@@ -1,15 +1,23 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import './home.styles.scss';
 
 export function HomePage() {
   const [stats, setStats] = useState({});
 
-  const onRefreshButtonClick = () => {
+  const fetchResults = async () => {
     axios.get('http://localhost:4200/api/db-stats').then((response) => {
       setStats({ nodesCount: response.data[0], relCount: response.data[1] });
     });
+  };
+
+  useEffect(() => {
+    fetchResults();
+  }, []);
+
+  const onRefreshButtonClick = () => {
+    fetchResults();
   };
 
   return (
@@ -21,7 +29,7 @@ export function HomePage() {
             <span className="stats-container">{stats.nodesCount}</span>
           </div>
         ) : (
-          <div className="db-stats-count-of-nodes">Refresh to get count</div>
+          <div className="db-stats-count-of-nodes">Wait...</div>
         )}
         {stats.relCount ? (
           <div className="db-stats-count-of-relationships">
