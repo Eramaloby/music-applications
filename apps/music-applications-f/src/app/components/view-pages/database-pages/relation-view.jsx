@@ -1,6 +1,4 @@
 const RelationViewPage = ({ item }) => {
-  console.log(item);
-
   const authorToTrackRelations = item.relations.filter(
     (relation) => relation.type === 'Author' && relation.target.type === 'Track'
   );

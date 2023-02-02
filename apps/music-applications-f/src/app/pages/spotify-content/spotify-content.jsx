@@ -2,7 +2,6 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TrackInfo from '../../components/view-pages/spotify-pages/track-info';
-import { Strategy } from '../../components/view-pages/parsing-strategy';
 import AlbumInfo from '../../components/view-pages/spotify-pages/album-info';
 import ArtistInfo from '../../components/view-pages/spotify-pages/artist-info';
 import PlaylistInfo from '../../components/view-pages/spotify-pages/playlist-info';
@@ -13,6 +12,12 @@ import {
 import AppModal from '../../components/ui-elements/modal';
 
 import './spotify-content.styles.scss';
+import {
+  extractSpotifyAlbumProperties,
+  extractSpotifyArtistProperties,
+  extractSpotifyPlaylistProperties,
+  extractSpotifyTrackProperties,
+} from '../../components/view-pages/utils';
 
 // todo: refactoring
 function SpotifyContentPage() {
@@ -33,13 +38,13 @@ function SpotifyContentPage() {
   const recognizeParsingStrategy = (type) => {
     switch (type) {
       case 'track':
-        return Strategy.ParseSpotifyTrack;
+        return extractSpotifyTrackProperties;
       case 'artist':
-        return Strategy.ParseSpotifyArtist;
+        return extractSpotifyArtistProperties;
       case 'album':
-        return Strategy.ParseSpotifyAlbum;
+        return extractSpotifyAlbumProperties;
       case 'playlist':
-        return Strategy.ParseSpotifyPlaylist;
+        return extractSpotifyPlaylistProperties;
       default:
         return undefined;
     }

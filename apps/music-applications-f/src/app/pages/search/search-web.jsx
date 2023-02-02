@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import Search from '../../components/search/search.component';
-import { Strategy } from '../../components/view-pages/parsing-strategy';
 
 import './search.styles.scss';
+import { parseSpotifyData } from '../../components/view-pages/utils';
 
 export function SearchWebPage() {
   const router = useNavigate();
@@ -44,9 +44,9 @@ export function SearchWebPage() {
         defaultSelectorValue={searchWordInitialState}
         searchWordInitialState={searchWordInitialState}
         endpointUrl="http://localhost:4200/api/web-search?"
-        parsingStrategy={Strategy.ParseWebSpotifyObj}
         instanceClickCallback={callbackDetailsView}
         selectorClassName="livesearch-selector"
+        parser={parseSpotifyData}
       ></Search>
     </div>
   );

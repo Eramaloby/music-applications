@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { convertDuration, translateLyricsToChunks } from '../utils';
 import { ArtistTrackName } from './page-utils';
 import { useState } from 'react';
 import AppModal from '../../ui-elements/modal';
 import axios from 'axios';
+import { convertDuration, translateLyricsToVerses } from '../utils';
 
 const TrackInfo = ({ track }) => {
   const [modal, setModal] = useState(false);
@@ -21,7 +21,7 @@ const TrackInfo = ({ track }) => {
         })
         .then((response) => {
           // need to handle when there is no lyrics provided
-          setLyrics(translateLyricsToChunks(response.data));
+          setLyrics(translateLyricsToVerses(response.data));
           setModal(true);
         });
     };

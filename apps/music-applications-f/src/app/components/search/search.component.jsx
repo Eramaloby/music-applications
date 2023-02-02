@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import ApplicationSelect from '../ui-elements/select';
 import InteractiveDropdown from '../interactive-dropdown/interactive-dropdown.component';
 import './search.styles.scss';
+import { parseNeo4jRecords } from '../view-pages/utils';
 
 // refactor this component later on
 export function Search({
@@ -12,7 +13,7 @@ export function Search({
   instanceClickCallback,
   searchWordInitialState,
   endpointUrl,
-  parsingStrategy,
+  parser,
   selectorClassName,
 }) {
   const [results, setResults] = useState([]);
@@ -31,7 +32,7 @@ export function Search({
       if (query !== '' && searchWord !== '') {
         axios.get(`${endpointUrl}${searchWord}=${query.toLowerCase()}`).then(
           (response) => {
-            setResults(parsingStrategy(response));
+            setResults(parser(response.data));
 
             if (results.length === 0) {
               setErrorText('Nothing was found');

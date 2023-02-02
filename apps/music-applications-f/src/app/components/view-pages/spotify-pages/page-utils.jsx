@@ -1,4 +1,4 @@
-import { convertDuration } from '../utils';
+import { convertDuration } from "../utils";
 
 export const ArtistTrackName = ({ artist, onArtistClickCallback }) => {
   return (

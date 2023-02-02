@@ -2,11 +2,11 @@ import { useState } from 'react';
 import axios from 'axios';
 
 import Search from '../../components/search/search.component';
-import { Strategy } from '../../components/view-pages/parsing-strategy';
 import AppModal from '../../components/ui-elements/modal';
 import DatabaseItemPage from '../../components/view-pages/database-pages/item-view';
 
 import './search.styles.scss';
+import { parseNeo4jData, parseNeo4jRecords } from '../../components/view-pages/utils';
 
 export function SearchPageDb() {
   // props to pass
@@ -18,7 +18,6 @@ export function SearchPageDb() {
     { value: 'playlist', name: 'Playlist' },
   ];
   const endpointUrl = 'http://localhost:4200/api/search?';
-  const parsingStrategy = Strategy.ParseGraphDbObj;
   const searchWordInitialState = 'All';
 
   const [modal, setModal] = useState(false);
@@ -31,7 +30,7 @@ export function SearchPageDb() {
         `http://localhost:4200/api/node-relation/${instance.type[0]}/${instance.label}`
       )
       .then((response) => {
-        setSelectedItem(Strategy.ParseGraphObjWithRelations(response.data));
+        setSelectedItem(parseNeo4jData(response.data));
       });
 
     setModal(true);
@@ -50,7 +49,7 @@ export function SearchPageDb() {
         defaultSelectorValue={searchWordInitialState}
         searchWordInitialState={searchWordInitialState}
         endpointUrl={endpointUrl}
-        parsingStrategy={parsingStrategy}
+        parser={parseNeo4jRecords}
         selectorClassName="livesearch-selector"
       ></Search>
       <div>
