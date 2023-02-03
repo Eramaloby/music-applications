@@ -17,7 +17,7 @@ import {
   extractSpotifyArtistProperties,
   extractSpotifyPlaylistProperties,
   extractSpotifyTrackProperties,
-} from '../../components/view-pages/utils';
+} from '../../utils';
 
 // todo: refactoring
 function SpotifyContentPage() {

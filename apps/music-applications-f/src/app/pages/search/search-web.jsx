@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import Search from '../../components/search/search.component';
 
 import './search.styles.scss';
-import { parseSpotifyData } from '../../components/view-pages/utils';
+import { parseSpotifyData } from '../../utils';
 
 export function SearchWebPage() {
   const router = useNavigate();

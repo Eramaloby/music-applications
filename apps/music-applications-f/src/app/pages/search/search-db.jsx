@@ -6,7 +6,7 @@ import AppModal from '../../components/ui-elements/modal';
 import DatabaseItemPage from '../../components/view-pages/database-pages/item-view';
 
 import './search.styles.scss';
-import { parseNeo4jData, parseNeo4jRecords } from '../../components/view-pages/utils';
+import { parseNeo4jData, parseNeo4jRecords } from '../../utils';
 
 export function SearchPageDb() {
   // props to pass

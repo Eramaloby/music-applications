@@ -3,7 +3,7 @@ import { ArtistTrackName } from './page-utils';
 import { useState } from 'react';
 import AppModal from '../../ui-elements/modal';
 import axios from 'axios';
-import { convertDuration, translateLyricsToVerses } from '../utils';
+import { convertDuration, translateLyricsToVerses } from '../../../utils';
 
 const TrackInfo = ({ track }) => {
   const [modal, setModal] = useState(false);

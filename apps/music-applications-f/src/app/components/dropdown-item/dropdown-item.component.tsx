@@ -1,7 +1,15 @@
+import { DropdownItem } from '../../types';
 import './dropdown-item.styles.scss';
 
-const InteractiveItemList = ({ item, onItemClickCallback }) => {
-  // consider using different print strategies for different objects
+type InteractiveItemListProps = {
+  item: DropdownItem;
+  onItemClickCallback: (item: DropdownItem) => void;
+};
+
+const InteractiveItemList = ({
+  item,
+  onItemClickCallback,
+}: InteractiveItemListProps) => {
   return (
     <div className="clickable-dropdown-item">
       <div className="clickable-dropdown-item-text">

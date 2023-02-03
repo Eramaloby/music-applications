@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import ApplicationSelect from '../ui-elements/select';
-import InteractiveDropdown from '../interactive-dropdown/interactive-dropdown.component';
 import './search.styles.scss';
-import { parseNeo4jRecords } from '../view-pages/utils';
+import InteractiveDropdown from '../interactive-dropdown/interactive-dropdown.component';
 
 // refactor this component later on
 export function Search({
@@ -71,17 +70,14 @@ export function Search({
           onChange={(e) => setQuery(e.target.value)}
         ></input>
       </div>
-      {query !== '' ? (
+      {query && (
         <div className="dropdown-container">
           <InteractiveDropdown
-            onClickCallback={instanceClickCallback}
+            onItemClickCallback={instanceClickCallback}
             list={results}
-            ocurredError={errorText}
             setOcurredError={setErrorText}
           ></InteractiveDropdown>
         </div>
-      ) : (
-        <div></div>
       )}
     </div>
   );

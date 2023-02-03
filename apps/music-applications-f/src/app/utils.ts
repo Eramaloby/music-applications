@@ -65,7 +65,7 @@ export const parseNeo4jRecords = (data: any) => {
   return data.records.map((value: any) => {
     const record = value._fields[0];
     return {
-      type: [record.labels],
+      type: record.labels.at(0),
       label: record.properties.name,
       spotify_id: record.properties.spotify_id,
     };
