@@ -9,7 +9,7 @@ import SpotifyContentPage from '../../pages/spotify-content/spotify-content';
 
 import './navbar-styles.scss';
 
-function ApplicationRouter() {
+const ApplicationRouter = () => {
   return (
     <div className="router-wrapper">
       <div className="navbar-wrapper">
@@ -53,6 +53,6 @@ function ApplicationRouter() {
       </div>
     </div>
   );
-}
+};
 
 export default ApplicationRouter;

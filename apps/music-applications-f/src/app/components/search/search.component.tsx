@@ -2,19 +2,30 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import ApplicationSelect from '../ui-elements/select';
 import './search.styles.scss';
+import { DropdownItem } from '../../types';
 import InteractiveDropdown from '../interactive-dropdown/interactive-dropdown.component';
 
-// refactor this component later on
-export function Search({
+type SearchComponentProps = {
+  isInputDisabled: boolean;
+  isSelectorDefaultValueDisabled: boolean;
+  selectorOptions: { value: string; name: string }[];
+  instanceClickCallback: (item: DropdownItem) => void;
+  searchWordInitialState: string;
+  endpointUrl: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  parser: (data: any) => any;
+  selectorClassName: string;
+};
+const Search = ({
   isInputDisabled,
   isSelectorDefaultValueDisabled,
-  selectorParamsArray,
-  instanceClickCallback,
+  selectorOptions,
   searchWordInitialState,
   endpointUrl,
-  parser,
   selectorClassName,
-}) {
+  instanceClickCallback,
+  parser,
+}: SearchComponentProps) => {
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState('');
   const [searchWord, setSearchWord] = useState(
@@ -22,8 +33,6 @@ export function Search({
   );
 
   const [errorText, setErrorText] = useState('');
-
-  const disableTag = (isDisabled) => (isDisabled ? 'disabled' : '');
 
   useEffect(() => {
     // move request code to different class later
@@ -44,6 +53,7 @@ export function Search({
       }
     }, 400);
 
+    console.log(results);
     return () => clearTimeout(searchDelayTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, searchWord]);
@@ -53,16 +63,16 @@ export function Search({
     <div className="livesearch-wrapper">
       <div className="livesearch-input-container">
         <ApplicationSelect
-          isDefaultDisabled={disableTag(isSelectorDefaultValueDisabled)}
+          isDefaultDisabled={isSelectorDefaultValueDisabled}
           defaultValueName={searchWordInitialState}
           defaultValue={searchWordInitialState.toLowerCase()}
           value={searchWord}
-          onChange={(value) => setSearchWord(value)}
-          options={selectorParamsArray}
+          onChange={(value: string) => setSearchWord(value)}
+          options={selectorOptions}
           selectorClassName={selectorClassName}
         ></ApplicationSelect>
         <input
-          disabled={disableTag(isInputDisabled)}
+          disabled={isInputDisabled}
           className="livesearch-input"
           value={query}
           type="text"
@@ -74,13 +84,15 @@ export function Search({
         <div className="dropdown-container">
           <InteractiveDropdown
             onItemClickCallback={instanceClickCallback}
-            list={results}
-            setOcurredError={setErrorText}
+            results={results}
           ></InteractiveDropdown>
         </div>
       )}
+      {results.length === 0 && query && (
+        <div className="error-message">{errorText}</div>
+      )}
     </div>
   );
-}
+};
 
 export default Search;
