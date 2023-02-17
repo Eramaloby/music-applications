@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import './about.styles.scss';
 
-export function AboutPage() {
+const AboutPage = () => {
   return (
     <div className="about-page-wrapper">
       <div className="about-page-header-text">Над проектом работали:</div>
