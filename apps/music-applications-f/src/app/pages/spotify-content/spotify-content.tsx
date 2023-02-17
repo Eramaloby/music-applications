@@ -20,14 +20,14 @@ import {
 } from '../../utils';
 
 // todo: refactoring
-function SpotifyContentPage() {
+const SpotifyContentPage = () => {
   const urlToLogin = 'http://localhost:4200/api/login';
 
   const router = useNavigate();
   const params = useParams();
 
-  const [item, setItem] = useState({});
-  const [error, setError] = useState('');
+  const [item, setItem] = useState<any>(null);
+  const [error, setError] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [popup, setPopup] = useState(false);
@@ -35,7 +35,7 @@ function SpotifyContentPage() {
 
   const togglePopup = () => setPopup(!popup);
 
-  const recognizeParsingStrategy = (type) => {
+  const recognizeParsingStrategy = (type: string | undefined) => {
     switch (type) {
       case 'track':
         return extractSpotifyTrackProperties;
@@ -50,13 +50,13 @@ function SpotifyContentPage() {
     }
   };
 
-  const parsingStrategy = recognizeParsingStrategy(params.type);
+  const parsingStrategy = recognizeParsingStrategy(params['type']);
 
   function postItem() {
     if (item) {
       setIsLoading(true);
       axios
-        .post(`http://localhost:4200/api/${params.type}/${item.spotify_id}`)
+        .post(`http://localhost:4200/api/${params['type']}/${item.spotify_id}`)
         .then((response) => {
           setIsLoading(false);
           if (response.data) {
@@ -74,25 +74,27 @@ function SpotifyContentPage() {
   }
 
   useEffect(() => {
-    if (recognizeParsingStrategy) {
-      axios.get(`http://localhost:4200/api/${params.type}/${params.id}`).then(
-        (response) => {
-          setItem(parsingStrategy(response.data));
-        },
-        (reason) => {
-          if (reason.response.status === 400) {
-            setError('Not found!');
-          } else {
-            setError(
-              'Unauthorized access. Before visiting this page you need to acquire or refresh access token.'
-            );
+    if (parsingStrategy) {
+      axios
+        .get(`http://localhost:4200/api/${params['type']}/${params['id']}`)
+        .then(
+          (response) => {
+            setItem(parsingStrategy(response.data));
+          },
+          (reason) => {
+            if (reason.response.status === 400) {
+              setError('Not found!');
+            } else {
+              setError(
+                'Unauthorized access. Before visiting this page you need to acquire or refresh access token.'
+              );
+            }
           }
-        }
-      );
+        );
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id, params.type]);
+  }, [params['id'], params['type']]);
 
   if (error !== '') {
     return (
@@ -140,32 +142,22 @@ function SpotifyContentPage() {
       <AppModal
         visible={isLoading}
         setVisible={setIsLoading}
-        notHideOnClick={true}
+        isHiddenOnClick={true}
       >
         <LoadingSpinner></LoadingSpinner>
       </AppModal>
-      {item.type === 'track' ? (
-        <TrackInfo track={item}></TrackInfo>
-      ) : (
-        <div></div>
-      )}
-      {item.type === 'album' ? (
-        <AlbumInfo album={item}></AlbumInfo>
-      ) : (
-        <div></div>
-      )}
-      {item.type === 'playlist' ? (
-        <PlaylistInfo playlist={item}></PlaylistInfo>
-      ) : (
-        <div></div>
-      )}
-      {item.type === 'artist' ? (
-        <ArtistInfo artist={item}></ArtistInfo>
-      ) : (
-        <div></div>
+      {item && (
+        <>
+          {item.type === 'track' && <TrackInfo track={item}></TrackInfo>}
+          {item.type === 'album' && <AlbumInfo album={item}></AlbumInfo>}
+          {item.type === 'playlist' && (
+            <PlaylistInfo playlist={item}></PlaylistInfo>
+          )}
+          {item.type === 'artist' && <ArtistInfo artist={item}></ArtistInfo>}
+        </>
       )}
     </div>
   );
-}
+};
 
 export default SpotifyContentPage;

@@ -4,7 +4,7 @@ import React from 'react';
 type AppModalProps = {
   children: React.ReactNode;
   visible: boolean;
-  isHiddenOnClick: false;
+  isHiddenOnClick: boolean;
   setVisible: (value: boolean) => void;
 };
 
