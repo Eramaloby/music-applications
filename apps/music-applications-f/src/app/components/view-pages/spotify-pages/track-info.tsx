@@ -4,13 +4,13 @@ import { useState } from 'react';
 import AppModal from '../../ui-elements/modal';
 import axios from 'axios';
 import { convertDuration, translateLyricsToVerses } from '../../../utils';
+import { SpotifyTrack } from '../../../types';
 
-const TrackInfo = ({ track }) => {
-  const [modal, setModal] = useState(false);
-  const [lyrics, setLyrics] = useState([]);
-
+const TrackInfo = ({ track }: { track: SpotifyTrack }) => {
+  const [modal, setModal] = useState<boolean>(false);
+  const [lyrics, setLyrics] = useState<string[]>([]);
   const router = useNavigate();
-  const artistNameClickCallback = (spotify_id) =>
+  const artistNameClickCallback = (spotify_id: string) =>
     router(`/artist/${spotify_id}`);
 
   const onMicrophoneClick = async () => {
@@ -92,7 +92,7 @@ const TrackInfo = ({ track }) => {
           </div>
         </div>
       </div>
-      <AppModal visible={modal} setVisible={setModal} notHideOnClick={false}>
+      <AppModal visible={modal} setVisible={setModal} isHiddenOnClick={false}>
         {lyrics.length === 1 ? (
           <div style={{ textAlign: 'center' }}>{lyrics[0]}</div>
         ) : (

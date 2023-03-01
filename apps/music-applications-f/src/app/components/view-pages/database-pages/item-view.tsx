@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import RelationViewPage from './relation-view';
 import './style.scss';
+import { Neo4jDbItem } from '../../../types';
 
-const DatabaseItemPage = ({ item }) => {
+const DatabaseItemPage = ({ item }: {item: Neo4jDbItem}) => {
   // default view is relation view
   const [isRelationViewSelected, setIsRelationViewSelected] = useState(true);
 

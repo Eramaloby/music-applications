@@ -1,4 +1,11 @@
-import { Neo4jDbItem } from './types';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  Neo4jDbItem,
+  SpotifyAlbum,
+  SpotifyArtist,
+  SpotifyTrack,
+  SpotifyPlaylist,
+} from './types';
 export const convertDuration = (ms: number) => {
   const minutes = Math.floor(ms / 60000);
   const seconds = Number.parseInt(((ms % 60000) / 1000).toFixed(0));
@@ -46,6 +53,7 @@ export const parseNeo4jData = (data: any[]) => {
     const relation = item._fields[1];
     const targetNode = item._fields[2];
 
+    // refactor this to multiple.
     relations.push({
       type: relation.type,
       target: {
@@ -147,32 +155,19 @@ export const extractSpotifyTrackProperties = (track: any) => {
       label: track.album.name,
       album_type: track.album.album_type,
       release_date: track.album.release_date,
-      total_tracks: track.album.total_tracks,
     },
-  };
+  } as SpotifyTrack;
 };
 
-export const extractSpotifyArtistProperties = (track: any) => {
+export const extractSpotifyArtistProperties = (artist: any): SpotifyArtist => {
   return {
-    type: track.type,
-    label: track.name,
-    spotify_id: track.id,
-    explicit: track.explicit,
-    duration_ms: track.duration_ms,
-    preview_url: track.preview_url,
-    artists: track.artists.map((artist: any) => {
-      return { label: artist.name, spotify_id: artist.id, type: artist.type };
-    }),
-    album: {
-      spotify_id: track.album.id,
-      type: track.album.type,
-      images: track.album.images,
-      label: track.album.name,
-      album_type: track.album.album_type,
-      release_date: track.album.release_date,
-      total_tracks: track.album.total_tracks,
-    },
-  };
+    type: artist.type,
+    label: artist.name,
+    spotify_id: artist.id,
+    preview_url: artist.preview_url,
+    genres: artist.genres,
+    images: artist.images,
+  } as SpotifyArtist;
 };
 
 export const extractSpotifyPlaylistProperties = (playlist: any) => {
@@ -208,7 +203,7 @@ export const extractSpotifyPlaylistProperties = (playlist: any) => {
         },
       };
     }),
-  };
+  } as SpotifyPlaylist;
 };
 
 export const extractSpotifyAlbumProperties = (album: any) => {
@@ -238,14 +233,14 @@ export const extractSpotifyAlbumProperties = (album: any) => {
         }),
       };
     }),
-    artist: album.artists.map((artist: any) => {
+    artists: album.artists.map((artist: any) => {
       return {
         label: artist.name,
         spotify_id: artist.id,
         type: artist.type,
       };
     }),
-  };
+  } as SpotifyAlbum;
 };
 
 const extractSpotifyObjProperties = (obj: any) => {

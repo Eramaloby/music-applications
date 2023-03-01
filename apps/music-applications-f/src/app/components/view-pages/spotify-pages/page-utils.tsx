@@ -1,6 +1,12 @@
-import { convertDuration } from "../../../utils";
+import { convertDuration } from '../../../utils';
 
-export const ArtistTrackName = ({ artist, onArtistClickCallback }) => {
+export const ArtistTrackName = ({
+  artist,
+  onArtistClickCallback,
+}: {
+  artist: { label: string; spotify_id: string; type: string };
+  onArtistClickCallback: (spotify_id: string) => void;
+}) => {
   return (
     <div
       onClick={(e) => {
@@ -14,11 +20,28 @@ export const ArtistTrackName = ({ artist, onArtistClickCallback }) => {
   );
 };
 
+type AlbumTrackInfoProps = {
+  track: {
+    type: string;
+    label: string;
+    spotify_id: string;
+    explicit: boolean;
+    duration_ms: number;
+    track_num: number;
+    artists: {
+      label: string;
+      spotify_id: string;
+      type: string;
+    }[];
+  };
+  onTrackClickCallback: (spotify_id: string) => void;
+  onArtistClickCallback: (spotify_id: string) => void;
+};
 export const AlbumTrackInfo = ({
   track,
   onTrackClickCallback,
   onArtistClickCallback,
-}) => {
+}: AlbumTrackInfoProps) => {
   return (
     <div
       className="album-track-text"
@@ -46,12 +69,30 @@ export const AlbumTrackInfo = ({
   );
 };
 
+type PlaylistTrackInfoProps = {
+  track: {
+    type: string;
+    label: string;
+    spotify_id: string;
+    explicit: boolean;
+    duration_ms: number;
+    track_num: number;
+    artists: {
+      label: string;
+      spotify_id: string;
+      type: string;
+    }[];
+  };
+  onTrackClickCallback: (spotify_id: string) => void;
+  onArtistClickCallback: (spotify_id: string) => void;
+  index: number;
+};
 export const PlaylistTrackInfo = ({
   track,
   index,
   onTrackClickCallback,
   onArtistClickCallback,
-}) => {
+}: PlaylistTrackInfoProps) => {
   return (
     <div
       className="playlist-track-text"
@@ -88,7 +129,13 @@ export const LoadingSpinner = () => {
   );
 };
 
-export const PopupMessage = ({ message, handleClose }) => {
+export const PopupMessage = ({
+  message,
+  handleClose,
+}: {
+  message: string;
+  handleClose: () => void;
+}) => {
   setTimeout(() => handleClose(), 3000);
   return (
     <div className="popup-box">

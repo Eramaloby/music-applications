@@ -18,6 +18,12 @@ import {
   extractSpotifyPlaylistProperties,
   extractSpotifyTrackProperties,
 } from '../../utils';
+import {
+  SpotifyAlbum,
+  SpotifyArtist,
+  SpotifyPlaylist,
+  SpotifyTrack,
+} from '../../types';
 
 // todo: refactoring
 const SpotifyContentPage = () => {
@@ -26,7 +32,9 @@ const SpotifyContentPage = () => {
   const router = useNavigate();
   const params = useParams();
 
-  const [item, setItem] = useState<any>(null);
+  const [item, setItem] = useState<
+    SpotifyAlbum | SpotifyArtist | SpotifyPlaylist | SpotifyTrack | undefined
+  >(undefined);
   const [error, setError] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +60,7 @@ const SpotifyContentPage = () => {
 
   const parsingStrategy = recognizeParsingStrategy(params['type']);
 
-  function postItem() {
+  const postItem = () => {
     if (item) {
       setIsLoading(true);
       axios
@@ -71,7 +79,7 @@ const SpotifyContentPage = () => {
           setIsLoading(false);
         });
     }
-  }
+  };
 
   useEffect(() => {
     if (parsingStrategy) {
@@ -148,12 +156,12 @@ const SpotifyContentPage = () => {
       </AppModal>
       {item && (
         <>
-          {item.type === 'track' && <TrackInfo track={item}></TrackInfo>}
-          {item.type === 'album' && <AlbumInfo album={item}></AlbumInfo>}
+          {item.type === 'track' && <TrackInfo track={item as SpotifyTrack}></TrackInfo>}
+          {item.type === 'album' && <AlbumInfo album={item as SpotifyAlbum}></AlbumInfo>}
           {item.type === 'playlist' && (
-            <PlaylistInfo playlist={item}></PlaylistInfo>
+            <PlaylistInfo playlist={item as SpotifyPlaylist}></PlaylistInfo>
           )}
-          {item.type === 'artist' && <ArtistInfo artist={item}></ArtistInfo>}
+          {item.type === 'artist' && <ArtistInfo artist={item as SpotifyArtist}></ArtistInfo>}
         </>
       )}
     </div>

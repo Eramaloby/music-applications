@@ -25,7 +25,6 @@ const SearchPageDb = () =>  {
 
   // callbacks to pass
   const callbackOnInstanceClick = (instance: DropdownItem) => {
-    console.log(instance);
     axios
       .get(
         `http://localhost:4200/api/node-relation/${instance.type}/${instance.label}`

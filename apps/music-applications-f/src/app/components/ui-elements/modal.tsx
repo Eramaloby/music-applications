@@ -14,8 +14,6 @@ const AppModal = ({
   setVisible,
   isHiddenOnClick,
 }: AppModalProps) => {
-
-  console.log('sdasd');
   const rootClasses = [cl['appModal']];
 
   if (visible) {

@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { ArtistTrackName } from './page-utils';
 import { AlbumTrackInfo } from './page-utils';
+import { SpotifyAlbum } from '../../../types';
 
-const AlbumInfo = ({ album }) => {
+const AlbumInfo = ({ album }: { album: SpotifyAlbum }) => {
   const router = useNavigate();
-  const trackNameClickCallback = (spotify_id) => router(`/track/${spotify_id}`);
-  const artistNameClickCallback = (spotify_id) =>
+  const trackNameClickCallback = (spotify_id: string) =>
+    router(`/track/${spotify_id}`);
+  const artistNameClickCallback = (spotify_id: string) =>
     router(`/artist/${spotify_id}`);
 
   return (
@@ -28,7 +30,7 @@ const AlbumInfo = ({ album }) => {
               <div>{album.label}</div>
             </div>
             <div className="album-info-text">
-              {album.artist.map((artist, index) => (
+              {album.artists.map((artist, index) => (
                 <ArtistTrackName
                   artist={artist}
                   onArtistClickCallback={artistNameClickCallback}
@@ -45,7 +47,7 @@ const AlbumInfo = ({ album }) => {
         </div>
         <div>
           <div className="featured-tracks-label">Featured tracks:</div>{' '}
-          {album.tracks.map((track, index) => {
+          {album.tracks.map((track, index: number) => {
             return (
               <AlbumTrackInfo
                 track={track}

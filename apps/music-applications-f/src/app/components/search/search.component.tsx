@@ -53,7 +53,6 @@ const Search = ({
       }
     }, 400);
 
-    console.log(results);
     return () => clearTimeout(searchDelayTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, searchWord]);

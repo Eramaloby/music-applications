@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { PlaylistTrackInfo } from './page-utils';
+import { SpotifyPlaylist } from '../../../types';
 
-const PlaylistInfo = ({ playlist }) => {
+const PlaylistInfo = ({ playlist }: { playlist: SpotifyPlaylist }) => {
   const router = useNavigate();
-  const trackNameClickCallback = (spotify_id) => router(`/track/${spotify_id}`);
-  const artistNameClickCallback = (spotify_id) =>
+  const trackNameClickCallback = (spotify_id: string) =>
+    router(`/track/${spotify_id}`);
+  const artistNameClickCallback = (spotify_id: string) =>
     router(`/artist/${spotify_id}`);
   return (
     <div className="item-page-content">
