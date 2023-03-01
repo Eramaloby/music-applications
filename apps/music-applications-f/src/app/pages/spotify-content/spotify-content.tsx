@@ -2,7 +2,6 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TrackInfo from '../../components/view-pages/spotify-pages/track-info';
-import { Strategy } from '../../components/view-pages/parsing-strategy';
 import AlbumInfo from '../../components/view-pages/spotify-pages/album-info';
 import ArtistInfo from '../../components/view-pages/spotify-pages/artist-info';
 import PlaylistInfo from '../../components/view-pages/spotify-pages/playlist-info';
@@ -13,16 +12,30 @@ import {
 import AppModal from '../../components/ui-elements/modal';
 
 import './spotify-content.styles.scss';
+import {
+  extractSpotifyAlbumProperties,
+  extractSpotifyArtistProperties,
+  extractSpotifyPlaylistProperties,
+  extractSpotifyTrackProperties,
+} from '../../utils';
+import {
+  SpotifyAlbum,
+  SpotifyArtist,
+  SpotifyPlaylist,
+  SpotifyTrack,
+} from '../../types';
 
 // todo: refactoring
-function SpotifyContentPage() {
+const SpotifyContentPage = () => {
   const urlToLogin = 'http://localhost:4200/api/login';
 
   const router = useNavigate();
   const params = useParams();
 
-  const [item, setItem] = useState({});
-  const [error, setError] = useState('');
+  const [item, setItem] = useState<
+    SpotifyAlbum | SpotifyArtist | SpotifyPlaylist | SpotifyTrack | undefined
+  >(undefined);
+  const [error, setError] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [popup, setPopup] = useState(false);
@@ -30,28 +43,28 @@ function SpotifyContentPage() {
 
   const togglePopup = () => setPopup(!popup);
 
-  const recognizeParsingStrategy = (type) => {
+  const recognizeParsingStrategy = (type: string | undefined) => {
     switch (type) {
       case 'track':
-        return Strategy.ParseSpotifyTrack;
+        return extractSpotifyTrackProperties;
       case 'artist':
-        return Strategy.ParseSpotifyArtist;
+        return extractSpotifyArtistProperties;
       case 'album':
-        return Strategy.ParseSpotifyAlbum;
+        return extractSpotifyAlbumProperties;
       case 'playlist':
-        return Strategy.ParseSpotifyPlaylist;
+        return extractSpotifyPlaylistProperties;
       default:
         return undefined;
     }
   };
 
-  const parsingStrategy = recognizeParsingStrategy(params.type);
+  const parsingStrategy = recognizeParsingStrategy(params['type']);
 
-  function postItem() {
+  const postItem = () => {
     if (item) {
       setIsLoading(true);
       axios
-        .post(`http://localhost:4200/api/${params.type}/${item.spotify_id}`)
+        .post(`http://localhost:4200/api/${params['type']}/${item.spotify_id}`)
         .then((response) => {
           setIsLoading(false);
           if (response.data) {
@@ -66,28 +79,30 @@ function SpotifyContentPage() {
           setIsLoading(false);
         });
     }
-  }
+  };
 
   useEffect(() => {
-    if (recognizeParsingStrategy) {
-      axios.get(`http://localhost:4200/api/${params.type}/${params.id}`).then(
-        (response) => {
-          setItem(parsingStrategy(response.data));
-        },
-        (reason) => {
-          if (reason.response.status === 400) {
-            setError('Not found!');
-          } else {
-            setError(
-              'Unauthorized access. Before visiting this page you need to acquire or refresh access token.'
-            );
+    if (parsingStrategy) {
+      axios
+        .get(`http://localhost:4200/api/${params['type']}/${params['id']}`)
+        .then(
+          (response) => {
+            setItem(parsingStrategy(response.data));
+          },
+          (reason) => {
+            if (reason.response.status === 400) {
+              setError('Not found!');
+            } else {
+              setError(
+                'Unauthorized access. Before visiting this page you need to acquire or refresh access token.'
+              );
+            }
           }
-        }
-      );
+        );
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id, params.type]);
+  }, [params['id'], params['type']]);
 
   if (error !== '') {
     return (
@@ -135,32 +150,22 @@ function SpotifyContentPage() {
       <AppModal
         visible={isLoading}
         setVisible={setIsLoading}
-        notHideOnClick={true}
+        isHiddenOnClick={true}
       >
         <LoadingSpinner></LoadingSpinner>
       </AppModal>
-      {item.type === 'track' ? (
-        <TrackInfo track={item}></TrackInfo>
-      ) : (
-        <div></div>
-      )}
-      {item.type === 'album' ? (
-        <AlbumInfo album={item}></AlbumInfo>
-      ) : (
-        <div></div>
-      )}
-      {item.type === 'playlist' ? (
-        <PlaylistInfo playlist={item}></PlaylistInfo>
-      ) : (
-        <div></div>
-      )}
-      {item.type === 'artist' ? (
-        <ArtistInfo artist={item}></ArtistInfo>
-      ) : (
-        <div></div>
+      {item && (
+        <>
+          {item.type === 'track' && <TrackInfo track={item as SpotifyTrack}></TrackInfo>}
+          {item.type === 'album' && <AlbumInfo album={item as SpotifyAlbum}></AlbumInfo>}
+          {item.type === 'playlist' && (
+            <PlaylistInfo playlist={item as SpotifyPlaylist}></PlaylistInfo>
+          )}
+          {item.type === 'artist' && <ArtistInfo artist={item as SpotifyArtist}></ArtistInfo>}
+        </>
       )}
     </div>
   );
-}
+};
 
 export default SpotifyContentPage;

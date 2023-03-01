@@ -1,22 +1,23 @@
 import { useNavigate } from 'react-router-dom';
 import Search from '../../components/search/search.component';
-import { Strategy } from '../../components/view-pages/parsing-strategy';
 
 import './search.styles.scss';
+import { parseSpotifyData } from '../../utils';
+import { DropdownItem } from '../../types';
 
-export function SearchWebPage() {
+const SearchWebPage = () => {
   const router = useNavigate();
 
   const urlToLogin = 'http://localhost:4200/api/login';
 
-  function onUnlockButtonClick() {
+  const onUnlockButtonClick = () => {
     window.open(urlToLogin, '_blank');
     setInterval(() => window.location.reload(), 100);
-  }
+  };
 
-  function callbackDetailsView(instance) {
+  const callbackDetailsView = (instance: DropdownItem) => {
     router(`/${instance.type}/${instance.spotify_id}`);
-  }
+  };
 
   const searchWordInitialState = 'All';
 
@@ -39,17 +40,16 @@ export function SearchWebPage() {
       </div>
       <Search
         isInputDisabled={false}
-        selectorParamsArray={selectorParamsArray}
+        selectorOptions={selectorParamsArray}
         isSelectorDefaultValueDisabled={false}
-        defaultSelectorValue={searchWordInitialState}
         searchWordInitialState={searchWordInitialState}
         endpointUrl="http://localhost:4200/api/web-search?"
-        parsingStrategy={Strategy.ParseWebSpotifyObj}
         instanceClickCallback={callbackDetailsView}
         selectorClassName="livesearch-selector"
+        parser={parseSpotifyData}
       ></Search>
     </div>
   );
-}
+};
 
 export default SearchWebPage;

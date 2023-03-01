@@ -1,3 +1,13 @@
+type ApplicationSelectProps = {
+  options: { value: string; name: string }[];
+  defaultValueName: string;
+  defaultValue: string;
+  value: string;
+  onChange: (value: string) => void;
+  isDefaultDisabled: boolean;
+  selectorClassName: string;
+};
+
 const ApplicationSelect = ({
   options,
   defaultValueName,
@@ -6,7 +16,7 @@ const ApplicationSelect = ({
   onChange,
   isDefaultDisabled,
   selectorClassName,
-}) => {
+}: ApplicationSelectProps) => {
   return (
     <select
       value={value}

@@ -1,4 +1,6 @@
-const ArtistInfo = ({ artist }) => {
+import { SpotifyArtist } from '../../../types';
+
+const ArtistInfo = ({ artist }: { artist: SpotifyArtist }) => {
   return (
     <div className="item-page-content">
       <div className="artist-item-page-details-header">

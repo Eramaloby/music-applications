@@ -5,7 +5,7 @@ import './network.styles.scss';
 import GoldStar from '../../../assets/gold-star.png';
 import Star from '../../../assets/star.png';
 
-export function RankingNeuralNetworkPage() {
+const RankingNeuralNetworkPage = () => {
   const [comment, setComment] = useState('');
   const [stars, setStars] = useState([false, false, false, false, false]);
   const [accuracy, setAccuracy] = useState(0);
@@ -61,9 +61,9 @@ export function RankingNeuralNetworkPage() {
       <div className="neural-network-accuracy">Accuracy: {accuracy}</div>
     </div>
   );
-}
+};
 
-const StarPng = ({ isActive }) => {
+const StarPng = ({ isActive }: { isActive: boolean }) => {
   // could import disable tag function
   return (
     <div className="image-wrapper">

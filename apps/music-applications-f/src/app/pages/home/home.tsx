@@ -3,8 +3,11 @@ import { useEffect, useState } from 'react';
 
 import './home.styles.scss';
 
-export function HomePage() {
-  const [stats, setStats] = useState({});
+const HomePage = () => {
+  const [stats, setStats] = useState<{ nodesCount: number; relCount: number }>({
+    nodesCount: 0,
+    relCount: 0,
+  });
 
   const fetchResults = async () => {
     axios.get('http://localhost:4200/api/db-stats').then((response) => {
@@ -16,9 +19,9 @@ export function HomePage() {
     fetchResults();
   }, []);
 
-  const onRefreshButtonClick = () => {
-    fetchResults();
-  };
+  // const onRefreshButtonClick = () => {
+  //   fetchResults();
+  // };
 
   return (
     <div className="home-page-wrapper">
@@ -40,16 +43,18 @@ export function HomePage() {
           <div className="db-stats-count-of-relationships"></div>
         )}
         <div className="refresh-button-container">
+          {/*
+          TODO: update this button to circle icon and display it under text
           <button
             className="refresh-button"
             onClick={() => onRefreshButtonClick()}
           >
             Refresh
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default HomePage;

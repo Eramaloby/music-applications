@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-import Search from '../../components/search/search.component';
-import { Strategy } from '../../components/view-pages/parsing-strategy';
-import AppModal from '../../components/ui-elements/modal';
 import DatabaseItemPage from '../../components/view-pages/database-pages/item-view';
+import AppModal from '../../components/ui-elements/modal';
 
 import './search.styles.scss';
+import { parseNeo4jData, parseNeo4jRecords } from '../../utils';
+import Search from '../../components/search/search.component';
+import { DropdownItem, Neo4jDbItem } from '../../types';
 
-export function SearchPageDb() {
-  // props to pass
+const SearchPageDb = () =>  {
   const selectorParamsArray = [
     { value: 'artist', name: 'Artists' },
     { value: 'track', name: 'Tracks' },
@@ -18,24 +18,23 @@ export function SearchPageDb() {
     { value: 'playlist', name: 'Playlist' },
   ];
   const endpointUrl = 'http://localhost:4200/api/search?';
-  const parsingStrategy = Strategy.ParseGraphDbObj;
   const searchWordInitialState = 'All';
 
-  const [modal, setModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState();
+  const [modal, setModal] = useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = useState<Neo4jDbItem>();
 
   // callbacks to pass
-  function callbackOnInstanceClick(instance) {
+  const callbackOnInstanceClick = (instance: DropdownItem) => {
     axios
       .get(
-        `http://localhost:4200/api/node-relation/${instance.type[0]}/${instance.label}`
+        `http://localhost:4200/api/node-relation/${instance.type}/${instance.label}`
       )
       .then((response) => {
-        setSelectedItem(Strategy.ParseGraphObjWithRelations(response.data));
+        setSelectedItem(parseNeo4jData(response.data));
       });
 
     setModal(true);
-  }
+  };
 
   return (
     <div className="search-page-wrapper">
@@ -44,13 +43,12 @@ export function SearchPageDb() {
       </div>
       <Search
         isInputDisabled={false}
-        selectorParamsArray={selectorParamsArray}
+        selectorOptions={selectorParamsArray}
         instanceClickCallback={callbackOnInstanceClick}
         isSelectorDefaultValueDisabled={false}
-        defaultSelectorValue={searchWordInitialState}
         searchWordInitialState={searchWordInitialState}
         endpointUrl={endpointUrl}
-        parsingStrategy={parsingStrategy}
+        parser={parseNeo4jRecords}
         selectorClassName="livesearch-selector"
       ></Search>
       <div>
@@ -58,7 +56,7 @@ export function SearchPageDb() {
           <AppModal
             visible={modal}
             setVisible={setModal}
-            notHideOnClick={false}
+            isHiddenOnClick={false}
           >
             {/* Write Classes That decompose item */}
             <DatabaseItemPage item={selectedItem}></DatabaseItemPage>

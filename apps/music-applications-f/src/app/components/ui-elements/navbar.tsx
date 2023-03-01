@@ -2,14 +2,14 @@ import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import HomePage from '../../pages/home/home';
 import AboutPage from '../../pages/about/about';
 import RankingNeuralNetworkPage from '../../pages/networks/ranking-network';
-import { LyricsGeneratorNetwork } from '../../pages/networks/generator-network';
+import LyricsGeneratorNetwork from '../../pages/networks/generator-network';
 import SearchPageDb from '../../pages/search/search-db';
 import SearchWebPage from '../../pages/search/search-web';
 import SpotifyContentPage from '../../pages/spotify-content/spotify-content';
 
 import './navbar-styles.scss';
 
-function ApplicationRouter() {
+const ApplicationRouter = () => {
   return (
     <div className="router-wrapper">
       <div className="navbar-wrapper">
@@ -53,6 +53,6 @@ function ApplicationRouter() {
       </div>
     </div>
   );
-}
+};
 
 export default ApplicationRouter;
