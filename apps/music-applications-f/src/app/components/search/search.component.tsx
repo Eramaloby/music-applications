@@ -80,12 +80,10 @@ const Search = ({
         ></input>
       </div>
       {query && (
-        <div className="dropdown-container">
-          <InteractiveDropdown
-            onItemClickCallback={instanceClickCallback}
-            results={results}
-          ></InteractiveDropdown>
-        </div>
+        <InteractiveDropdown
+          onItemClickCallback={instanceClickCallback}
+          results={results}
+        ></InteractiveDropdown>
       )}
       {results.length === 0 && query && (
         <div className="error-message">{errorText}</div>
