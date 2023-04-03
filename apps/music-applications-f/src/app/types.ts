@@ -154,3 +154,21 @@ export interface PlaylistProperties {
   owner_name: string;
   spotify_id: string;
 }
+
+export interface UserSignUpForm {
+  email: string;
+  confirmEmail: string;
+  password: string;
+  confirmPassword: string;
+  username: string;
+  dateOfBirth: Date;
+};
+
+export interface UserSignUpFormErrors {
+  email: string;
+  confirmEmail: string;
+  password: string;
+  confirmPassword: string;
+  username: string;
+  dateOfBirth: string;
+}
