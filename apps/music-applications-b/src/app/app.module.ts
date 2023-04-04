@@ -15,11 +15,11 @@ import { NetworkController } from './controllers/network.controller';
 @Module({
   imports: [
     Neo4jModule.forRoot({
-      scheme: ApplicationConfig.scheme as Neo4jScheme,
-      host: ApplicationConfig.host,
+      scheme: ApplicationConfig.scheme_neo4j as Neo4jScheme,
+      host: ApplicationConfig.host_neo4j,
       port: '',
-      username: ApplicationConfig.username,
-      password: ApplicationConfig.password,
+      username: ApplicationConfig.username_neo4j,
+      password: ApplicationConfig.host_neo4j,
     }),
   ],
   controllers: [
