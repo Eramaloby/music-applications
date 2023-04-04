@@ -251,3 +251,77 @@ const extractSpotifyObjProperties = (obj: any) => {
     label: obj.name,
   };
 };
+
+export const emailExpression = new RegExp(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
+export const usernameExpression = new RegExp(/^[a-zA-Z]+$/);
+
+// validators for forms
+// refactor validation for email && confirm email fields
+export const validateEmail = (email: string) => {
+  if (!email.trim()) {
+    return 'Email is required.';
+  } else if (!emailExpression.test(email)) {
+    return 'Given email address is not correct.';
+
+    // put already in usage validation.
+  }
+
+  return '';
+};
+
+export const validateEmailConfirm = (emailConfirm: string, email: string) => {
+  if (!emailConfirm.trim()) {
+    return 'Confirming email address is required.';
+  } else if (emailConfirm !== email) {
+    return 'The email confirmation does not match.';
+  } else if (
+    emailExpression.test(emailConfirm) ||
+    emailExpression.test(email)
+  ) {
+    return 'Given email address is not correct.';
+  }
+
+  return '';
+};
+
+export const validatePassword = (password: string) => {
+  if (!password.trim()) {
+    return 'Password is required.';
+  } else if (password.length < 9) {
+    return 'Password is too short. Use at least 9 characters.';
+  }
+  // check what password includes
+  // hash password
+
+  return '';
+};
+
+export const validatePasswordConfirm = (
+  passwordConfirm: string,
+  password: string
+) => {
+  if (!passwordConfirm.trim()) {
+    return 'Confirming password is required.';
+  } else if (passwordConfirm !== password) {
+    return 'The password confirmation does not match';
+  } else if (password.length < 9 || passwordConfirm.length < 9) {
+    return 'Password is too short. Use at least 9 characters.';
+  }
+
+  return '';
+};
+
+export const validateUsername = (username: string) => {
+  if (!username.trim()) {
+    return 'Username is required';
+  } else if (!usernameExpression.test(username)) {
+    return 'Username must include only letters.';
+  }
+
+  return '';
+};
+
+export const subtractYearsFromDate = (date: Date, years: number) => {
+  date.setFullYear(date.getFullYear() - years);
+  return date;
+};
