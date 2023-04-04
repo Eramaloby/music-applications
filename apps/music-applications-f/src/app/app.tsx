@@ -6,7 +6,8 @@ import RegistrationComponent from './pages/registration/registartion';
 export function App() {
   return (
     <div className="application-wrapper">
-      <RegistrationComponent />
+      <ApplicationRouter></ApplicationRouter>
+      {/* <RegistrationComponent /> */}
     </div>
   );
 }

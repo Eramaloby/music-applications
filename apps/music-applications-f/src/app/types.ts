@@ -161,8 +161,9 @@ export interface UserSignUpForm {
   password: string;
   confirmPassword: string;
   username: string;
-  dateOfBirth: Date;
-};
+  dateOfBirth: Date | null;
+  gender: string;
+}
 
 export interface UserSignUpFormErrors {
   email: string;
@@ -170,5 +171,4 @@ export interface UserSignUpFormErrors {
   password: string;
   confirmPassword: string;
   username: string;
-  dateOfBirth: string;
 }

@@ -1,5 +1,91 @@
-// .date-picker-wrapper {
-//   margin-top: 10px;
-//   padding: 10px;
-//   background-color: white;
+// .form-value-input {
+//   background-color: aliceblue;
+//   color: black;
 // }
+
+// .date-picker-wrapper {
+//   display: inline-block;
+//   padding: 5px;
+// }
+
+.registration-form-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  .registration-form-title {
+    font-size: xx-large;
+    font-weight: 700;
+  }
+
+  .form-wrapper {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+
+    .form-value {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      width: 400px;
+      gap: 5px;
+
+      .form-value-label {
+        font-weight: 600;
+      }
+
+      .form-value-input {
+        margin-top: 10px;
+      }
+
+      .form-value-label-remark {
+        font-weight: 300;
+        font-size: smaller;
+      }
+    }
+  }
+
+  .submit-btn-wrapper {
+    margin-top: 30px;
+
+    .submit-btn {
+      height: 50px;
+      width: 250px;
+      border: 3px solid white;
+      border-radius: 10px;
+      background-color: rgb(107, 144, 51);
+      font-size: large;
+      font-weight: 700;
+      color: aliceblue;
+    }
+
+    .submit-btn:hover {
+      cursor: pointer;
+    }
+  }
+
+  .log-in-link-wrapper {
+    .log-in-link {
+      display: flex;
+      font-weight: 600;
+      margin-top: 10px;
+
+      .link {
+        display: inline;
+        font-weight: 600;
+        color: green;
+        margin-left: 3px;
+      }
+
+      .link:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}

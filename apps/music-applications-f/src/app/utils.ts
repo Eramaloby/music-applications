@@ -321,4 +321,7 @@ export const validateUsername = (username: string) => {
   return '';
 };
 
-// date validation
+export const subtractYearsFromDate = (date: Date, years: number) => {
+  date.setFullYear(date.getFullYear() - years);
+  return date;
+};
