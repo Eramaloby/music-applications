@@ -1,0 +1,75 @@
+.profile-page-wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 10px;
+
+  .profile-page-action-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 20%;
+  }
+
+  .profile-page-content {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    .profile-information-panel {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+
+      .greeting-message {
+        font-size: xx-large;
+        font-weight: 800;
+        margin-top: 10px;
+      }
+
+      .user-stats {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+
+        .stats-relation,
+        .stats-instances {
+          font-size: medium;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .recommendation-panel {
+      margin-top: 30px;
+
+      .recommendation-title {
+        font-size: xx-large;
+        font-weight: bold;
+      }
+    }
+
+  }
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  align-items: center;
+  font-size: larger;
+  font-weight: 600;
+  color: aliceblue;
+  border: 2px solid green;
+  border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

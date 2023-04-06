@@ -172,3 +172,10 @@ export interface UserSignUpFormErrors {
   confirmPassword: string;
   username: string;
 }
+
+export interface User {
+  email: string;
+  username: string;
+
+  // add image and other later
+}
