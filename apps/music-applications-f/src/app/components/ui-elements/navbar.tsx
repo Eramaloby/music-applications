@@ -1,4 +1,10 @@
-import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Link,
+  Routes,
+  Route,
+  useNavigate,
+} from 'react-router-dom';
 import HomePage from '../../pages/home/home';
 import AboutPage from '../../pages/about/about';
 import RankingNeuralNetworkPage from '../../pages/networks/ranking-network';
@@ -8,8 +14,22 @@ import SearchWebPage from '../../pages/search/search-web';
 import SpotifyContentPage from '../../pages/spotify-content/spotify-content';
 
 import './navbar-styles.scss';
+import { useContext } from 'react';
+import { UserContext } from '../../contexts/user.context';
+import Profile from '../../pages/profile/profile.component';
 
 const ApplicationRouter = () => {
+  const mockUser = {
+    email: 'testUserEmail@gmail.com',
+    username: 'testUsername',
+  };
+
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+
+  const logIn = () => {
+    setCurrentUser(mockUser);
+  };
+
   return (
     <div className="router-wrapper">
       <div className="navbar-wrapper">
@@ -33,6 +53,18 @@ const ApplicationRouter = () => {
             <Link className="router-link" to="/about">
               About
             </Link>
+            {currentUser ? (
+              <Link to="/profile" className="router-link">
+                Profile
+              </Link>
+            ) : (
+              <div
+                className="log-in-nav-btn router-link"
+                onClick={() => logIn()}
+              >
+                Log in
+              </div>
+            )}
           </div>
           <Routes>
             <Route
@@ -48,6 +80,7 @@ const ApplicationRouter = () => {
             <Route path="/search" element={<SearchPageDb />}></Route>
             <Route path="/search-web" element={<SearchWebPage />}></Route>
             <Route path="/:type/:id" element={<SpotifyContentPage />}></Route>
+            <Route path="/profile" element={<Profile />}></Route>
           </Routes>
         </BrowserRouter>
       </div>

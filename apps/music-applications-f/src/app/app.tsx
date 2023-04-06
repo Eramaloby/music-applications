@@ -2,11 +2,14 @@
 import ApplicationRouter from './components/ui-elements/navbar';
 import './app-styles.scss';
 import RegistrationComponent from './pages/registration/registartion';
+import { UserContextProvider } from './contexts/user.context';
 
 export function App() {
   return (
     <div className="application-wrapper">
-      <ApplicationRouter></ApplicationRouter>
+      <UserContextProvider>
+        <ApplicationRouter></ApplicationRouter>
+      </UserContextProvider>
       {/* <RegistrationComponent /> */}
     </div>
   );
