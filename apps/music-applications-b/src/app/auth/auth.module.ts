@@ -12,8 +12,7 @@ import { AuthController } from './controllers/auth.controller';
 import { User } from './entites/user.entity';
 
 import { customUserRepository } from './repositories/user.repository';
-import { ApplicationConfig } from 'apps/config/config';
-
+import { ApplicationConfig } from '../../../../config/config';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
