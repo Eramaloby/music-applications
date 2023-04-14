@@ -254,6 +254,9 @@ const extractSpotifyObjProperties = (obj: any) => {
 
 export const emailExpression = new RegExp(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
 export const usernameExpression = new RegExp(/^[a-zA-Z]+$/);
+export const passwordExpression = new RegExp(
+  /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/
+);
 
 // validators for forms
 // refactor validation for email && confirm email fields
@@ -275,8 +278,8 @@ export const validateEmailConfirm = (emailConfirm: string, email: string) => {
   } else if (emailConfirm !== email) {
     return 'The email confirmation does not match.';
   } else if (
-    emailExpression.test(emailConfirm) ||
-    emailExpression.test(email)
+    !emailExpression.test(emailConfirm) ||
+    !emailExpression.test(email)
   ) {
     return 'Given email address is not correct.';
   }
@@ -287,11 +290,13 @@ export const validateEmailConfirm = (emailConfirm: string, email: string) => {
 export const validatePassword = (password: string) => {
   if (!password.trim()) {
     return 'Password is required.';
-  } else if (password.length < 9) {
-    return 'Password is too short. Use at least 9 characters.';
+  } else if (password.length < 8) {
+    return 'Password is too short.';
+  } else if (password.length > 20) {
+    return 'Password is too long.';
+  } else if (!passwordExpression.test(password)) {
+    return 'Password is too weak. Password at least must include: 1 upper case letter, 1 lower case letter, 1 digit or special character.';
   }
-  // check what password includes
-  // hash password
 
   return '';
 };
@@ -316,6 +321,10 @@ export const validateUsername = (username: string) => {
     return 'Username is required';
   } else if (!usernameExpression.test(username)) {
     return 'Username must include only letters.';
+  } else if (username.length < 4) {
+    return 'Username must be longer than 4 symbols.';
+  } else if (username.length > 20) {
+    return 'Username must be shorter than 20 symbols.';
   }
 
   return '';
