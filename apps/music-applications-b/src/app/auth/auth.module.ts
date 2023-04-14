@@ -18,7 +18,12 @@ import { ApplicationConfig } from 'apps/config/config';
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({ secret: ApplicationConfig.jwt_secret }),
+    JwtModule.register({
+      secret: ApplicationConfig.jwt_secret,
+      signOptions: {
+        expiresIn: 3600,
+      },
+    }),
   ],
   providers: [
     {
@@ -31,5 +36,6 @@ import { ApplicationConfig } from 'apps/config/config';
     AuthService,
   ],
   controllers: [AuthController],
+  exports: [PassportModule],
 })
 export class AuthModule {}

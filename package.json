@@ -33,6 +33,7 @@
     "genius-lyrics": "^4.4.0",
     "nest-neo4j": "^0.2.0",
     "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
     "pg": "^8.10.0",
     "python-shell": "^3.0.1",
     "react": "18.2.0",
