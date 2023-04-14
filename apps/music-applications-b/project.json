@@ -49,7 +49,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/music-applications-b"],
+      "outputs": ["{workspaceRoot}/coverage/apps/music-applications-b"],
       "options": {
         "jestConfig": "apps/music-applications-b/jest.config.ts",
         "passWithNoTests": true

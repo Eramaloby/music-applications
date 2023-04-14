@@ -1,6 +1,6 @@
-import { Controller, Get, Param, Post, Req } from '@nestjs/common';
-import { DatabaseManager } from '../db-manager.service';
-import { SpotifyService } from '../spotify.service';
+import { Controller, Get, Param, Post } from '@nestjs/common';
+import { DatabaseManager } from '../services/db-manager.service';
+import { SpotifyService } from '../services/spotify.service';
 
 @Controller('album')
 export class AlbumController {
