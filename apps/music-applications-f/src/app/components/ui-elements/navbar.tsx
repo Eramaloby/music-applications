@@ -17,6 +17,8 @@ import './navbar-styles.scss';
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/user.context';
 import Profile from '../../pages/profile/profile.component';
+import SignUpPage from '../../pages/sign-up/sign-up';
+import { SignInPage } from '../../pages/sign-in/sign-in';
 
 const ApplicationRouter = () => {
   const mockUser = {
@@ -62,7 +64,7 @@ const ApplicationRouter = () => {
                 className="log-in-nav-btn router-link"
                 onClick={() => logIn()}
               >
-                Log in
+                Sign in
               </div>
             )}
           </div>
@@ -81,6 +83,8 @@ const ApplicationRouter = () => {
             <Route path="/search-web" element={<SearchWebPage />}></Route>
             <Route path="/:type/:id" element={<SpotifyContentPage />}></Route>
             <Route path="/profile" element={<Profile />}></Route>
+            <Route path="/signup" element={<SignUpPage />}></Route>
+            <Route path="/signin" element={<SignInPage />}></Route>
           </Routes>
         </BrowserRouter>
       </div>

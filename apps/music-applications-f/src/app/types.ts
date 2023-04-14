@@ -173,6 +173,16 @@ export interface UserSignUpFormErrors {
   username: string;
 }
 
+export interface UserSignInForm {
+  username: string;
+  password: string;
+}
+
+export interface UserSignInFormErrors {
+  username: string;
+  password: string;
+}
+
 export interface User {
   email: string;
   username: string;

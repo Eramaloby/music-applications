@@ -16,9 +16,10 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 
-import './registration.styles.scss';
+import './sign-up.styles.scss';
+import { useNavigate } from 'react-router-dom';
 
-const RegistrationComponent = () => {
+const SignUpPage = () => {
   // states of form
   const [signUpForm, setSignUpForm] = useState<UserSignUpForm>({
     email: '',
@@ -39,9 +40,8 @@ const RegistrationComponent = () => {
       username: '',
     });
 
-  // date validation
+  const router = useNavigate();
 
-  // handlers
   const handleEmailChange = (email: string) => {
     setSignUpForm({ ...signUpForm, email: email });
     setSignUpFormErrors({ ...signUpFormErrors, email: validateEmail(email) });
@@ -246,11 +246,11 @@ const RegistrationComponent = () => {
       <div className="log-in-link-wrapper">
         <div className="log-in-link">
           Already have an account? {'\t'}
-          <span className="link">Log in</span>
+          <span className="link" onClick={() => router('/signin')}>Sign in</span>
         </div>
       </div>
     </div>
   );
 };
 
-export default RegistrationComponent;
+export default SignUpPage;
