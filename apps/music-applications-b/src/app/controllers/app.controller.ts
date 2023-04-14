@@ -6,9 +6,9 @@ import {
   Request,
   Response,
 } from '@nestjs/common';
-import { DatabaseManager } from '../db-manager.service';
-import { GeniusService } from '../genius.service';
-import { SpotifyService } from '../spotify.service';
+import { DatabaseManager } from '../services/db-manager.service';
+import { GeniusService } from '../services/genius.service';
+import { SpotifyService } from '../services/spotify.service';
 
 @Controller()
 export class AppController {
