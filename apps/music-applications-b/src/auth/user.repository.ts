@@ -1,6 +1,6 @@
 import { QueryFailedError, Repository } from 'typeorm';
 import { User } from './user.entity';
-import { UserCredentialsSignUpDto } from './dto/user-credentials.dto';
+import { UserCredentialsSignUpDto } from './dto/sign-up-credentials.dto';
 
 import * as bcrypt from 'bcrypt';
 import {
