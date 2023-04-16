@@ -1,3 +1,4 @@
+//Main form
 .database-item-page-wrapper {
   display: flex;
   flex-direction: row;
@@ -37,24 +38,29 @@
   border-left: 3px solid #1fdf64;
 }
 
+//Relation Form
 .database-item-page-text {
   height: 100%;
   margin-left: 1.5%;
   display: flex;
   flex-direction: column;
-}
 
-.database-item-name-author-text {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 3%;
-}
+  .database-item-name-author-text {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 3%;
 
-.database-item-author-toartist-relation {
-  display: flex;
-  flex-direction: column;
-  width: 230px;
-  font-size: large;
+    .database-item-name-text {
+      font-size: xx-large;
+    }
+
+    .database-item-author-toartist-relation {
+      display: flex;
+      flex-direction: column;
+      width: 230px;
+      font-size: large;
+    }    
+  }
 }
 
 .database-item-author-description-text,
@@ -80,10 +86,6 @@
 
 .database-item-description-text {
   display: flex;
-}
-
-.database-item-name-text {
-  font-size: xx-large;
 }
 
 .database-item-scroll {
@@ -115,4 +117,19 @@
 
 .database-item-coloumn-settings {
   margin-right: 2%;
+}
+
+//Graph-form
+.database-graph-form {
+  font-family: sans-serif;
+  text-align: center;
+  display: flex;
+  margin-left: 15px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 600px;
+  width: 100%;
+  position: sticky;
 }
