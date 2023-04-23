@@ -90,7 +90,7 @@ const SpotifyContentPage = () => {
   useEffect(() => {
     if (parsingStrategy) {
       axios
-        .get(`http://localhost:4200/api/${params['type']}/${params['id']}`)
+        .get(`http://localhost:4200/api/item/${params['type']}/${params['id']}`)
         .then(
           (response) => {
             setItem(parsingStrategy(response.data));
