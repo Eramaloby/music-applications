@@ -191,6 +191,13 @@ export interface User {
   dateOfBirth: string;
   gender: string;
   id: string;
-  
+
   // add image and other later
+}
+
+export enum ProfilePageStates {
+  RESET_PASSWORD = 'reset',
+  SEARCH_SAVED_ITEMS = 'saved',
+  LIKED_ITEMS = 'favorite',
+  DEFAULT = 'default',
 }
