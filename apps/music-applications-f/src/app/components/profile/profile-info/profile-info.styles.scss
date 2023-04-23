@@ -1,0 +1,47 @@
+.profile-page-content {
+  // fix margin later
+  margin-top: 50px;
+  width: 80%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  .profile-information-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  
+    .greeting-message {
+      font-size: xx-large;
+      font-weight: 800;
+      margin-top: 10px;
+    }
+  
+    .user-stats {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 5px;
+  
+      .stats-relation,
+      .stats-instances {
+        font-size: medium;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .recommendation-panel {
+    margin-top: 30px;
+
+    .recommendation-title {
+      font-size: xx-large;
+      font-weight: bold;
+    }
+  }
+
+}
+
