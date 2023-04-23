@@ -13,11 +13,13 @@ import { User } from './entities/user.entity';
 
 import { customUserRepository } from './repositories/user.repository';
 import { ApplicationConfig } from '../../../../config/config';
+import { JwtStrategy } from './jwt/jwt.strategy';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
+      global: true,
       secret: ApplicationConfig.jwt_secret,
       signOptions: {
         expiresIn: 3600,
@@ -33,6 +35,7 @@ import { ApplicationConfig } from '../../../../config/config';
       },
     },
     AuthService,
+    JwtStrategy
   ],
   controllers: [AuthController],
   exports: [PassportModule],
