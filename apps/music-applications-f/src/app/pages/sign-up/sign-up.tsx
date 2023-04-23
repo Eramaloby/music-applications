@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { UserSignUpForm, UserSignUpFormErrors } from '../../types';
 import {
+  tryToSignUp,
   validateEmail,
   validateEmailConfirm,
   validatePassword,
@@ -90,6 +91,13 @@ const SignUpPage = () => {
 
   const handleGenderChange = (value: string) => {
     setSignUpForm({ ...signUpForm, gender: value });
+  };
+
+  const onFormSubmit = async () => {
+    const resultOfSignUp = await tryToSignUp(signUpForm);
+    if (resultOfSignUp) {
+      router('/signin');
+    }
   };
 
   // form submitting
@@ -239,14 +247,16 @@ const SignUpPage = () => {
         </div>
       </div>
       <div className="submit-btn-wrapper">
-        <button type="button" className="submit-btn">
+        <button type="button" className="submit-btn" onClick={onFormSubmit}>
           Sign up
         </button>
       </div>
       <div className="log-in-link-wrapper">
         <div className="log-in-link">
           Already have an account? {'\t'}
-          <span className="link" onClick={() => router('/signin')}>Sign in</span>
+          <span className="link" onClick={() => router('/signin')}>
+            Sign in
+          </span>
         </div>
       </div>
     </div>

@@ -186,6 +186,7 @@ export interface UserSignInFormErrors {
 export interface User {
   email: string;
   username: string;
+  accessToken: string;
 
   // add image and other later
 }

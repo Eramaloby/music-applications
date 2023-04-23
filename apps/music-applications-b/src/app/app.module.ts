@@ -15,6 +15,7 @@ import { NetworkController } from './controllers/network.controller';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseManager } from './services/db-manager.service';
 import { SpotifyService } from './services/spotify.service';
+import { AddItemController } from './controllers/add-item.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -42,6 +43,7 @@ import { SpotifyService } from './services/spotify.service';
     AlbumController,
     ArtistController,
     NetworkController,
+    AddItemController,
   ],
   providers: [GeniusService, DatabaseManager, SpotifyService],
 })

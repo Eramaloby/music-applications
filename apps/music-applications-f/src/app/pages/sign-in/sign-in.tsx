@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { UserSignInForm, UserSignInFormErrors } from '../../types';
 import TextField from '@mui/material/TextField';
 
 import './sign-in.styles.scss';
 import { useNavigate } from 'react-router-dom';
+import { tryToSignIn } from '../../utils';
+import { UserContext } from '../../contexts/user.context';
 
 export const SignInPage = () => {
+  const { setCurrentUser } = useContext(UserContext);
+
   // states of form
   const [signInForm, setSignInForm] = useState<UserSignInForm>({
     password: '',
@@ -32,6 +36,19 @@ export const SignInPage = () => {
     });
   };
 
+  const onFormSubmit = async () => {
+    const result = await tryToSignIn(signInForm);
+    if (result) {
+      console.log(result.accessToken);
+      setCurrentUser({
+        email: 'some_blank_email',
+        username: 'some_username',
+        accessToken: result.accessToken,
+      });
+      router('/');
+    }
+  };
+
   const router = useNavigate();
 
   return (
@@ -52,7 +69,7 @@ export const SignInPage = () => {
             }}
             color={'primary'}
             error={signInFormErrors.username ? true : false}
-            label={`Enter your email`}
+            label={`Enter your username`}
             value={signInForm.username}
             onChange={(e) => handleUsernameChange(e.target.value)}
             helperText={signInFormErrors.username}
@@ -78,7 +95,9 @@ export const SignInPage = () => {
             Sign Up
           </span>
         </div>
-        <button className="log-in-button-sign-in">Sign In</button>
+        <button className="log-in-button-sign-in" onClick={onFormSubmit}>
+          Sign In
+        </button>
       </div>
     </div>
   );

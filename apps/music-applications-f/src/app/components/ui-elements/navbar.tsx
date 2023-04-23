@@ -1,10 +1,4 @@
-import {
-  BrowserRouter,
-  Link,
-  Routes,
-  Route,
-  useNavigate,
-} from 'react-router-dom';
+import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import HomePage from '../../pages/home/home';
 import AboutPage from '../../pages/about/about';
 import RankingNeuralNetworkPage from '../../pages/networks/ranking-network';
@@ -21,16 +15,7 @@ import SignUpPage from '../../pages/sign-up/sign-up';
 import { SignInPage } from '../../pages/sign-in/sign-in';
 
 const ApplicationRouter = () => {
-  const mockUser = {
-    email: 'testUserEmail@gmail.com',
-    username: 'testUsername',
-  };
-
-  const { currentUser, setCurrentUser } = useContext(UserContext);
-
-  const logIn = () => {
-    setCurrentUser(mockUser);
-  };
+  const { currentUser } = useContext(UserContext);
 
   return (
     <div className="router-wrapper">
@@ -60,12 +45,9 @@ const ApplicationRouter = () => {
                 Profile
               </Link>
             ) : (
-              <div
-                className="log-in-nav-btn router-link"
-                onClick={() => logIn()}
-              >
+              <Link to="/signin" className="router-link">
                 Sign in
-              </div>
+              </Link>
             )}
           </div>
           <Routes>

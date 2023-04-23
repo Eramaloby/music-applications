@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios';
 import {
   Neo4jDbItem,
   SpotifyAlbum,
   SpotifyArtist,
   SpotifyTrack,
   SpotifyPlaylist,
+  UserSignUpForm,
+  UserSignInForm,
 } from './types';
+
+export const baseUrl = 'http://localhost:4200/api';
+
 export const convertDuration = (ms: number) => {
   const minutes = Math.floor(ms / 60000);
   const seconds = Number.parseInt(((ms % 60000) / 1000).toFixed(0));
@@ -333,4 +339,57 @@ export const validateUsername = (username: string) => {
 export const subtractYearsFromDate = (date: Date, years: number) => {
   date.setFullYear(date.getFullYear() - years);
   return date;
+};
+
+export const tryToSignIn = async (form: UserSignInForm) => {
+  try {
+    const response = await axios.post(`${baseUrl}/auth/signin`, {
+      ...form,
+    });
+    if (response.status === 201) {
+      return response.data;
+    }
+    else {
+      return null;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const tryToSignUp = async (form: UserSignUpForm) => {
+  const formValidationMessages = [
+    validateUsername(form.username),
+    validateEmail(form.email),
+    validateEmailConfirm(form.confirmEmail, form.email),
+    validatePassword(form.password),
+    validatePasswordConfirm(form.confirmPassword, form.password),
+    // date of birth validation
+  ];
+
+  const isFormValid = formValidationMessages.every(
+    (error: string) => error.length === 0
+  );
+
+  if (isFormValid) {
+    try {
+      const response = await axios.post(`${baseUrl}/auth/signup`, {
+        username: form.username,
+        password: form.password,
+        email: form.email,
+        dateOfBirth: form.dateOfBirth,
+        gender: form.gender.toString(),
+      });
+
+      return response.statusText === 'Created';
+    } catch (error) {
+      console.log(error.response.data.message);
+
+      return false;
+    }
+  } else {
+    // show messages
+
+    return false;
+  }
 };
