@@ -8,7 +8,7 @@ import { tryToSignIn } from '../../utils';
 import { UserContext } from '../../contexts/user.context';
 
 export const SignInPage = () => {
-  const { setCurrentUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   // states of form
   const [signInForm, setSignInForm] = useState<UserSignInForm>({
@@ -40,12 +40,8 @@ export const SignInPage = () => {
     const result = await tryToSignIn(signInForm);
     if (result) {
       console.log(result.accessToken);
-      setCurrentUser({
-        email: 'some_blank_email',
-        username: 'some_username',
-        accessToken: result.accessToken,
-      });
-      router('/');
+      setUser(result.accessToken);
+      router('/profile');
     }
   };
 

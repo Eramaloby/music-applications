@@ -5,10 +5,14 @@ import {
   Query,
   Request,
   Response,
+  UseGuards,
 } from '@nestjs/common';
 import { DatabaseManager } from '../services/db-manager.service';
 import { GeniusService } from '../services/genius.service';
 import { SpotifyService } from '../services/spotify.service';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from '../auth/entities/user.entity';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 
 @Controller()
 export class AppController {
@@ -23,6 +27,12 @@ export class AppController {
   async getData(@Query() query) {
     const res = await this.dbManager.getData(query);
     return res;
+  }
+
+  @UseGuards(AuthGuard())
+  @Get('currentUser')
+  async getCurrentUser(@GetUser() user: User) {
+    return user;
   }
 
   @Get('node-relation/:type/:name')

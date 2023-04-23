@@ -5,11 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import './profile.styles.scss';
 
 const Profile = () => {
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { currentUser, setUser } = useContext(UserContext);
   const router = useNavigate();
 
   const signOut = () => {
-    setCurrentUser(null);
+    setUser(null);
     router(-1);
   };
 

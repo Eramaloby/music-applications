@@ -1,8 +1,6 @@
 import { Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { DatabaseManager } from '../services/db-manager.service';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from '../auth/decorators/get-user.decorator';
-import { User } from '../auth/entities/user.entity';
 
 @Controller('add')
 @UseGuards(AuthGuard())
@@ -10,7 +8,7 @@ export class AddItemController {
   constructor(private readonly dbManager: DatabaseManager) {}
 
   @Post(':type/:id')
-  async addTrack(@Param() params, @GetUser() user: User) {
+  async addTrack(@Param() params) {
     switch (params.type) {
       case 'track':
         return await this.dbManager.addTrack(params.id);

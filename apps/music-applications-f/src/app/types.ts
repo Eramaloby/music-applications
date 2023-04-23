@@ -187,6 +187,10 @@ export interface User {
   email: string;
   username: string;
   accessToken: string;
-
+  password: string;
+  dateOfBirth: string;
+  gender: string;
+  id: string;
+  
   // add image and other later
 }
