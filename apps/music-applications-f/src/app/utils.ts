@@ -325,8 +325,6 @@ export const validatePasswordConfirm = (
 export const validateUsername = (username: string) => {
   if (!username.trim()) {
     return 'Username is required';
-  } else if (!usernameExpression.test(username)) {
-    return 'Username must include only letters.';
   } else if (username.length < 4) {
     return 'Username must be longer than 4 symbols.';
   } else if (username.length > 20) {

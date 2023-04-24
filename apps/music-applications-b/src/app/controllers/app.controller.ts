@@ -11,8 +11,8 @@ import { DatabaseManager } from '../services/db-manager.service';
 import { GeniusService } from '../services/genius.service';
 import { SpotifyService } from '../services/spotify.service';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from '../auth/entities/user.entity';
-import { GetUser } from '../auth/decorators/get-user.decorator';
+import { User } from '../auth/user.entity';
+import { GetUser } from '../auth/get-user.decorator';
 
 @Controller()
 export class AppController {
@@ -43,6 +43,11 @@ export class AppController {
     );
 
     return res;
+  }
+
+  @Get('exists/:id')
+  async isThereInstanceWithId(@Param() params) {
+    return await this.dbManager.isThereInstanceWithId(params.id);
   }
 
   @Get('lyrics')

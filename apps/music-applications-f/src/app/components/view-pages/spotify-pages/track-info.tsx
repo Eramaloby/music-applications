@@ -5,8 +5,18 @@ import AppModal from '../../ui-elements/modal';
 import axios from 'axios';
 import { convertDuration, translateLyricsToVerses } from '../../../utils';
 import { SpotifyTrack } from '../../../types';
+import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
+import { ReactComponent as Heart } from '../../../../assets/heart.svg';
 
-const TrackInfo = ({ track }: { track: SpotifyTrack }) => {
+const TrackInfo = ({
+  track,
+  isLiked,
+  handleLikeChanges,
+}: {
+  track: SpotifyTrack;
+  isLiked: boolean | null;
+  handleLikeChanges: (value: boolean) => void;
+}) => {
   const [modal, setModal] = useState<boolean>(false);
   const [lyrics, setLyrics] = useState<string[]>([]);
   const router = useNavigate();
@@ -40,6 +50,7 @@ const TrackInfo = ({ track }: { track: SpotifyTrack }) => {
             alt="album-cover"
           ></img>
         </div>
+
         <div className="track-item-info">
           <div className="track-item-title-info">
             <div className="track-item-type-text">SONG</div>
@@ -56,6 +67,21 @@ const TrackInfo = ({ track }: { track: SpotifyTrack }) => {
               alt="mic"
             ></img>
           </div>
+          {isLiked !== null && (
+            <div className="like-container">
+              {isLiked !== null && isLiked ? (
+                <FilledHeart
+                  className="heart-icon"
+                  onClick={() => handleLikeChanges(!isLiked)}
+                ></FilledHeart>
+              ) : (
+                <Heart
+                  className="heart-icon"
+                  onClick={() => handleLikeChanges(!isLiked)}
+                ></Heart>
+              )}
+            </div>
+          )}
           <div className="track-item-additional-info">
             <audio
               controls

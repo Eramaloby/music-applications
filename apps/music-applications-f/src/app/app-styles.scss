@@ -21,11 +21,9 @@ body {
   border-radius: 5px;
   margin: 20px;
   background: rgb(0, 0, 0);
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 1) 30%,
-    rgba(29, 185, 84, 1) 100%
-  );
+  background: linear-gradient(0deg,
+      rgba(0, 0, 0, 1) 30%,
+      rgba(29, 185, 84, 1) 100%);
 }
 
 .item-page-details {
@@ -95,6 +93,22 @@ body {
 .playlist-label-text {
   font-size: xx-large;
   font-weight: bold;
+}
+
+.like-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+
+  .heart-icon {
+    &:hover {
+      cursor: pointer;
+    }
+
+    transform: scale(2);
+  }
 }
 
 .artist-genres-text,

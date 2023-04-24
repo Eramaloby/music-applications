@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../auth.service';
 import { UserCredentialsSignUpDto } from '../dto/sign-up-credentials.dto';
 import { UserCredentialsSignInDto } from '../dto/sign-in-credentials.dto';
 
@@ -10,7 +10,7 @@ export class AuthController {
   @Post('/signup')
   async signUp(@Body() userCredentialsSignUpDto: UserCredentialsSignUpDto) {
     return this.authService.signUp(userCredentialsSignUpDto);
-  } 
+  }
 
   @Post('/signin')
   async signIn(@Body() userCredentialsSignInDto: UserCredentialsSignInDto) {

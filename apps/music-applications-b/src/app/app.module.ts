@@ -13,6 +13,8 @@ import { DatabaseManager } from './services/db-manager.service';
 import { SpotifyService } from './services/spotify.service';
 import { AddItemController } from './controllers/add-item.controller';
 import { GetItemController } from './controllers/get-item.controller';
+import { LikesModule } from './likes/likes.module';
+import { LikeController } from './controllers/like.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -32,12 +34,14 @@ import { GetItemController } from './controllers/get-item.controller';
       password: ApplicationConfig.password_neo4j,
     }),
     AuthModule,
+    LikesModule,
   ],
   controllers: [
     AppController,
     NetworkController,
     AddItemController,
     GetItemController,
+    LikeController,
   ],
   providers: [GeniusService, DatabaseManager, SpotifyService],
 })

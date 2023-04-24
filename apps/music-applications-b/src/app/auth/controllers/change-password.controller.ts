@@ -1,10 +1,10 @@
 import { Controller, Get, UseGuards, Body, Post, Query } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfirmPasswordDto } from '../dto/confirm-password.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
-import { User } from '../entities/user.entity';
-import { GetUser } from '../decorators/get-user.decorator';
+import { User } from '../user.entity';
+import { GetUser } from '../get-user.decorator';
 
 @Controller('password')
 @UseGuards(AuthGuard())

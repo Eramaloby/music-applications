@@ -1,8 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { PlaylistTrackInfo } from './page-utils';
 import { SpotifyPlaylist } from '../../../types';
+import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
+import { ReactComponent as Heart } from '../../../../assets/heart.svg';
 
-const PlaylistInfo = ({ playlist }: { playlist: SpotifyPlaylist }) => {
+const PlaylistInfo = ({
+  playlist,
+  isLiked,
+  handleLikeChanges,
+}: {
+  playlist: SpotifyPlaylist;
+  isLiked: boolean | null;
+  handleLikeChanges: (value: boolean) => void;
+}) => {
   const router = useNavigate();
   const trackNameClickCallback = (spotify_id: string) =>
     router(`/track/${spotify_id}`);
@@ -25,6 +35,21 @@ const PlaylistInfo = ({ playlist }: { playlist: SpotifyPlaylist }) => {
             <div className="playlist-description-text">
               {playlist.description}
             </div>
+            {isLiked !== null && (
+              <div className="like-container">
+                {isLiked !== null && isLiked ? (
+                  <FilledHeart
+                    className="heart-icon"
+                    onClick={() => handleLikeChanges(!isLiked)}
+                  ></FilledHeart>
+                ) : (
+                  <Heart
+                    className="heart-icon"
+                    onClick={() => handleLikeChanges(!isLiked)}
+                  ></Heart>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div className="featured-tracks-wrapper">
