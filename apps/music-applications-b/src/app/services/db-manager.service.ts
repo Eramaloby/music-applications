@@ -109,14 +109,29 @@ export class DatabaseManager {
     return query.records.length != 0;
   }
 
-  public async addGenre(genreName: string) {
+  public async generateNewNodeId(): Promise<number> {
+    const query = await this.dbService.write(`MERGE (id:GlobalUniqueId)
+      ON CREATE SET id.count = 1
+      ON MATCH SET id.count = id.count + 1
+      RETURN id.count AS generated_id`);
+
+    const [recordId] = query.records;
+    return recordId.get('generated_id')['low'];
+  }
+
+  public async addGenre(genreName: string, username: string) {
     const checkQuery = await this.dbService.read(
       `MATCH (genre: Genre) WHERE genre.name = "${genreName}" RETURN genre`
     );
 
+    const nodeId = await this.generateNewNodeId();
     if (checkQuery.records.length === 0) {
       await this.dbService.write(
-        `CREATE (genre: Genre {name: "${genreName}"})`
+        `CREATE (genre: Genre {
+          name: "${genreName}",
+          added_by: "${username}",
+          id: "${nodeId}"
+        })`
       );
 
       return true;
@@ -125,12 +140,13 @@ export class DatabaseManager {
     return false;
   }
 
-  public async addAlbum(spotify_id: string) {
+  public async addAlbum(spotify_id: string, username: string) {
     const alreadyExists = await this.isThereInstanceWithId(spotify_id);
 
     if (!alreadyExists) {
       const album = await this.spotifyService.getAlbumById(spotify_id);
 
+      const nodeId = await this.generateNewNodeId();
       await this.dbService.write(`
         CREATE (album: Album {
           name: "${album.name}",
@@ -138,12 +154,14 @@ export class DatabaseManager {
           type: "${album.album_type}",
           count_of_tracks: "${album.total_tracks}",
           label: "${album.label}",
-          release: "${album.release_date}"
+          release: "${album.release_date}",
+          added_by: "${username}",
+          id: "${nodeId}"
         })`);
 
       for (const genre of album.genres) {
         // create genre if possible
-        await this.addGenre(genre);
+        await this.addGenre(genre, username);
         await this.dbService.write(`
           MATCH
             (album: Album {spotify_id: "${spotify_id}"}),
@@ -153,7 +171,7 @@ export class DatabaseManager {
       }
 
       for (const artist of album.artists) {
-        await this.addArtist(artist.id);
+        await this.addArtist(artist.id, username);
       }
 
       const albumAuthor = album.artists.shift();
@@ -174,7 +192,7 @@ export class DatabaseManager {
       }
 
       for (const track of album.tracks.items) {
-        await this.addTrack(track.id);
+        await this.addTrack(track.id, username);
         await this.dbService.write(`
           MATCH
             (album: Album {spotify_id: "${spotify_id}"}),
@@ -189,23 +207,26 @@ export class DatabaseManager {
     return false;
   }
 
-  public async addArtist(spotify_id: string) {
+  public async addArtist(spotify_id: string, username: string) {
     const alreadyExists = await this.isThereInstanceWithId(spotify_id);
 
     if (!alreadyExists) {
       // create artist
       const artist = await this.spotifyService.getArtistById(spotify_id);
+      const nodeId = await this.generateNewNodeId();
 
       await this.dbService.write(`
         CREATE (artist: Artist {
           name: "${artist.name}",
           spotify_id: "${artist.id}",
-          type: "${artist.type}"
+          type: "${artist.type}",
+          added_by: "${username}",
+          id: "${nodeId}"
         })`);
 
       // sequence
       for (const genre of artist.genres) {
-        await this.addGenre(genre);
+        await this.addGenre(genre, username);
       }
 
       for (const genre of artist.genres) {
@@ -223,11 +244,12 @@ export class DatabaseManager {
     return false;
   }
 
-  public async addPlaylist(spotify_id: string) {
+  public async addPlaylist(spotify_id: string, username: string) {
     const alreadyExists = await this.isThereInstanceWithId(spotify_id);
 
     if (!alreadyExists) {
       const playlist = await this.spotifyService.getPlaylistById(spotify_id);
+      const nodeId = await this.generateNewNodeId();
 
       await this.dbService.write(`
         CREATE (playlist: Playlist {
@@ -235,14 +257,16 @@ export class DatabaseManager {
           description: "${playlist.description}",
           spotify_id: "${playlist.id}",
           owner_name: "${playlist.owner.display_name}",
-          collaborative: "${playlist.collaborative}"
+          collaborative: "${playlist.collaborative}",
+          added_by: "${username}",
+          id: "${nodeId}"
         })
       `);
 
       // add tracks
       for (const track of playlist.tracks.items) {
         // if (track.track.id)
-        await this.addTrack(track.track.id);
+        await this.addTrack(track.track.id, username);
         await this.dbService.write(`
           MATCH
             (playlist: Playlist {spotify_id: "${spotify_id}"}),
@@ -257,11 +281,12 @@ export class DatabaseManager {
     return false;
   }
 
-  public async addTrack(spotify_id: string) {
+  public async addTrack(spotify_id: string, username: string) {
     const alreadyExists = await this.isThereInstanceWithId(spotify_id);
 
     if (!alreadyExists) {
       const track = await this.spotifyService.getTrackById(spotify_id);
+      const nodeId = await this.generateNewNodeId();
 
       // create track at first
       await this.dbService.write(`
@@ -269,13 +294,15 @@ export class DatabaseManager {
           name: "${track.name}",
           duration_ms: "${track.duration_ms}",
           explicit: "${track.explicit}",
-          spotify_id: "${track.id}"
+          spotify_id: "${track.id}",
+          added_by: "${username}",
+          id: "${nodeId}"
         })`);
 
       // relate artists to track
       // first add artists
       for (const artist of track.artists) {
-        await this.addArtist(artist.id);
+        await this.addArtist(artist.id, username);
       }
 
       // add author relations

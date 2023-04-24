@@ -65,11 +65,17 @@ const SpotifyContentPage = () => {
 
   const postItem = () => {
     if (item && currentUser) {
+      console.log(currentUser.accessToken);
       setIsLoading(true);
       axios
         .post(
           `http://localhost:4200/api/add/${params['type']}/${item.spotify_id}`,
-          { headers: { Authorization: `Bearer ${currentUser.accessToken}` } }
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser.accessToken}`,
+            },
+          }
         )
         .then((response) => {
           setIsLoading(false);
@@ -119,7 +125,7 @@ const SpotifyContentPage = () => {
             className="item-error-link-to-token"
             onClick={() => {
               window.open(urlToLogin, '_blank');
-              setInterval(() => window.location.reload(), 300);
+              // setInterval(() => window.location.reload(), 300);
             }}
           >
             Acquire token

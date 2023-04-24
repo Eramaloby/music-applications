@@ -126,16 +126,19 @@ export interface TrackProperties {
   explicit: boolean;
   name: string;
   spotify_id: string;
+  added_by: string;
 }
 
 export interface ArtistProperties {
   name: string;
   spotify_id: string;
   type: string;
+  added_by: string;
 }
 
 export interface GenreProperties {
   name: string;
+  added_by: string;
 }
 
 export interface AlbumProperties {
@@ -145,6 +148,7 @@ export interface AlbumProperties {
   release: string;
   spotify_id: string;
   type: string;
+  added_by: string;
 }
 
 export interface PlaylistProperties {
@@ -153,6 +157,7 @@ export interface PlaylistProperties {
   name: string;
   owner_name: string;
   spotify_id: string;
+  added_by: string;
 }
 
 export interface UserSignUpForm {
