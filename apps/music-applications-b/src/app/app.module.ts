@@ -7,14 +7,12 @@ import { GeniusService } from './services/genius.service';
 import { Neo4jModule, Neo4jScheme } from 'nest-neo4j/dist';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TrackController } from './controllers/track.controller';
-import { PlaylistController } from './controllers/playlist.controller';
-import { AlbumController } from './controllers/album.controller';
-import { ArtistController } from './controllers/artist.controller';
 import { NetworkController } from './controllers/network.controller';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseManager } from './services/db-manager.service';
 import { SpotifyService } from './services/spotify.service';
+import { AddItemController } from './controllers/add-item.controller';
+import { GetItemController } from './controllers/get-item.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -37,11 +35,9 @@ import { SpotifyService } from './services/spotify.service';
   ],
   controllers: [
     AppController,
-    TrackController,
-    PlaylistController,
-    AlbumController,
-    ArtistController,
     NetworkController,
+    AddItemController,
+    GetItemController,
   ],
   providers: [GeniusService, DatabaseManager, SpotifyService],
 })

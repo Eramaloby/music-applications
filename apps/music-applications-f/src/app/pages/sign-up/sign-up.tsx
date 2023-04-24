@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { UserSignUpForm, UserSignUpFormErrors } from '../../types';
 import {
+  tryToSignUp,
   validateEmail,
   validateEmailConfirm,
   validatePassword,
@@ -16,9 +17,10 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 
-import './registration.styles.scss';
+import './sign-up.styles.scss';
+import { useNavigate } from 'react-router-dom';
 
-const RegistrationComponent = () => {
+const SignUpPage = () => {
   // states of form
   const [signUpForm, setSignUpForm] = useState<UserSignUpForm>({
     email: '',
@@ -39,9 +41,8 @@ const RegistrationComponent = () => {
       username: '',
     });
 
-  // date validation
+  const router = useNavigate();
 
-  // handlers
   const handleEmailChange = (email: string) => {
     setSignUpForm({ ...signUpForm, email: email });
     setSignUpFormErrors({ ...signUpFormErrors, email: validateEmail(email) });
@@ -90,6 +91,13 @@ const RegistrationComponent = () => {
 
   const handleGenderChange = (value: string) => {
     setSignUpForm({ ...signUpForm, gender: value });
+  };
+
+  const onFormSubmit = async () => {
+    const resultOfSignUp = await tryToSignUp(signUpForm);
+    if (resultOfSignUp) {
+      router('/signin');
+    }
   };
 
   // form submitting
@@ -239,18 +247,20 @@ const RegistrationComponent = () => {
         </div>
       </div>
       <div className="submit-btn-wrapper">
-        <button type="button" className="submit-btn">
+        <button type="button" className="submit-btn" onClick={onFormSubmit}>
           Sign up
         </button>
       </div>
       <div className="log-in-link-wrapper">
         <div className="log-in-link">
           Already have an account? {'\t'}
-          <span className="link">Log in</span>
+          <span className="link" onClick={() => router('/signin')}>
+            Sign in
+          </span>
         </div>
       </div>
     </div>
   );
 };
 
-export default RegistrationComponent;
+export default SignUpPage;

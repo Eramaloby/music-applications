@@ -126,16 +126,19 @@ export interface TrackProperties {
   explicit: boolean;
   name: string;
   spotify_id: string;
+  added_by: string;
 }
 
 export interface ArtistProperties {
   name: string;
   spotify_id: string;
   type: string;
+  added_by: string;
 }
 
 export interface GenreProperties {
   name: string;
+  added_by: string;
 }
 
 export interface AlbumProperties {
@@ -145,6 +148,7 @@ export interface AlbumProperties {
   release: string;
   spotify_id: string;
   type: string;
+  added_by: string;
 }
 
 export interface PlaylistProperties {
@@ -153,6 +157,7 @@ export interface PlaylistProperties {
   name: string;
   owner_name: string;
   spotify_id: string;
+  added_by: string;
 }
 
 export interface UserSignUpForm {
@@ -173,9 +178,43 @@ export interface UserSignUpFormErrors {
   username: string;
 }
 
+export interface UserSignInForm {
+  username: string;
+  password: string;
+}
+
+export interface UserSignInFormErrors {
+  username: string;
+  password: string;
+}
+
+export interface ChangePasswordForm {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+export interface ChangePasswordFormErrors {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
 export interface User {
   email: string;
   username: string;
+  accessToken: string;
+  password: string;
+  dateOfBirth: string;
+  gender: string;
+  id: string;
 
   // add image and other later
+}
+
+export enum ProfilePageStates {
+  RESET_PASSWORD = 'reset',
+  SEARCH_SAVED_ITEMS = 'saved',
+  LIKED_ITEMS = 'favorite',
+  DEFAULT = 'default',
 }

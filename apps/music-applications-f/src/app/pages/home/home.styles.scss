@@ -40,4 +40,20 @@
       }
     }
   }
+
+  .info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .link {
+      font-size: xx-large;
+      color: blue;
+      font-weight: bold;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
 }

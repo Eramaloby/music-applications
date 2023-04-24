@@ -1,48 +1,76 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { UserContext } from '../../contexts/user.context';
 import { useNavigate } from 'react-router-dom';
 
 import './profile.styles.scss';
+import { ProfilePageStates, User } from '../../types';
+import ProfileInfoComponent from '../../components/profile/profile-info/profile-info.component';
+import ViewLikedItemsComponent from '../../components/profile/view-liked-items/view-liked-items.component';
+import ChangePasswordComponent from '../../components/profile/change-password/change-password.component';
+import SearchSavedItemsComponent from '../../components/profile/search-saved-items/search-saved-items.component';
 
 const Profile = () => {
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const [pageState, setPageState] = useState<ProfilePageStates>(
+    ProfilePageStates.DEFAULT
+  );
+
+  const { currentUser, setUser } = useContext(UserContext);
   const router = useNavigate();
 
   const signOut = () => {
-    setCurrentUser(null);
+    setUser(null);
     router(-1);
   };
 
   return (
     <div className="profile-page-wrapper">
       <div className="profile-page-action-panel">
-        <div className="export-saved-records-btn btn">Export saved records</div>
-        <div className="search-saved-records-btn btn">Search saved records</div>
-        <div className="change-password-btn btn">Change Password</div>
+        <div
+          className="export-saved-records-btn btn"
+          onClick={() => setPageState(ProfilePageStates.DEFAULT)}
+        >
+          You
+        </div>
+        <div
+          className="export-saved-records-btn btn"
+          onClick={() => console.log('export flow')}
+        >
+          Export saved items
+        </div>
+        <div
+          className="search-saved-records-btn btn"
+          onClick={() => setPageState(ProfilePageStates.SEARCH_SAVED_ITEMS)}
+        >
+          Search saved items
+        </div>
+        <div
+          className="view-liked-records-btn btn"
+          onClick={() => setPageState(ProfilePageStates.LIKED_ITEMS)}
+        >
+          View liked items
+        </div>
+        <div
+          className="change-password-btn btn"
+          onClick={() => setPageState(ProfilePageStates.RESET_PASSWORD)}
+        >
+          Change Password
+        </div>
         <div className="sign-out-btn btn" onClick={() => signOut()}>
           Sign out
         </div>
       </div>
-      <div className="profile-page-content">
-        <div className="profile-information-panel">
-          <div className="greeting-message">
-            Welcome, {currentUser?.username}{' '}
-          </div>
-          <div className="user-stats">
-            <div className="stats-relation">
-              Count of relations saved by you: 152
-            </div>
-            <div className="stats-instances">
-              Count of nodes saved by you: 502
-            </div>
-          </div>
-        </div>
-        <div className="recommendation-panel">
-          <div className="recommendation-title">
-            According to your taste, you would like:
-          </div>
-        </div>
-      </div>
+      {pageState === ProfilePageStates.DEFAULT && (
+        <ProfileInfoComponent user={currentUser as User}></ProfileInfoComponent>
+      )}
+      {pageState === ProfilePageStates.LIKED_ITEMS && (
+        <ViewLikedItemsComponent></ViewLikedItemsComponent>
+      )}
+      {pageState === ProfilePageStates.RESET_PASSWORD && (
+        <ChangePasswordComponent></ChangePasswordComponent>
+      )}
+      {pageState === ProfilePageStates.SEARCH_SAVED_ITEMS && (
+        <SearchSavedItemsComponent></SearchSavedItemsComponent>
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TrackInfo from '../../components/view-pages/spotify-pages/track-info';
 import AlbumInfo from '../../components/view-pages/spotify-pages/album-info';
@@ -24,10 +24,13 @@ import {
   SpotifyPlaylist,
   SpotifyTrack,
 } from '../../types';
+import { UserContext } from '../../contexts/user.context';
 
 // todo: refactoring
 const SpotifyContentPage = () => {
   const urlToLogin = 'http://localhost:4200/api/login';
+
+  const { currentUser } = useContext(UserContext);
 
   const router = useNavigate();
   const params = useParams();
@@ -61,10 +64,19 @@ const SpotifyContentPage = () => {
   const parsingStrategy = recognizeParsingStrategy(params['type']);
 
   const postItem = () => {
-    if (item) {
+    if (item && currentUser) {
+      console.log(currentUser.accessToken);
       setIsLoading(true);
       axios
-        .post(`http://localhost:4200/api/${params['type']}/${item.spotify_id}`)
+        .post(
+          `http://localhost:4200/api/add/${params['type']}/${item.spotify_id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser.accessToken}`,
+            },
+          }
+        )
         .then((response) => {
           setIsLoading(false);
           if (response.data) {
@@ -84,7 +96,7 @@ const SpotifyContentPage = () => {
   useEffect(() => {
     if (parsingStrategy) {
       axios
-        .get(`http://localhost:4200/api/${params['type']}/${params['id']}`)
+        .get(`http://localhost:4200/api/item/${params['type']}/${params['id']}`)
         .then(
           (response) => {
             setItem(parsingStrategy(response.data));
@@ -113,7 +125,7 @@ const SpotifyContentPage = () => {
             className="item-error-link-to-token"
             onClick={() => {
               window.open(urlToLogin, '_blank');
-              setInterval(() => window.location.reload(), 300);
+              // setInterval(() => window.location.reload(), 300);
             }}
           >
             Acquire token
@@ -137,6 +149,7 @@ const SpotifyContentPage = () => {
           className="save-to-db-btn"
           onClick={() => postItem()}
           disabled={isLoading}
+          style={{ display: currentUser ? '' : 'none' }}
         >
           Save to db
         </button>
@@ -156,12 +169,18 @@ const SpotifyContentPage = () => {
       </AppModal>
       {item && (
         <>
-          {item.type === 'track' && <TrackInfo track={item as SpotifyTrack}></TrackInfo>}
-          {item.type === 'album' && <AlbumInfo album={item as SpotifyAlbum}></AlbumInfo>}
+          {item.type === 'track' && (
+            <TrackInfo track={item as SpotifyTrack}></TrackInfo>
+          )}
+          {item.type === 'album' && (
+            <AlbumInfo album={item as SpotifyAlbum}></AlbumInfo>
+          )}
           {item.type === 'playlist' && (
             <PlaylistInfo playlist={item as SpotifyPlaylist}></PlaylistInfo>
           )}
-          {item.type === 'artist' && <ArtistInfo artist={item as SpotifyArtist}></ArtistInfo>}
+          {item.type === 'artist' && (
+            <ArtistInfo artist={item as SpotifyArtist}></ArtistInfo>
+          )}
         </>
       )}
     </div>

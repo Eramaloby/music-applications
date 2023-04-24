@@ -2,8 +2,11 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 import './home.styles.scss';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
+  const router = useNavigate();
+
   const [stats, setStats] = useState<{ nodesCount: number; relCount: number }>({
     nodesCount: 0,
     relCount: 0,
@@ -42,15 +45,11 @@ const HomePage = () => {
         ) : (
           <div className="db-stats-count-of-relationships"></div>
         )}
-        <div className="refresh-button-container">
-          {/*
-          TODO: update this button to circle icon and display it under text
-          <button
-            className="refresh-button"
-            onClick={() => onRefreshButtonClick()}
-          >
-            Refresh
-          </button> */}
+        <div className="refresh-button-container"></div>
+      </div>
+      <div className='info-container'>
+        <div className="link" onClick={() => router('/signin')}>
+          Sign in
         </div>
       </div>
     </div>

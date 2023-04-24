@@ -1,3 +1,4 @@
+import { ChangePasswordFlowController } from './controllers/change-password.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import {
@@ -9,15 +10,17 @@ import { DataSource } from 'typeorm';
 import { Module } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
-import { User } from './entites/user.entity';
+import { User } from './entities/user.entity';
 
 import { customUserRepository } from './repositories/user.repository';
 import { ApplicationConfig } from '../../../../config/config';
+import { JwtStrategy } from './jwt/jwt.strategy';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
+      global: true,
       secret: ApplicationConfig.jwt_secret,
       signOptions: {
         expiresIn: 3600,
@@ -33,8 +36,9 @@ import { ApplicationConfig } from '../../../../config/config';
       },
     },
     AuthService,
+    JwtStrategy,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, ChangePasswordFlowController],
   exports: [PassportModule],
 })
 export class AuthModule {}

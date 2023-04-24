@@ -10,7 +10,7 @@ export class AuthController {
   @Post('/signup')
   async signUp(@Body() userCredentialsSignUpDto: UserCredentialsSignUpDto) {
     return this.authService.signUp(userCredentialsSignUpDto);
-  }
+  } 
 
   @Post('/signin')
   async signIn(@Body() userCredentialsSignInDto: UserCredentialsSignInDto) {
