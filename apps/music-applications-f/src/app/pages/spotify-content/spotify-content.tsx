@@ -50,27 +50,28 @@ const SpotifyContentPage = () => {
   const [isLiked, setIsLiked] = useState<null | boolean>(null);
 
   const setIsLikedHandler = async (newState: boolean) => {
-    if (newState) {
-      const response = await axios.post(
-        `http://localhost:4200/api/like`,
-        { spotify_id: item?.spotify_id },
-        {
+    if (currentUser && item) {
+      if (newState) {
+        await axios.post(
+          `http://localhost:4200/api/like`,
+          { spotify_id: item?.spotify_id },
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser.accessToken}`,
+            },
+          }
+        );
+      } else {
+        await axios.delete(`http://localhost:4200/api/like`, {
           headers: {
-            Authorization: `Bearer ${currentUser!.accessToken}`,
+            Authorization: `Bearer ${currentUser.accessToken}`,
           },
-        }
-      );
-    } else {
-      const response = await axios.delete(`http://localhost:4200/api/like`, {
-        headers: {
-          Authorization: `Bearer ${currentUser!.accessToken}`,
-        },
-        params: { spotify_id: item!.spotify_id },
-      });
+          params: { spotify_id: item.spotify_id },
+        });
+      }
+      // after awaiting
+      setIsLiked(newState);
     }
-
-    // after awaiting
-    setIsLiked(newState);
   };
 
   const togglePopup = () => setPopup(!popup);
