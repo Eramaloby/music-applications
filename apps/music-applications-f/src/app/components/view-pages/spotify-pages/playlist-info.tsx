@@ -10,7 +10,7 @@ const PlaylistInfo = ({
   handleLikeChanges,
 }: {
   playlist: SpotifyPlaylist;
-  isLiked: boolean;
+  isLiked: boolean | null;
   handleLikeChanges: (value: boolean) => void;
 }) => {
   const router = useNavigate();
@@ -35,13 +35,21 @@ const PlaylistInfo = ({
             <div className="playlist-description-text">
               {playlist.description}
             </div>
-            <div className="like-container">
-              {isLiked ? (
-                <FilledHeart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></FilledHeart>
-              ) : (
-                <Heart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></Heart>
-              )}
-            </div>
+            {isLiked !== null && (
+              <div className="like-container">
+                {isLiked !== null && isLiked ? (
+                  <FilledHeart
+                    className="heart-icon"
+                    onClick={() => handleLikeChanges(!isLiked)}
+                  ></FilledHeart>
+                ) : (
+                  <Heart
+                    className="heart-icon"
+                    onClick={() => handleLikeChanges(!isLiked)}
+                  ></Heart>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div className="featured-tracks-wrapper">

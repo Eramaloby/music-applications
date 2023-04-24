@@ -8,7 +8,7 @@ const ArtistInfo = ({
   handleLikeChanges,
 }: {
   artist: SpotifyArtist;
-  isLiked: boolean;
+  isLiked: boolean | null;
   handleLikeChanges: (value: boolean) => void;
 }) => {
   return (
@@ -33,13 +33,21 @@ const ArtistInfo = ({
           <div className="artist-label-text">
             <p>{artist.label}</p>
           </div>
-          <div className="like-container">
-              {isLiked ? (
-                <FilledHeart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></FilledHeart>
+          {isLiked !== null && (
+            <div className="like-container">
+              {isLiked !== null && isLiked ? (
+                <FilledHeart
+                  className="heart-icon"
+                  onClick={() => handleLikeChanges(!isLiked)}
+                ></FilledHeart>
               ) : (
-                <Heart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></Heart>
+                <Heart
+                  className="heart-icon"
+                  onClick={() => handleLikeChanges(!isLiked)}
+                ></Heart>
               )}
             </div>
+          )}
           <div className="artist-genres-text">
             <p>{artist.genres.join(' ● ').toUpperCase()}</p>
           </div>

@@ -38,6 +38,8 @@ const SpotifyContentPage = () => {
   const [item, setItem] = useState<
     SpotifyAlbum | SpotifyArtist | SpotifyPlaylist | SpotifyTrack | undefined
   >(undefined);
+
+  const [isSavedToDb, setIsSavedToDb] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -45,9 +47,10 @@ const SpotifyContentPage = () => {
   const [popupMessage, setPopupMessage] = useState('');
 
   // update state from server later
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState<null | boolean>(null);
 
   const setIsLikedHandler = async (newState: boolean) => {
+    // after awaiting
     setIsLiked(newState);
   };
 
@@ -101,24 +104,52 @@ const SpotifyContentPage = () => {
   };
 
   useEffect(() => {
-    if (parsingStrategy) {
-      axios
-        .get(`http://localhost:4200/api/item/${params['type']}/${params['id']}`)
-        .then(
-          (response) => {
-            setItem(parsingStrategy(response.data));
-          },
-          (reason) => {
-            if (reason.response.status === 400) {
-              setError('Not found!');
-            } else {
-              setError(
-                'Unauthorized access. Before visiting this page you need to acquire or refresh access token.'
-              );
-            }
-          }
-        );
+    if (currentUser && isSavedToDb) {
+      // should fetch result from db
+      setIsLiked(false);
+    } else {
+      setIsLiked(null);
     }
+  }, [currentUser, isSavedToDb]);
+
+  useEffect(() => {
+    const asyncWrapper = async () => {
+      if (parsingStrategy) {
+        try {
+          const response = await axios.get(
+            `http://localhost:4200/api/item/${params['type']}/${params['id']}`
+          );
+          setItem(parsingStrategy(response.data));
+
+          const existResponse = await axios.get(
+            `http://localhost:4200/api/exists/${params['id']}`
+          );
+
+          if (existResponse.data) {
+            setIsSavedToDb(true);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      // .then(
+      //   (response) => {
+      //     setItem(parsingStrategy(response.data));
+      //     // check state of item whether it's added or not
+      //   },
+      //   (reason) => {
+      //     if (reason.response.status === 400) {
+      //       setError('Not found!');
+      //     } else {
+      //       setError(
+      //         'Unauthorized access. Before visiting this page you need to acquire or refresh access token.'
+      //       );
+      //     }
+      //   }
+      // );
+    };
+
+    asyncWrapper();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params['id'], params['type']]);
@@ -156,7 +187,7 @@ const SpotifyContentPage = () => {
           className="save-to-db-btn"
           onClick={() => postItem()}
           disabled={isLoading}
-          style={{ display: currentUser ? '' : 'none' }}
+          style={{ display: currentUser && !isSavedToDb ? '' : 'none' }}
         >
           Save to db
         </button>

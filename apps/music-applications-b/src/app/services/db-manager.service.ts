@@ -101,7 +101,7 @@ export class DatabaseManager {
       5. Provide relations.
   */
 
-  private async isThereInstanceWithId(id: string) {
+  public async isThereInstanceWithId(id: string) {
     const query = await this.dbService.read(
       `MATCH (instance) WHERE instance.spotify_id = "${id}" RETURN instance`
     );

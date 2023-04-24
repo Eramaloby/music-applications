@@ -14,7 +14,7 @@ const TrackInfo = ({
   handleLikeChanges,
 }: {
   track: SpotifyTrack;
-  isLiked: boolean;
+  isLiked: boolean | null;
   handleLikeChanges: (value: boolean) => void;
 }) => {
   const [modal, setModal] = useState<boolean>(false);
@@ -67,13 +67,21 @@ const TrackInfo = ({
               alt="mic"
             ></img>
           </div>
-          <div className="like-container">
-            {isLiked ? (
-              <FilledHeart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></FilledHeart>
-            ) : (
-              <Heart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></Heart>
-            )}
-          </div>
+          {isLiked !== null && (
+            <div className="like-container">
+              {isLiked !== null && isLiked ? (
+                <FilledHeart
+                  className="heart-icon"
+                  onClick={() => handleLikeChanges(!isLiked)}
+                ></FilledHeart>
+              ) : (
+                <Heart
+                  className="heart-icon"
+                  onClick={() => handleLikeChanges(!isLiked)}
+                ></Heart>
+              )}
+            </div>
+          )}
           <div className="track-item-additional-info">
             <audio
               controls

@@ -45,6 +45,11 @@ export class AppController {
     return res;
   }
 
+  @Get('exists/:id')
+  async isThereInstanceWithId(@Param() params) {
+    return await this.dbManager.isThereInstanceWithId(params.id);
+  }
+
   @Get('lyrics')
   async getLyrics(@Request() request) {
     // seems strange, but that's how passing params to axios get works

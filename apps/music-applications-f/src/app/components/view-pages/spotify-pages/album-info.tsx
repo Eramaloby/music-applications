@@ -11,7 +11,7 @@ const AlbumInfo = ({
   handleLikeChanges,
 }: {
   album: SpotifyAlbum;
-  isLiked: boolean;
+  isLiked: boolean | null;
   handleLikeChanges: (value: boolean) => void;
 }) => {
   const router = useNavigate();
@@ -39,13 +39,21 @@ const AlbumInfo = ({
             <div className="album-label-text">
               <div>{album.label}</div>
             </div>
-            <div className="like-container">
-              {isLiked ? (
-                <FilledHeart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></FilledHeart>
-              ) : (
-                <Heart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></Heart>
-              )}
-            </div>
+            {isLiked !== null && (
+              <div className="like-container">
+                {isLiked !== null && isLiked ? (
+                  <FilledHeart
+                    className="heart-icon"
+                    onClick={() => handleLikeChanges(!isLiked)}
+                  ></FilledHeart>
+                ) : (
+                  <Heart
+                    className="heart-icon"
+                    onClick={() => handleLikeChanges(!isLiked)}
+                  ></Heart>
+                )}
+              </div>
+            )}
             <div className="album-info-text">
               {album.artists.map((artist, index) => (
                 <ArtistTrackName
