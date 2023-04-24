@@ -1,10 +1,19 @@
-import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { DatabaseManager } from '../services/db-manager.service';
 import { LikeService } from '../likes/like.service';
 import { CreateDeleteLikeSpotifyDto } from '../dto/create-delete-like-spotify.dto';
 import { CreateDeleteLikeDto } from '../dto/create-delete-like.dto';
+import { User } from '../auth/user.entity';
 
 @UseGuards(AuthGuard())
 @Controller('like')
@@ -13,6 +22,18 @@ export class LikeController {
     private readonly likeService: LikeService,
     private readonly dbManager: DatabaseManager
   ) {}
+
+  @Get()
+  async isLikeExists(@Query() params, @GetUser() user: User) {
+    const [item] = await this.dbManager.findNodeBySpotifyId(params.spotifyId);
+    const nodeId: number = item.get('instance')['properties']['id'];
+    return this.likeService.isLikeExists(user, nodeId);
+  }
+
+  @Get('db')
+  async isLikeExistsDb(@Query() params, @GetUser() user: User) {
+    return this.likeService.isLikeExists(user, params.nodeId);
+  }
 
   @Post()
   async createLike(

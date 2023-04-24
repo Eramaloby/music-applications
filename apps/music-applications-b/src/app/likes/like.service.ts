@@ -21,4 +21,28 @@ export class LikeService {
       throw new NotFoundException(`No like with credentials found.`);
     }
   }
+
+  async isLikeExists(user: User, nodeId: number) {
+    try {
+      const result = await this.likeRepository.findOneOrFail({
+        where: { user, nodeId },
+      });
+
+      if (result) {
+        return true;
+      }
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async findUserLikes(user: User) {
+    try {
+      const result = await this.likeRepository.find({ where: { user } });
+      return result;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
 }
