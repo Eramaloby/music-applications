@@ -1,3 +1,4 @@
+import { ChangePasswordFlowController } from './controllers/change-password.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import {
@@ -35,9 +36,9 @@ import { JwtStrategy } from './jwt/jwt.strategy';
       },
     },
     AuthService,
-    JwtStrategy
+    JwtStrategy,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, ChangePasswordFlowController],
   exports: [PassportModule],
 })
 export class AuthModule {}

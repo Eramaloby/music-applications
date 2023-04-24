@@ -348,12 +348,38 @@ export const tryToSignIn = async (form: UserSignInForm) => {
     });
     if (response.status === 201) {
       return response.data;
-    }
-    else {
+    } else {
       return null;
     }
   } catch (err) {
     console.log(err);
+  }
+};
+
+export const tryToChangePassword = async (
+  currentPassword: string,
+  newPassword: string,
+  accessToken: string
+) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/password/update`,
+      { password: currentPassword, newPassword: newPassword },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (response.statusText === 'Created') {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.log(err);
+    return false;
   }
 };
 

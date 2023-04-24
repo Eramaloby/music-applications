@@ -183,6 +183,18 @@ export interface UserSignInFormErrors {
   password: string;
 }
 
+export interface ChangePasswordForm {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+export interface ChangePasswordFormErrors {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
 export interface User {
   email: string;
   username: string;
