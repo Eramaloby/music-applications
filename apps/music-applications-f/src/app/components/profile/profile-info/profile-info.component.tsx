@@ -1,9 +1,14 @@
+import { Navigate } from 'react-router-dom';
 import { User } from '../../../types';
 import './profile-info.styles.scss';
 
 import React from 'react';
 
 const ProfileInfoComponent = ({ user }: { user: User }) => {
+  if (!user) {
+    return <Navigate to="/signin" replace></Navigate>;
+  }
+
   return (
     <div className="profile-page-content">
       <div className="profile-information-panel">
