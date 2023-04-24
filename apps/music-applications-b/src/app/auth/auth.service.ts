@@ -1,18 +1,18 @@
-import { ConfirmPasswordDto } from './../dto/confirm-password.dto';
+import { ConfirmPasswordDto } from './dto/confirm-password.dto';
 import {
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../entities/user.entity';
-import { UserRepository } from '../repositories/user.repository';
-import { UserCredentialsSignUpDto } from '../dto/sign-up-credentials.dto';
-import { UserCredentialsSignInDto } from '../dto/sign-in-credentials.dto';
+import { User } from './user.entity';
+import { UserRepository } from './user.repository';
+import { UserCredentialsSignUpDto } from './dto/sign-up-credentials.dto';
+import { UserCredentialsSignInDto } from './dto/sign-in-credentials.dto';
 import * as bcrypt from 'bcrypt';
-import { JwtPayload } from '../jwt/jwt.payload';
+import { JwtPayload } from './jwt/jwt.payload';
 import { JwtService } from '@nestjs/jwt';
-import { ChangePasswordDto } from '../dto/change-password.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {

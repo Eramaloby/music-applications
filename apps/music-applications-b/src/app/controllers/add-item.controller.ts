@@ -1,8 +1,8 @@
 import { Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { DatabaseManager } from '../services/db-manager.service';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from '../auth/decorators/get-user.decorator';
-import { User } from '../auth/entities/user.entity';
+import { GetUser } from '../auth/get-user.decorator';
+import { User } from '../auth/user.entity';
 
 @Controller('add')
 @UseGuards(AuthGuard())
