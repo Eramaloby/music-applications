@@ -17,5 +17,5 @@ export class Like {
   user: User;
 
   @Column()
-  nodeId: string;
+  nodeId: number;
 }

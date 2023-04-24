@@ -37,6 +37,13 @@ export class DatabaseManager {
     return res.records;
   };
 
+  public findNodeBySpotifyId = async (spotify_id: string) => {
+    const res = await this.dbService.read(
+      `MATCH (instance) WHERE instance.spotify_id = '${spotify_id}' RETURN instance;`
+    );
+    return res.records;
+  };
+
   private searchFunctions = [
     this.searchArtistQuery,
     this.searchAlbumQuery,
