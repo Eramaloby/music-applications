@@ -42,8 +42,10 @@ export const SignInPage = () => {
       console.log(result.accessToken);
       setUser(result.accessToken);
 
-      // async call does'nt come in time
-      // router('/profile');
+      // could be refactored to something else
+      setTimeout(() => {
+        router('/profile');
+      }, 500);
     }
   };
 
