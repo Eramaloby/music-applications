@@ -2,8 +2,18 @@ import { useNavigate } from 'react-router-dom';
 import { ArtistTrackName } from './page-utils';
 import { AlbumTrackInfo } from './page-utils';
 import { SpotifyAlbum } from '../../../types';
+import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
+import { ReactComponent as Heart } from '../../../../assets/heart.svg';
 
-const AlbumInfo = ({ album }: { album: SpotifyAlbum }) => {
+const AlbumInfo = ({
+  album,
+  isLiked,
+  handleLikeChanges,
+}: {
+  album: SpotifyAlbum;
+  isLiked: boolean;
+  handleLikeChanges: (value: boolean) => void;
+}) => {
   const router = useNavigate();
   const trackNameClickCallback = (spotify_id: string) =>
     router(`/track/${spotify_id}`);
@@ -28,6 +38,13 @@ const AlbumInfo = ({ album }: { album: SpotifyAlbum }) => {
             </div>
             <div className="album-label-text">
               <div>{album.label}</div>
+            </div>
+            <div className="like-container">
+              {isLiked ? (
+                <FilledHeart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></FilledHeart>
+              ) : (
+                <Heart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></Heart>
+              )}
             </div>
             <div className="album-info-text">
               {album.artists.map((artist, index) => (

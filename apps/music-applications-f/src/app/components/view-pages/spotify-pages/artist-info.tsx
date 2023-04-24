@@ -1,6 +1,16 @@
 import { SpotifyArtist } from '../../../types';
+import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
+import { ReactComponent as Heart } from '../../../../assets/heart.svg';
 
-const ArtistInfo = ({ artist }: { artist: SpotifyArtist }) => {
+const ArtistInfo = ({
+  artist,
+  isLiked,
+  handleLikeChanges,
+}: {
+  artist: SpotifyArtist;
+  isLiked: boolean;
+  handleLikeChanges: (value: boolean) => void;
+}) => {
   return (
     <div className="item-page-content">
       <div className="artist-item-page-details-header">
@@ -23,6 +33,13 @@ const ArtistInfo = ({ artist }: { artist: SpotifyArtist }) => {
           <div className="artist-label-text">
             <p>{artist.label}</p>
           </div>
+          <div className="like-container">
+              {isLiked ? (
+                <FilledHeart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></FilledHeart>
+              ) : (
+                <Heart className="heart-icon" onClick={() => handleLikeChanges(!isLiked)}></Heart>
+              )}
+            </div>
           <div className="artist-genres-text">
             <p>{artist.genres.join(' ● ').toUpperCase()}</p>
           </div>

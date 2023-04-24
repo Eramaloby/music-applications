@@ -44,7 +44,7 @@ export const SignInPage = () => {
 
       // could be refactored to something else
       setTimeout(() => {
-        router('/profile');
+        router(-1);
       }, 500);
     }
   };

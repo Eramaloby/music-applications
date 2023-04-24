@@ -44,6 +44,13 @@ const SpotifyContentPage = () => {
   const [popup, setPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
 
+  // update state from server later
+  const [isLiked, setIsLiked] = useState(false);
+
+  const setIsLikedHandler = async (newState: boolean) => {
+    setIsLiked(newState);
+  };
+
   const togglePopup = () => setPopup(!popup);
 
   const recognizeParsingStrategy = (type: string | undefined) => {
@@ -170,16 +177,32 @@ const SpotifyContentPage = () => {
       {item && (
         <>
           {item.type === 'track' && (
-            <TrackInfo track={item as SpotifyTrack}></TrackInfo>
+            <TrackInfo
+              track={item as SpotifyTrack}
+              isLiked={isLiked}
+              handleLikeChanges={setIsLikedHandler}
+            ></TrackInfo>
           )}
           {item.type === 'album' && (
-            <AlbumInfo album={item as SpotifyAlbum}></AlbumInfo>
+            <AlbumInfo
+              album={item as SpotifyAlbum}
+              isLiked={isLiked}
+              handleLikeChanges={setIsLikedHandler}
+            ></AlbumInfo>
           )}
           {item.type === 'playlist' && (
-            <PlaylistInfo playlist={item as SpotifyPlaylist}></PlaylistInfo>
+            <PlaylistInfo
+              playlist={item as SpotifyPlaylist}
+              isLiked={isLiked}
+              handleLikeChanges={setIsLikedHandler}
+            ></PlaylistInfo>
           )}
           {item.type === 'artist' && (
-            <ArtistInfo artist={item as SpotifyArtist}></ArtistInfo>
+            <ArtistInfo
+              artist={item as SpotifyArtist}
+              isLiked={isLiked}
+              handleLikeChanges={setIsLikedHandler}
+            ></ArtistInfo>
           )}
         </>
       )}
