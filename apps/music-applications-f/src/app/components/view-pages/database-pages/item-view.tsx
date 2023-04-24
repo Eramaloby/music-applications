@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import RelationViewPage from './relation-view';
+import GraphViewPage from './graph-view';
 import './style.scss';
 import { Neo4jDbItem } from '../../../types';
 
@@ -27,7 +28,7 @@ const DatabaseItemPage = ({ item }: {item: Neo4jDbItem}) => {
         {isRelationViewSelected ? (
           <RelationViewPage item={item}></RelationViewPage>
         ) : (
-          <div>NOT IMPLEMENTED YET</div>
+          <GraphViewPage item={item}></GraphViewPage>
         )}
       </div>
     </div>
