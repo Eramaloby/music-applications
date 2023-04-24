@@ -50,7 +50,7 @@ export class LikeController {
 
   @Delete()
   async deleteLike(
-    @Body() createLikeDto: CreateDeleteLikeSpotifyDto,
+    @Query() createLikeDto: CreateDeleteLikeSpotifyDto,
     @GetUser() user
   ) {
     const [item] = await this.dbManager.findNodeBySpotifyId(
@@ -72,7 +72,7 @@ export class LikeController {
 
   @Delete('/db')
   async deleteLikeFromDb(
-    @Body() createDeleteLikeDb: CreateDeleteLikeDto,
+    @Query() createDeleteLikeDb: CreateDeleteLikeDto,
     @GetUser() user
   ) {
     return this.likeService.deleteLike(user, createDeleteLikeDb.nodeId);
