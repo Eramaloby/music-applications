@@ -50,6 +50,16 @@ const SpotifyContentPage = () => {
   const [isLiked, setIsLiked] = useState<null | boolean>(null);
 
   const setIsLikedHandler = async (newState: boolean) => {
+    const response = await axios.post(
+      `http://localhost:4200/api/like`,
+      { spotify_id: item?.spotify_id },
+      {
+        headers: {
+          Authorization: `Bearer ${currentUser!.accessToken}`,
+        },
+      }
+    );
+
     // after awaiting
     setIsLiked(newState);
   };
@@ -104,13 +114,31 @@ const SpotifyContentPage = () => {
   };
 
   useEffect(() => {
-    if (currentUser && isSavedToDb) {
-      // should fetch result from db
-      setIsLiked(false);
-    } else {
-      setIsLiked(null);
-    }
-  }, [currentUser, isSavedToDb]);
+    const asyncWrapee = async () => {
+      if (currentUser && isSavedToDb && item) {
+        if (currentUser && isSavedToDb) {
+          const result = await axios.get(
+            `http://localhost:4200/api/like?spotifyId=${item.spotify_id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${currentUser.accessToken}`,
+              },
+            }
+          );
+
+          if (result.data) {
+            setIsLiked(true);
+          } else {
+            setIsLiked(false);
+          }
+        } else {
+          setIsLiked(null);
+        }
+      }
+    };
+
+    asyncWrapee();
+  }, [currentUser, isSavedToDb, item]);
 
   useEffect(() => {
     const asyncWrapper = async () => {

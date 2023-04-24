@@ -1,8 +1,7 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../auth/user.entity';
@@ -12,8 +11,7 @@ export class Like {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => User)
-  @JoinColumn()
+  @ManyToOne(() => User, (user) => user)
   user: User;
 
   @Column()

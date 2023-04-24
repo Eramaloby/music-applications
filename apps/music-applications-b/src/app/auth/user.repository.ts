@@ -35,6 +35,7 @@ export const customUserRepository: Pick<UserRepository, any> = {
     const user = this.create({
       ...userCredentialsSignUpDto,
       password: hashedPassword,
+      likes: [],
     });
 
     try {
