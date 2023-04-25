@@ -124,7 +124,7 @@ const SpotifyContentPage = () => {
   };
 
   useEffect(() => {
-    const asyncWrapee = async () => {
+    const asyncWrapper = async () => {
       if (currentUser && isSavedToDb && item) {
         if (currentUser && isSavedToDb) {
           const result = await axios.get(
@@ -147,7 +147,7 @@ const SpotifyContentPage = () => {
       }
     };
 
-    asyncWrapee();
+    asyncWrapper();
   }, [currentUser, isSavedToDb, item]);
 
   useEffect(() => {
