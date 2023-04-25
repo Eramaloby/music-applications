@@ -23,6 +23,7 @@ const RelationViewPage = ({ item }: { item: Neo4jDbItem }) => {
     (relation: any) =>
       relation.type === 'PerformsInGenre' && relation.target.type === 'Genre'
   );
+  //only for genreProperties
   const performsInGenreToArtistRelations = item.relations.filter(
     (relation: any) =>
       relation.type === 'PerformsInGenre' && relation.target.type === 'Artist'
