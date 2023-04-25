@@ -15,6 +15,7 @@ import { AddItemController } from './controllers/add-item.controller';
 import { GetItemController } from './controllers/get-item.controller';
 import { LikesModule } from './likes/likes.module';
 import { LikeController } from './controllers/like.controller';
+import { ProfileController } from './controllers/profile.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -42,6 +43,7 @@ import { LikeController } from './controllers/like.controller';
     AddItemController,
     GetItemController,
     LikeController,
+    ProfileController,
   ],
   providers: [GeniusService, DatabaseManager, SpotifyService],
 })

@@ -63,7 +63,7 @@ export class AppController {
 
   @Get('db-stats')
   async getDatabaseStats() {
-    const res = await this.dbManager.getCountOfNodesInDb();
+    const res = await this.dbManager.getDbStats();
     const values = res.records[0]['_fields'].map(
       (obj: { low: number }) => obj.low
     );

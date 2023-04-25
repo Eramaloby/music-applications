@@ -83,13 +83,27 @@ export class DatabaseManager {
     return result;
   }
 
-  public async getCountOfNodesInDb() {
+  public async getDbStats() {
     // WARNING: part of following query is deprecated and will be removed in future
     const result = await this.dbService.read(
       `match (n) return count(n) as countOfNodes, sum ( size( (n)-[]->())) as counfOfRelationShip`
     );
 
     return result;
+  }
+
+  public async getUserDbStats(username: string) {
+    const result = await this.dbService.read(
+      `match (n) where n.added_by = "${username}" return count(n) as countOfNodes, sum ( size( (n)-[]->())) as counfOfRelationShip`
+    );
+
+    const values = result.records[0]['_fields'].map(
+      (obj: { low: number }) => obj.low
+    );
+
+    console.log(values);
+
+    return values;
   }
 
   /*
