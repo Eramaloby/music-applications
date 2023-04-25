@@ -25,12 +25,14 @@ import {
   SpotifyTrack,
 } from '../../types';
 import { UserContext } from '../../contexts/user.context';
+import { RecentlyViewedContext } from '../../contexts/recently.viewed.content';
 
 // todo: refactoring
 const SpotifyContentPage = () => {
   const urlToLogin = 'http://localhost:4200/api/login';
 
   const { currentUser } = useContext(UserContext);
+  const { addItem } = useContext(RecentlyViewedContext);
 
   const router = useNavigate();
   const params = useParams();
@@ -156,7 +158,10 @@ const SpotifyContentPage = () => {
           const response = await axios.get(
             `http://localhost:4200/api/item/${params['type']}/${params['id']}`
           );
-          setItem(parsingStrategy(response.data));
+
+          const item = parsingStrategy(response.data); 
+          setItem(item);
+          
 
           const existResponse = await axios.get(
             `http://localhost:4200/api/exists/${params['id']}`

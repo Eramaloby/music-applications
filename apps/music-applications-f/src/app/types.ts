@@ -223,3 +223,11 @@ export enum ProfilePageStates {
   LIKED_ITEMS = 'favorite',
   DEFAULT = 'default',
 }
+
+export interface RecentlyViewedItem {
+  image: Image;
+  label: string;
+  type: string;
+}
+
+
