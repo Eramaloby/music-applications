@@ -1,15 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import ApplicationRouter from './components/ui-elements/navbar';
 import './app-styles.scss';
-import SignUpPage from './pages/sign-up/sign-up';
-import { UserContextProvider } from './contexts/user.context';
 
 export function App() {
   return (
     <div className="application-wrapper">
-      <UserContextProvider>
         <ApplicationRouter></ApplicationRouter>
-      </UserContextProvider>
       {/* <RegistrationComponent /> */}
     </div>
   );

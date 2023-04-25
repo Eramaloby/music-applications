@@ -8,7 +8,7 @@ import { tryToSignIn } from '../../utils';
 import { UserContext } from '../../contexts/user.context';
 
 export const SignInPage = () => {
-  const { setUser } = useContext(UserContext);
+  const { setUser, currentUser } = useContext(UserContext);
 
   // states of form
   const [signInForm, setSignInForm] = useState<UserSignInForm>({
@@ -42,10 +42,10 @@ export const SignInPage = () => {
       console.log(result.accessToken);
       setUser(result.accessToken);
 
-      // could be refactored to something else
-      setTimeout(() => {
-        router(-1);
-      }, 500);
+      // // could be refactored to something else
+      // setTimeout(() => {
+        
+      // }, 500);
     }
   };
 
