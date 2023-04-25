@@ -1,4 +1,3 @@
-import { Navigate } from 'react-router-dom';
 import { User } from '../../../types';
 
 import './profile-info.styles.scss';
@@ -43,10 +42,6 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
     asyncWrapper();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (!user) {
-    return <Navigate to="/signin" replace></Navigate>;
-  }
 
   return (
     <div className="profile-page-content">
