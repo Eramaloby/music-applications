@@ -74,11 +74,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           (new Date().getTime() - tokenMetadata.receivedAt) / 60000
         );
 
-        console.log('TIME SINCE TOKEN WAS REFRESHED:', elapsedTimeMinutes);
 
         if (elapsedTimeMinutes < 45) {
           await logInUser(tokenMetadata.accessToken);
-          console.log('CURRENT USER', currentUser);
         }
       }
     };

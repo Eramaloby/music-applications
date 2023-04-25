@@ -98,8 +98,6 @@ const ChangePasswordComponent = () => {
       changePasswordFormErrors.currentPassword,
     ].every((val: string) => val.length === 0);
 
-    console.log(isValid);
-
     if (isValid && changePasswordForm.currentPassword && currentUser) {
       const response = await tryToChangePassword(
         changePasswordForm.currentPassword,

@@ -48,6 +48,14 @@ export class LikeController {
     return this.likeService.createLike(user, nodeId);
   }
 
+  @Post('/db')
+  async createLikeFromDb(
+    @Body() createDeleteLikeDb: CreateDeleteLikeDto,
+    @GetUser() user
+  ) {
+    return this.likeService.createLike(user, createDeleteLikeDb.nodeId);
+  }
+
   @Delete()
   async deleteLike(
     @Query() createLikeDto: CreateDeleteLikeSpotifyDto,
@@ -58,16 +66,7 @@ export class LikeController {
     );
 
     const nodeId: number = item.get('instance')['properties']['id'];
-    console.log(nodeId);
     return this.likeService.deleteLike(user, nodeId);
-  }
-
-  @Post('/db')
-  async createLikeFromDb(
-    @Body() createDeleteLikeDb: CreateDeleteLikeDto,
-    @GetUser() user
-  ) {
-    return this.likeService.deleteLike(user, createDeleteLikeDb.nodeId);
   }
 
   @Delete('/db')

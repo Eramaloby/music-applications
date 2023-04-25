@@ -17,7 +17,6 @@ const Profile = () => {
   const { currentUser, signOut } = useContext(UserContext);
 
   if (!currentUser) {
-    console.log(currentUser);
     return <Navigate to="/signin" replace></Navigate>;
   }
 

@@ -45,7 +45,6 @@ export const SignInPage = () => {
 
   const router = useNavigate();
   if (currentUser) {
-    console.log(currentUser);
     return <Navigate to="/profile" replace></Navigate>;
   }
 
