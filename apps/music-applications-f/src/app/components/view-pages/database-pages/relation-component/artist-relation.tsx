@@ -1,4 +1,4 @@
-import { AlbumProperties, GenreProperties, Neo4jDbItem, PlaylistProperties, TrackProperties } from "../../../../types";
+import { Neo4jDbItem } from "../../../../types";
 
 const ArtistRelation = ({ item }: { item: Neo4jDbItem }) => {
   const authorToTrackRelations = item.relations.filter(

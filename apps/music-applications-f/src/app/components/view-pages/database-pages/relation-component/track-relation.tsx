@@ -1,4 +1,4 @@
-import { AlbumProperties, GenreProperties, Neo4jDbItem, PlaylistProperties, TrackProperties } from "../../../../types";
+import { Neo4jDbItem, TrackProperties } from "../../../../types";
 
 const TrackRelation = ({ item }: { item: Neo4jDbItem }) => {
   const containsToAlbumRelations = item.relations.filter(
@@ -53,40 +53,41 @@ const TrackRelation = ({ item }: { item: Neo4jDbItem }) => {
           )}
         </div>
       </div>
-      <div className="database-item-contains-toalbum-text">
-        {containsToAlbumRelations.length > 0 ? (
-          <div>
-            <div className="database-item-contains-head-text">Albums</div>
-            {containsToAlbumRelations.map((relation: any, index: number) => {
-              return (
-                <ToRelation target={relation.target} key={index}></ToRelation>
-              );
-            })}
-          </div>
-        ) : (
-          <div></div>
-        )}
-      </div>
-      <div className="database-item-contains-toplaylist-text">
-          {containsToPlaylistRelations.length > 0 ? (
-            <div className="database-item-scroll">
-              <div className="database-item-contains-head-text">Playlists</div>
-              {containsToPlaylistRelations.map(
-                (relation: any, index: number) => {
-                  return (
-                    <ToRelation
-                      target={relation.target}
-                      key={index}
-                    ></ToRelation>
-                  );
-                }
-              )}
+      <div className="database-item-description-text">
+        <div className="database-item-contains-toalbum-text">
+          {containsToAlbumRelations.length > 0 ? (
+            <div>
+              <div className="database-item-contains-head-text">Albums</div>
+              {containsToAlbumRelations.map((relation: any, index: number) => {
+                return (
+                  <ToRelation target={relation.target} key={index}></ToRelation>
+                );
+              })}
             </div>
           ) : (
             <div></div>
           )}
+        </div>
+        <div className="database-item-contains-toplaylist-text">
+            {containsToPlaylistRelations.length > 0 ? (
+              <div className="database-item-scroll">
+                <div className="database-item-contains-head-text">Playlists</div>
+                {containsToPlaylistRelations.map(
+                  (relation: any, index: number) => {
+                    return (
+                      <ToRelation
+                        target={relation.target}
+                        key={index}
+                      ></ToRelation>
+                    );
+                  }
+                )}
+              </div>
+            ) : (
+              <div></div>
+            )}
+        </div>
       </div>
-      
     </div>
   );
 };

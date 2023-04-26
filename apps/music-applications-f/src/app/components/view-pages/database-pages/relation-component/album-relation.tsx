@@ -1,6 +1,7 @@
-import { AlbumProperties, GenreProperties, Neo4jDbItem, PlaylistProperties, TrackProperties } from "../../../../types";
+import { AlbumProperties, Neo4jDbItem } from "../../../../types";
 
 const AlbumRelation = ({ item }: { item: Neo4jDbItem }) => {
+
   const authorToArtistRelations = item.relations.filter(
     (relation: any) =>
       relation.type === 'Author' && relation.target.type === 'Artist'
@@ -33,9 +34,11 @@ const AlbumRelation = ({ item }: { item: Neo4jDbItem }) => {
                 );
               })}
             </div>
-            <div className="database-item-by">Added by:{' '}</div>
-            <div>{item.properties.added_by}</div>
-            <div>
+            <div >
+              <div className="database-item-by">Added by:{' '}</div>
+              <div>{item.properties.added_by}</div>
+            </div>
+            <div className="database-item-author-text">
               <div className="database-item-author-description-text">
                 <div className="database-item-release">Release:</div>{' '}
                   {(item.properties as AlbumProperties).release}
