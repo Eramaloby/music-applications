@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import Search from '../../components/search/search.component';
 
 import './search.styles.scss';
@@ -6,8 +5,6 @@ import { parseSpotifyData } from '../../utils';
 import { DropdownItem } from '../../types';
 
 const SearchWebPage = () => {
-  const router = useNavigate();
-
   const urlToLogin = 'http://localhost:4200/api/login';
 
   const onUnlockButtonClick = () => {
@@ -16,7 +13,10 @@ const SearchWebPage = () => {
   };
 
   const callbackDetailsView = (instance: DropdownItem) => {
-    router(`/${instance.type}/${instance.spotify_id}`);
+    window.open(
+      `${window.location.origin}/${instance.type}/${instance.spotify_id}`,
+      '_blank'
+    );
   };
 
   const searchWordInitialState = 'All';

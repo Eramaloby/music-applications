@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { UserContext } from '../../contexts/user.context';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import './profile.styles.scss';
 import { ProfilePageStates, User } from '../../types';
@@ -14,12 +14,14 @@ const Profile = () => {
     ProfilePageStates.DEFAULT
   );
 
-  const { currentUser, setUser } = useContext(UserContext);
-  const router = useNavigate();
+  const { currentUser, signOut } = useContext(UserContext);
 
-  const signOut = () => {
-    setUser(null);
-    router(-1);
+  if (!currentUser) {
+    return <Navigate to="/signin" replace></Navigate>;
+  }
+
+  const signOutHandler = () => {
+    signOut();
   };
 
   return (
@@ -55,7 +57,7 @@ const Profile = () => {
         >
           Change Password
         </div>
-        <div className="sign-out-btn btn" onClick={() => signOut()}>
+        <div className="sign-out-btn btn" onClick={() => signOutHandler()}>
           Sign out
         </div>
       </div>

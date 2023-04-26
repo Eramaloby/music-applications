@@ -40,7 +40,7 @@ const SpotifyContentPage = () => {
   >(undefined);
 
   const [isSavedToDb, setIsSavedToDb] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [error] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [popup, setPopup] = useState(false);
@@ -95,7 +95,6 @@ const SpotifyContentPage = () => {
 
   const postItem = () => {
     if (item && currentUser) {
-      console.log(currentUser.accessToken);
       setIsLoading(true);
       axios
         .post(
@@ -124,7 +123,7 @@ const SpotifyContentPage = () => {
   };
 
   useEffect(() => {
-    const asyncWrapee = async () => {
+    const asyncWrapper = async () => {
       if (currentUser && isSavedToDb && item) {
         if (currentUser && isSavedToDb) {
           const result = await axios.get(
@@ -147,7 +146,7 @@ const SpotifyContentPage = () => {
       }
     };
 
-    asyncWrapee();
+    asyncWrapper();
   }, [currentUser, isSavedToDb, item]);
 
   useEffect(() => {

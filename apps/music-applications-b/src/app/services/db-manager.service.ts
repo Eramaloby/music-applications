@@ -101,8 +101,6 @@ export class DatabaseManager {
       (obj: { low: number }) => obj.low
     );
 
-    console.log(values);
-
     return values;
   }
 

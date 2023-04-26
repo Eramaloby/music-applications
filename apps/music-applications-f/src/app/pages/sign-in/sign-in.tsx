@@ -3,7 +3,7 @@ import { UserSignInForm, UserSignInFormErrors } from '../../types';
 import TextField from '@mui/material/TextField';
 
 import './sign-in.styles.scss';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { tryToSignIn } from '../../utils';
 import { UserContext } from '../../contexts/user.context';
 
@@ -39,17 +39,14 @@ export const SignInPage = () => {
   const onFormSubmit = async () => {
     const result = await tryToSignIn(signInForm);
     if (result) {
-      console.log(result.accessToken);
       setUser(result.accessToken);
-
-      // // could be refactored to something else
-      // setTimeout(() => {
-        
-      // }, 500);
     }
   };
 
   const router = useNavigate();
+  if (currentUser) {
+    return <Navigate to="/profile" replace></Navigate>;
+  }
 
   return (
     <div className="log-in-component-wrapper">

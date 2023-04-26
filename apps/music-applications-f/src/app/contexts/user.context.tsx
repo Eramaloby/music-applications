@@ -1,17 +1,19 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { User } from '../types';
 import axios from 'axios';
-import { Router, useNavigate } from 'react-router-dom';
 
 export interface UserContextType {
   currentUser: User | null;
   setUser: (accessToken: string | null) => void;
+  signOut: () => void;
 }
 
 export const UserContext = createContext<UserContextType>({
   currentUser: null,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setUser: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  signOut: () => {},
 });
 
 interface AccessTokenMetadata {
@@ -22,14 +24,13 @@ interface AccessTokenMetadata {
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  const router = useNavigate();
-
   const logInUser = async (accessToken: string) => {
     const response = await axios.get(`http://localhost:4200/api/currentUser`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     setCurrentUser({
+      ...currentUser,
       accessToken: accessToken,
       username: response.data.username,
       password: response.data.password,
@@ -58,6 +59,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const signOut = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('tokenData');
+  };
+
   useEffect(() => {
     const asyncWrapper = async () => {
       const unparsed = localStorage.getItem('tokenData');
@@ -68,19 +74,18 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
           (new Date().getTime() - tokenMetadata.receivedAt) / 60000
         );
 
-        console.log('TIME SINCE TOKEN WAS REFRESHED:', elapsedTimeMinutes);
 
         if (elapsedTimeMinutes < 45) {
           await logInUser(tokenMetadata.accessToken);
-          router('/profile');
         }
       }
     };
 
     asyncWrapper();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const value = { currentUser, setUser };
+  const value = { currentUser, setUser, signOut };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

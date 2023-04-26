@@ -4,7 +4,6 @@ import {
 import { GraphCanvas, darkTheme } from 'reagraph';
 
 const GraphViewPage = ({ item }: { item: Neo4jDbItem }) => {
-  console.log(item);
   const nodes = [];
   const edges = [];
   const RED = '#ff3333';
@@ -50,8 +49,6 @@ const GraphViewPage = ({ item }: { item: Neo4jDbItem }) => {
     label: 'Edge -1 -> -6',
     size: 2,
   });
-  console.log(nodes);
-  console.log(edges);
   return (
     <div>
       <div>

@@ -122,6 +122,7 @@ export interface SpotifyPlaylist {
   }[];
 }
 export interface TrackProperties {
+  id: number;
   duration_ms: string;
   explicit: boolean;
   name: string;
@@ -130,6 +131,7 @@ export interface TrackProperties {
 }
 
 export interface ArtistProperties {
+  id: number;
   name: string;
   spotify_id: string;
   type: string;
@@ -137,11 +139,13 @@ export interface ArtistProperties {
 }
 
 export interface GenreProperties {
+  id: number;
   name: string;
   added_by: string;
 }
 
 export interface AlbumProperties {
+  id: number;
   count_of_tracks: number;
   label: string;
   name: string;
@@ -152,6 +156,7 @@ export interface AlbumProperties {
 }
 
 export interface PlaylistProperties {
+  id: number;
   collaborative: boolean;
   description: string;
   name: string;
