@@ -1,8 +1,5 @@
 import {
-  AlbumProperties,
   Neo4jDbItem,
-  PlaylistProperties,
-  TrackProperties,
 } from '../../../types';
 import { GraphCanvas, darkTheme } from 'reagraph';
 
@@ -16,8 +13,6 @@ const GraphViewPage = ({ item }: { item: Neo4jDbItem }) => {
   const GRAY = '#f5770a';
 
   nodes.push({ id: '-1', label: item.properties.name });
-  //добавить проверку на входимость в сущность
-
   
   edges.push({
     source: '-1',

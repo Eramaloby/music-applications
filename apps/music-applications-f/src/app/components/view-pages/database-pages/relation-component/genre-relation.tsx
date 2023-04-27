@@ -13,9 +13,11 @@ const GenreRelation = ({ item }: { item: Neo4jDbItem }) => {
           <div className="database-item-name-text">
             {item.properties.name.toUpperCase()}
           </div>
+          <div>
+            <div className="database-item-by">Added by:{' '}</div>
+            <div>{item.properties.added_by}</div>
+          </div>
         </div>
-        <div className="database-item-by">Added by:{' '}</div>
-        <div>{item.properties.added_by}</div>
        <div className="database-item-perfomsingenre-toartist-text">
           {performsInGenreToArtistRelations.length > 0 ? (
             <div>

@@ -100,7 +100,7 @@ const DatabaseItemPage = ({ item }: { item: Neo4jDbItem }) => {
       </div>
       <div className="database-item-page-content">
         {isRelationViewSelected ? (
-          <RelationViewPage_2 item={item}></RelationViewPage_2>
+          <RelationViewPage item={item}></RelationViewPage>
         ) : (
           // <RelationViewPage item={item}></RelationViewPage>
           <GraphViewPage item={item}></GraphViewPage>

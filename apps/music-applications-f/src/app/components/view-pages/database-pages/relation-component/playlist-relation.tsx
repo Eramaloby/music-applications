@@ -1,4 +1,4 @@
-import { AlbumProperties, GenreProperties, Neo4jDbItem, PlaylistProperties, TrackProperties } from "../../../../types";
+import { Neo4jDbItem, PlaylistProperties } from "../../../../types";
 
 const PlaylistRelation = ({ item }: { item: Neo4jDbItem }) => {
   const containsToTrackRelations = item.relations.filter(
@@ -15,19 +15,21 @@ const PlaylistRelation = ({ item }: { item: Neo4jDbItem }) => {
         <div className="database-item-name-text">
           {item.properties.name.toUpperCase()}
         </div>
-        <div className="database-item-by">Added by:{' '}</div>
-        <div>{item.properties.added_by}</div>
-        <div>
-          <div className="database-item-author-toartist-relation">
-            {item.type === 'Playlist' ? (
-              <div className="database-item-author-description-text">
-                <div className="database-item-by">Owner-name:</div>
-                {(item.properties as PlaylistProperties).owner_name}
-              </div>
-            ) : (
-              <div></div>
-            )}
+        <div className="database-item-text">
+          <div>
+            <div className="database-item-by">Added by:{' '}</div>
+            <div>{item.properties.added_by}</div>
           </div>
+
+              {item.type === 'Playlist' ? (
+                <div className="database-item-author-description-text">
+                  <div className="database-item-by">Owner-name:</div>
+                  {(item.properties as PlaylistProperties).owner_name}
+                </div>
+              ) : (
+                <div></div>
+              )}
+
         </div>
       </div>
       <div className="database-item-description-text">

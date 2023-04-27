@@ -5,8 +5,8 @@ import GenreRelation from './relation-component/genre-relation';
 import PlaylistRelation from './relation-component/playlist-relation';
 import TrackRelation from './relation-component/track-relation';
 
-const RelationViewPage_2 = ({ item }: { item: Neo4jDbItem }) => {
-  console.log(item.properties.id);
+const RelationViewPage = ({ item }: { item: Neo4jDbItem }) => {
+  console.log(item)
   return (
     <div>
       <div>
@@ -34,4 +34,4 @@ const RelationViewPage_2 = ({ item }: { item: Neo4jDbItem }) => {
   );
 };
 
-export default RelationViewPage_2;
+export default RelationViewPage;
