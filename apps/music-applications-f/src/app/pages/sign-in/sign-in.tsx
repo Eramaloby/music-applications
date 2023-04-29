@@ -37,9 +37,9 @@ export const SignInPage = () => {
   };
 
   const onFormSubmit = async () => {
-    const result = await tryToSignIn(signInForm);
-    if (result) {
-      setUser(result.accessToken);
+    const token = await tryToSignIn(signInForm);
+    if (token) {
+      setUser(token);
     }
   };
 

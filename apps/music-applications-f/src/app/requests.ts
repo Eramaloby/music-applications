@@ -28,10 +28,11 @@ export const fetchDatabaseItem = async (
 
 export const sendSignInRequest = async (form: UserSignInForm) => {
   try {
-    const response = await axios.post(`${baseUrl}/auth/signup`, {
+    const response = await axios.post(`${baseUrl}/auth/signin`, {
       ...form,
     });
 
+    console.log(response);
     if (response.status === 201) {
       return response.data;
     } else {
@@ -198,7 +199,7 @@ export const checkIfLikedSpotifyId = async (spotify_id: string, accessToken: str
 
 export const fetchUserProfileData = async (accessToken: string) => {
   try {
-    const response = await axios.get(`${accessToken}/currentUser`, {
+    const response = await axios.get(`${baseUrl}/${accessToken}/currentUser`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
