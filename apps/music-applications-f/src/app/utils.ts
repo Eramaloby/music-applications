@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
 import {
   Neo4jDbItem,
   SpotifyAlbum,
@@ -9,8 +8,11 @@ import {
   UserSignUpForm,
   UserSignInForm,
 } from './types';
-
-export const baseUrl = 'http://localhost:4200/api';
+import {
+  sendChangePasswordRequest,
+  sendSignInRequest,
+  sendSignUpRequest,
+} from './requests';
 
 export const convertDuration = (ms: number) => {
   const minutes = Math.floor(ms / 60000);
@@ -341,18 +343,8 @@ export const subtractYearsFromDate = (date: Date, years: number) => {
 };
 
 export const tryToSignIn = async (form: UserSignInForm) => {
-  try {
-    const response = await axios.post(`${baseUrl}/auth/signin`, {
-      ...form,
-    });
-    if (response.status === 201) {
-      return response.data;
-    } else {
-      return null;
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  const token = await sendSignInRequest(form);
+  return token;
 };
 
 export const tryToChangePassword = async (
@@ -360,29 +352,15 @@ export const tryToChangePassword = async (
   newPassword: string,
   accessToken: string
 ) => {
-  try {
-    const response = await axios.post(
-      `${baseUrl}/password/update`,
-      { password: currentPassword, newPassword: newPassword },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-
-    if (response.statusText === 'Created') {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
+  return await sendChangePasswordRequest(
+    currentPassword,
+    newPassword,
+    accessToken
+  );
 };
 
 export const tryToSignUp = async (form: UserSignUpForm) => {
+  // add validation from server
   const formValidationMessages = [
     validateUsername(form.username),
     validateEmail(form.email),
@@ -396,25 +374,10 @@ export const tryToSignUp = async (form: UserSignUpForm) => {
     (error: string) => error.length === 0
   );
 
+  // add validation from server
   if (isFormValid) {
-    try {
-      const response = await axios.post(`${baseUrl}/auth/signup`, {
-        username: form.username,
-        password: form.password,
-        email: form.email,
-        dateOfBirth: form.dateOfBirth,
-        gender: form.gender.toString(),
-      });
-
-      return response.statusText === 'Created';
-    } catch (error) {
-      console.log(error.response.data.message);
-
-      return false;
-    }
+    return await sendSignUpRequest(form);
   } else {
-    // show messages
-
     return false;
   }
 };

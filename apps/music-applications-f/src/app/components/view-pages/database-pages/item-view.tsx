@@ -7,6 +7,7 @@ import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.s
 import { ReactComponent as Heart } from '../../../../assets/heart.svg';
 import axios from 'axios';
 import { UserContext } from '../../../contexts/user.context';
+import { dropLike, pressLike } from '../../../requests';
 
 const DatabaseItemPage = ({
   item,
@@ -24,22 +25,9 @@ const DatabaseItemPage = ({
   const handleLikeChanges = async (newState: boolean) => {
     if (currentUser && item) {
       if (newState) {
-        await axios.post(
-          `http://localhost:4200/api/like/db`,
-          { nodeId: item.properties.id },
-          {
-            headers: {
-              Authorization: `Bearer ${currentUser.accessToken}`,
-            },
-          }
-        );
+        await pressLike(item.properties.id, currentUser.accessToken);
       } else {
-        await axios.delete(`http://localhost:4200/api/like/db`, {
-          headers: {
-            Authorization: `Bearer ${currentUser.accessToken}`,
-          },
-          params: { nodeId: item.properties.id },
-        });
+        await dropLike(item.properties.id, currentUser.accessToken);
       }
       // after awaiting
       setIsLiked(newState);

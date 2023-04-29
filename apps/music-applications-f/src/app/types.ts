@@ -225,4 +225,7 @@ export interface RecentlyViewedItem {
   type: string;
 }
 
-
+export interface ProfilePageSavedStats {
+  nodes: number;
+  relationships: number;
+}
