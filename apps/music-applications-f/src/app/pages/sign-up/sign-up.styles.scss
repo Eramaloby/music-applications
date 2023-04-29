@@ -23,11 +23,16 @@
 
   .form-wrapper {
     margin-top: 10px;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(200px, 1fr));;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     gap: 20px;
+
+    .form-value-username {
+      margin-left: 50%;
+    }
 
     .form-value {
       display: flex;

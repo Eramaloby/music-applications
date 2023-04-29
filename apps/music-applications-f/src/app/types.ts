@@ -4,28 +4,6 @@ export interface DropdownItem {
   spotify_id?: string;
 }
 
-export interface Neo4jDbItem {
-  type: string;
-  properties:
-    | TrackProperties
-    | ArtistProperties
-    | GenreProperties
-    | AlbumProperties
-    | PlaylistProperties;
-  relations: {
-    type: string;
-    target: {
-      type: string;
-      properties:
-        | TrackProperties
-        | ArtistProperties
-        | GenreProperties
-        | AlbumProperties
-        | PlaylistProperties;
-    };
-  }[];
-}
-
 export interface Image {
   height: number;
   url: string;
@@ -121,11 +99,28 @@ export interface SpotifyPlaylist {
     };
   }[];
 }
+
+/* Db related interfaces */
+export interface Neo4jDbItem {
+  type: string;
+  name: string;
+  properties:
+    | TrackProperties
+    | ArtistProperties
+    | GenreProperties
+    | AlbumProperties
+    | PlaylistProperties;
+  relations: {
+    type: string;
+    target: Neo4jDbItem;
+  }[];
+}
+
 export interface TrackProperties {
   id: number;
+  name: string;
   duration_ms: string;
   explicit: boolean;
-  name: string;
   spotify_id: string;
   added_by: string;
 }
@@ -140,15 +135,15 @@ export interface ArtistProperties {
 
 export interface GenreProperties {
   id: number;
-  name: string;
   added_by: string;
+  name: string;
 }
 
 export interface AlbumProperties {
   id: number;
+  name: string;
   count_of_tracks: number;
   label: string;
-  name: string;
   release: string;
   spotify_id: string;
   type: string;

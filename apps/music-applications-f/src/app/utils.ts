@@ -51,6 +51,7 @@ export const translateLyricsToVerses = (lyrics: string): string[] => {
 export const parseNeo4jData = (data: any[]) => {
   // check bug when length is 0
   const type = data[0]._fields[0].labels[0];
+  const name = data[0]._fields[0].properties.name;
   const properties = data[0]._fields[0].properties;
 
   const relations = [];
@@ -58,10 +59,10 @@ export const parseNeo4jData = (data: any[]) => {
   for (const item of data) {
     const relation = item._fields[1];
     const targetNode = item._fields[2];
-
     // refactor this to multiple.
     relations.push({
       type: relation.type,
+      name: targetNode.properties.name,
       target: {
         type: targetNode.labels[0],
         properties: targetNode.properties,
@@ -69,7 +70,7 @@ export const parseNeo4jData = (data: any[]) => {
     });
   }
 
-  return { type, properties, relations } as unknown as Neo4jDbItem;
+  return { type, name, properties, relations } as unknown as Neo4jDbItem;
 };
 
 export const parseNeo4jRecords = (data: any) => {

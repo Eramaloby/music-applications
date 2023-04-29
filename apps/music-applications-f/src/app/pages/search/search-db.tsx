@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import axios from 'axios';
 
 import DatabaseItemPage from '../../components/view-pages/database-pages/item-view';
 import AppModal from '../../components/ui-elements/modal';
 
 import './search.styles.scss';
-import { parseNeo4jData, parseNeo4jRecords } from '../../utils';
+import { parseNeo4jRecords } from '../../utils';
 import Search from '../../components/search/search.component';
 import { DropdownItem, Neo4jDbItem } from '../../types';
+import { fetchDatabaseItem } from '../../requests';
 
-const SearchPageDb = () =>  {
+const SearchPageDb = () => {
   const selectorParamsArray = [
     { value: 'artist', name: 'Artists' },
     { value: 'track', name: 'Tracks' },
@@ -24,16 +24,19 @@ const SearchPageDb = () =>  {
   const [selectedItem, setSelectedItem] = useState<Neo4jDbItem>();
 
   // callbacks to pass
-  const callbackOnInstanceClick = (instance: DropdownItem) => {
-    axios
-      .get(
-        `http://localhost:4200/api/node-relation/${instance.type}/${instance.label}`
-      )
-      .then((response) => {
-        setSelectedItem(parseNeo4jData(response.data));
-      });
+  const callbackOnInstanceClick = async (instance: DropdownItem) => {
+    const item = await fetchDatabaseItem(instance.type, instance.label);
+    if (item) {
+      setSelectedItem(item);
+      setModal(true);
+    }
+  };
 
-    setModal(true);
+  const handleRelationClick = async (type: string, name: string) => {
+    const item = await fetchDatabaseItem(type, name);
+    if (item) {
+      setSelectedItem(item);
+    }
   };
 
   return (
@@ -59,12 +62,15 @@ const SearchPageDb = () =>  {
             isHiddenOnClick={false}
           >
             {/* Write Classes That decompose item */}
-            <DatabaseItemPage item={selectedItem}></DatabaseItemPage>
+            <DatabaseItemPage
+              item={selectedItem}
+              routingCallback={handleRelationClick}
+            ></DatabaseItemPage>
           </AppModal>
         )}
       </div>
     </div>
   );
-}
+};
 
 export default SearchPageDb;

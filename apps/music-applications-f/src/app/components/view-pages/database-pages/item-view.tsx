@@ -2,13 +2,19 @@ import { useContext, useEffect, useState } from 'react';
 import GraphViewPage from './graph-view';
 import './style.scss';
 import { Neo4jDbItem } from '../../../types';
-import RelationViewPage_2 from './relation';
+import RelationViewPage from './relation';
 import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
 import { ReactComponent as Heart } from '../../../../assets/heart.svg';
 import axios from 'axios';
 import { UserContext } from '../../../contexts/user.context';
 
-const DatabaseItemPage = ({ item }: { item: Neo4jDbItem }) => {
+const DatabaseItemPage = ({
+  item,
+  routingCallback,
+}: {
+  item: Neo4jDbItem;
+  routingCallback: (type: string, name: string) => void;
+}) => {
   // default view is relation view
   const [isRelationViewSelected, setIsRelationViewSelected] = useState(true);
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
@@ -100,7 +106,10 @@ const DatabaseItemPage = ({ item }: { item: Neo4jDbItem }) => {
       </div>
       <div className="database-item-page-content">
         {isRelationViewSelected ? (
-          <RelationViewPage item={item}></RelationViewPage>
+          <RelationViewPage
+            item={item}
+            routingCallback={routingCallback}
+          ></RelationViewPage>
         ) : (
           // <RelationViewPage item={item}></RelationViewPage>
           <GraphViewPage item={item}></GraphViewPage>
