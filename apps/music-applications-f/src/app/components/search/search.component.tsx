@@ -36,6 +36,7 @@ const Search = ({
 
   useEffect(() => {
     // move request code to different class later
+    // test
     const searchDelayTimer = setTimeout(() => {
       if (query !== '' && searchWord !== '') {
         axios.get(`${endpointUrl}${searchWord}=${query.toLowerCase()}`).then(
