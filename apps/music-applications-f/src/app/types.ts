@@ -220,12 +220,13 @@ export enum ProfilePageStates {
 }
 
 export interface RecentlyViewedItem {
+  spotify_id: string;
   image: Image;
   label: string;
   type: string;
 }
 
-export interface ProfilePageSavedStats {
+export interface DbStats {
   nodes: number;
   relationships: number;
 }

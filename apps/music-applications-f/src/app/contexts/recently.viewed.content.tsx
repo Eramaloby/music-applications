@@ -36,7 +36,7 @@ export const RecentlyViewedContextProvider = ({ children }: { children: ReactNod
       setRecentlyViewed([newItem, ...recentlyViewed]);
     }
     localStorage.setItem("recentlyViewedItems", JSON.stringify([...recentlyViewed]));
-    updateRecentlyViewedFromStorage();
+    // updateRecentlyViewedFromStorage();
   };
 
   const value = {

@@ -1,4 +1,4 @@
-import { ProfilePageSavedStats, User } from '../../../types';
+import { DbStats, User } from '../../../types';
 
 import './profile-info.styles.scss';
 
@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { fetchProfileStats } from '../../../requests';
 
 const ProfileInfoComponent = ({ user }: { user: User }) => {
-  const [stats, setStats] = useState<ProfilePageSavedStats>({
+  const [stats, setStats] = useState<DbStats>({
     nodes: 0,
     relationships: 0,
   });

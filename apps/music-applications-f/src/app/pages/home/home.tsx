@@ -3,44 +3,43 @@ import { useEffect, useState } from 'react';
 
 import './home.styles.scss';
 import { useNavigate } from 'react-router-dom';
+import { DbStats } from '../../types';
+import { fetchDatabaseStats } from '../../requests';
 
 const HomePage = () => {
   const router = useNavigate();
 
-  const [stats, setStats] = useState<{ nodesCount: number; relCount: number }>({
-    nodesCount: 0,
-    relCount: 0,
+  const [stats, setStats] = useState<DbStats>({
+    nodes: 0,
+    relationships: 0,
   });
 
   const fetchResults = async () => {
-    axios.get('http://localhost:4200/api/db-stats').then((response) => {
-      setStats({ nodesCount: response.data[0], relCount: response.data[1] });
-    });
+    const result = await fetchDatabaseStats();
+    if (result) {
+      setStats({...result})
+    }
   };
 
   useEffect(() => {
     fetchResults();
   }, []);
 
-  // const onRefreshButtonClick = () => {
-  //   fetchResults();
-  // };
-
   return (
     <div className="home-page-wrapper">
       <div className="home-page-db-stats">
-        {stats.nodesCount ? (
+        {stats.nodes ? (
           <div className="db-stats-count-of-nodes">
             Count of nodes in db:{' '}
-            <span className="stats-container">{stats.nodesCount}</span>
+            <span className="stats-container">{stats.nodes}</span>
           </div>
         ) : (
           <div className="db-stats-count-of-nodes">Wait...</div>
         )}
-        {stats.relCount ? (
+        {stats.relationships ? (
           <div className="db-stats-count-of-relationships">
             Count of relationships in db:{' '}
-            <span className="stats-container">{stats.relCount}</span>
+            <span className="stats-container">{stats.relationships}</span>
           </div>
         ) : (
           <div className="db-stats-count-of-relationships"></div>

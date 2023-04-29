@@ -11,7 +11,6 @@ export function App() {
       
       <BrowserRouter>
         <RecentlyViewedContextProvider>
-        
           <UserContextProvider>
             <ApplicationRouter></ApplicationRouter>
           </UserContextProvider>

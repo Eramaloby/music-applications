@@ -26,6 +26,7 @@ import {
 } from '../../types';
 import { UserContext } from '../../contexts/user.context';
 import { RecentlyViewedContext } from '../../contexts/recently.viewed.content';
+import { checkIfLikedSpotifyId, dropLikeSpotifyId, getSpotifyItem, isItemInDatabase, pressLikeSpotifyId } from '../../requests';
 
 // todo: refactoring
 const SpotifyContentPage = () => {
@@ -54,22 +55,9 @@ const SpotifyContentPage = () => {
   const setIsLikedHandler = async (newState: boolean) => {
     if (currentUser && item) {
       if (newState) {
-        await axios.post(
-          `http://localhost:4200/api/like`,
-          { spotify_id: item?.spotify_id },
-          {
-            headers: {
-              Authorization: `Bearer ${currentUser.accessToken}`,
-            },
-          }
-        );
+        await pressLikeSpotifyId(item.spotify_id, currentUser.accessToken);
       } else {
-        await axios.delete(`http://localhost:4200/api/like`, {
-          headers: {
-            Authorization: `Bearer ${currentUser.accessToken}`,
-          },
-          params: { spotify_id: item.spotify_id },
-        });
+        await dropLikeSpotifyId(item.spotify_id, currentUser.accessToken);
       }
       // after awaiting
       setIsLiked(newState);
@@ -128,20 +116,8 @@ const SpotifyContentPage = () => {
     const asyncWrapper = async () => {
       if (currentUser && isSavedToDb && item) {
         if (currentUser && isSavedToDb) {
-          const result = await axios.get(
-            `http://localhost:4200/api/like?spotifyId=${item.spotify_id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${currentUser.accessToken}`,
-              },
-            }
-          );
-
-          if (result.data) {
-            setIsLiked(true);
-          } else {
-            setIsLiked(false);
-          }
+          const isLiked = await checkIfLikedSpotifyId(item.spotify_id, currentUser.accessToken);
+          setIsLiked(isLiked);
         } else {
           setIsLiked(null);
         }
@@ -155,20 +131,17 @@ const SpotifyContentPage = () => {
     const asyncWrapper = async () => {
       if (parsingStrategy) {
         try {
-          const response = await axios.get(
-            `http://localhost:4200/api/item/${params['type']}/${params['id']}`
-          );
-
-          const item = parsingStrategy(response.data); 
-          setItem(item);
+          const rawData = await getSpotifyItem(params['type'] as string, params['id'] as string);
+          if (rawData) {
+            const item = parsingStrategy(rawData); 
+            setItem(item);
+          }
           
 
-          const existResponse = await axios.get(
-            `http://localhost:4200/api/exists/${params['id']}`
-          );
+          const isExists = await isItemInDatabase(params['id'] as string);
 
-          if (existResponse.data) {
-            setIsSavedToDb(true);
+          if (isExists !== null) {
+            setIsSavedToDb(isExists);
           }
         } catch (error) {
           console.log(error);
