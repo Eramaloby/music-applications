@@ -5,9 +5,8 @@ import { Neo4jDbItem } from '../../../types';
 import RelationViewPage from './relation';
 import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
 import { ReactComponent as Heart } from '../../../../assets/heart.svg';
-import axios from 'axios';
 import { UserContext } from '../../../contexts/user.context';
-import { dropLike, pressLike } from '../../../requests';
+import { checkIfLiked, dropLike, pressLike } from '../../../requests';
 
 const DatabaseItemPage = ({
   item,
@@ -38,20 +37,12 @@ const DatabaseItemPage = ({
     const asyncWrapper = async () => {
       if (currentUser) {
         if (currentUser) {
-          const result = await axios.get(
-            `http://localhost:4200/api/like/db?nodeId=${item.properties.id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${currentUser.accessToken}`,
-              },
-            }
+          const result = await checkIfLiked(
+            item.properties.id,
+            currentUser.accessToken
           );
 
-          if (result.data) {
-            setIsLiked(true);
-          } else {
-            setIsLiked(false);
-          }
+          setIsLiked(result);
         } else {
           setIsLiked(null);
         }

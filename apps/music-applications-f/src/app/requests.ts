@@ -108,7 +108,7 @@ export const fetchProfileStats = async (accessToken: string) => {
 export const pressLike = async (nodeId: number, accessToken: string) => {
   try {
     await axios.post(
-      `http://localhost:4200/api/like/db`,
+      `${baseUrl}/like/db`,
       { nodeId: nodeId },
       {
         headers: {
@@ -123,7 +123,7 @@ export const pressLike = async (nodeId: number, accessToken: string) => {
 
 export const dropLike = async (nodeId: number, accessToken: string) => {
   try {
-    await axios.delete(`http://localhost:4200/api/like/db`, {
+    await axios.delete(`${baseUrl}/like/db`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -133,3 +133,34 @@ export const dropLike = async (nodeId: number, accessToken: string) => {
     console.log(err);
   }
 };
+
+export const checkIfLiked = async (nodeId: number, accessToken: string): Promise<boolean> => {
+  try {
+    const result = await axios.get(
+      `${baseUrl}/like/db?nodeId=${nodeId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return result.data;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
+
+export const fetchUserProfileData = async (accessToken: string) => {
+  try {
+    const response = await axios.get(`http://localhost:4200/api/currentUser`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return response.data;
+  } catch(err) {
+    console.log(err);
+    return null;
+  }
+}
