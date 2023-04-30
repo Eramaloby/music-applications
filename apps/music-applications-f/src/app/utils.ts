@@ -343,7 +343,7 @@ export const subtractYearsFromDate = (date: Date, years: number) => {
 };
 
 export const tryToSignIn = async (form: UserSignInForm) => {
-  const token = await sendSignInRequest(form);
+  const token: string = (await sendSignInRequest(form)).accessToken;
   return token;
 };
 

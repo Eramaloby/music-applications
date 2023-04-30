@@ -32,7 +32,6 @@ export const sendSignInRequest = async (form: UserSignInForm) => {
       ...form,
     });
 
-    console.log(response);
     if (response.status === 201) {
       return response.data;
     } else {
@@ -197,10 +196,10 @@ export const checkIfLikedSpotifyId = async (spotify_id: string, accessToken: str
   }
 }
 
-export const fetchUserProfileData = async (accessToken: string) => {
+export const fetchUserProfileData = async (token: string) => {
   try {
-    const response = await axios.get(`${baseUrl}/${accessToken}/currentUser`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
+    const response = await axios.get(`${baseUrl}/currentUser`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     return response.data;

@@ -47,11 +47,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
       // store token in local storage exposes application to XSS attacks
       const receivedAt = new Date().getTime();
+      console.log('store access token', accessToken);
       localStorage.setItem(
         'tokenData',
         JSON.stringify({
-          accessToken: accessToken,
-          receivedAt: receivedAt,
+          accessToken,
+          receivedAt,
         } as AccessTokenMetadata)
       );
     } else {
@@ -69,7 +70,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       const unparsed = localStorage.getItem('tokenData');
       if (unparsed) {
         const tokenMetadata = JSON.parse(unparsed) as AccessTokenMetadata;
-
         const elapsedTimeMinutes = Math.floor(
           (new Date().getTime() - tokenMetadata.receivedAt) / 60000
         );
