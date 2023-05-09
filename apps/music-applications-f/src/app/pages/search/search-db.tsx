@@ -11,6 +11,7 @@ import { fetchDatabaseItem } from '../../requests';
 
 const SearchPageDb = () => {
   const selectorParamsArray = [
+    { value: 'all', name: 'All' },
     { value: 'artist', name: 'Artists' },
     { value: 'track', name: 'Tracks' },
     { value: 'genre', name: 'Genres' },
@@ -18,8 +19,6 @@ const SearchPageDb = () => {
     { value: 'playlist', name: 'Playlist' },
   ];
   const endpointUrl = 'http://localhost:4200/api/search?';
-  const searchWordInitialState = 'All';
-
   const [modal, setModal] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<Neo4jDbItem>();
 
@@ -48,8 +47,6 @@ const SearchPageDb = () => {
         isInputDisabled={false}
         selectorOptions={selectorParamsArray}
         instanceClickCallback={callbackOnInstanceClick}
-        isSelectorDefaultValueDisabled={false}
-        searchWordInitialState={searchWordInitialState}
         endpointUrl={endpointUrl}
         parser={parseNeo4jRecords}
         selectorClassName="livesearch-selector"

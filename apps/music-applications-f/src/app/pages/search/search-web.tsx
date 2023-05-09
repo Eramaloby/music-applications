@@ -19,9 +19,8 @@ const SearchWebPage = () => {
     );
   };
 
-  const searchWordInitialState = 'All';
-
   const selectorParamsArray = [
+    { value: 'all', name: 'All' },
     { value: 'track', name: 'Tracks' },
     { value: 'artist', name: 'Artists' },
     { value: 'playlist', name: 'Playlists' },
@@ -41,8 +40,6 @@ const SearchWebPage = () => {
       <Search
         isInputDisabled={false}
         selectorOptions={selectorParamsArray}
-        isSelectorDefaultValueDisabled={false}
-        searchWordInitialState={searchWordInitialState}
         endpointUrl="http://localhost:4200/api/web-search?"
         instanceClickCallback={callbackDetailsView}
         selectorClassName="livesearch-selector"

@@ -1,16 +1,14 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import ApplicationSelect from '../ui-elements/select';
 import './search.styles.scss';
 import { DropdownItem } from '../../types';
 import InteractiveDropdown from '../interactive-dropdown/interactive-dropdown.component';
+import ApplicationSelector from '../ui-elements/selector';
 
 type SearchComponentProps = {
   isInputDisabled: boolean;
-  isSelectorDefaultValueDisabled: boolean;
   selectorOptions: { value: string; name: string }[];
   instanceClickCallback: (item: DropdownItem) => void;
-  searchWordInitialState: string;
   endpointUrl: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parser: (data: any) => any;
@@ -18,9 +16,7 @@ type SearchComponentProps = {
 };
 const Search = ({
   isInputDisabled,
-  isSelectorDefaultValueDisabled,
   selectorOptions,
-  searchWordInitialState,
   endpointUrl,
   selectorClassName,
   instanceClickCallback,
@@ -28,9 +24,7 @@ const Search = ({
 }: SearchComponentProps) => {
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState('');
-  const [searchWord, setSearchWord] = useState(
-    searchWordInitialState.toLowerCase()
-  );
+  const [searchWord, setSearchWord] = useState('all');
 
   const [errorText, setErrorText] = useState('');
 
@@ -62,15 +56,6 @@ const Search = ({
   return (
     <div className="livesearch-wrapper">
       <div className="livesearch-input-container">
-        <ApplicationSelect
-          isDefaultDisabled={isSelectorDefaultValueDisabled}
-          defaultValueName={searchWordInitialState}
-          defaultValue={searchWordInitialState.toLowerCase()}
-          value={searchWord}
-          onChange={(value: string) => setSearchWord(value)}
-          options={selectorOptions}
-          selectorClassName={selectorClassName}
-        ></ApplicationSelect>
         <input
           disabled={isInputDisabled}
           className="livesearch-input"
@@ -80,6 +65,12 @@ const Search = ({
           onChange={(e) => setQuery(e.target.value)}
         ></input>
       </div>
+      <ApplicationSelector
+        selectorClassName={selectorClassName}
+        value={searchWord}
+        options={selectorOptions}
+        onChange={(value: string) => setSearchWord(value)}
+      ></ApplicationSelector>
       {query && (
         <InteractiveDropdown
           onItemClickCallback={instanceClickCallback}
