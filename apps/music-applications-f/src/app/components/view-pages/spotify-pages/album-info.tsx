@@ -18,9 +18,9 @@ const AlbumInfo = ({
 }) => {
   const router = useNavigate();
   const trackNameClickCallback = (spotify_id: string) =>
-    router(`/track/${spotify_id}`);
+    router(`/web/track/${spotify_id}`);
   const artistNameClickCallback = (spotify_id: string) =>
-    router(`/artist/${spotify_id}`);
+    router(`/web/artist/${spotify_id}`);
 
   const { addItem } = useContext(RecentlyViewedContext);
   useEffect(() => {

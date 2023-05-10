@@ -10,7 +10,7 @@ const RelationViewPage = ({
   routingCallback,
 }: {
   item: Neo4jDbItem;
-  routingCallback: (type: string, name: string) => void;
+  routingCallback: (type: string, id: number) => void;
 }) => {
   return (
     <div className='relation-view-content-wrapper'>

@@ -1,22 +1,15 @@
 import axios from 'axios';
-import {
-  Neo4jDbItem,
-  DbStats,
-  UserSignInForm,
-  UserSignUpForm,
-} from './types';
+import { Neo4jDbItem, DbStats, UserSignInForm, UserSignUpForm } from './types';
 import { parseNeo4jData } from './utils';
 
 export const baseUrl = 'http://localhost:4200/api';
 
 export const fetchDatabaseItem = async (
-  type: string,
-  label: string
+  id: number,
+  type: string
 ): Promise<Neo4jDbItem | null> => {
   try {
-    const response = await axios.get(
-      `${baseUrl}/node-relation/${type}/${label}`
-    );
+    const response = await axios.get(`${baseUrl}/item/db/${type}/${id}`);
 
     return parseNeo4jData(response.data);
   } catch (error) {
@@ -105,7 +98,10 @@ export const fetchProfileStats = async (accessToken: string) => {
   }
 };
 
-export const pressLikeSpotifyId = async (spotify_id: string, accessToken: string) => {
+export const pressLikeSpotifyId = async (
+  spotify_id: string,
+  accessToken: string
+) => {
   try {
     await axios.post(
       `${baseUrl}/like`,
@@ -119,7 +115,7 @@ export const pressLikeSpotifyId = async (spotify_id: string, accessToken: string
   } catch (err) {
     console.log(err);
   }
-}
+};
 
 export const pressLike = async (nodeId: number, accessToken: string) => {
   try {
@@ -150,7 +146,10 @@ export const dropLike = async (nodeId: number, accessToken: string) => {
   }
 };
 
-export const dropLikeSpotifyId = async (spotify_id: string, accessToken: string) => {
+export const dropLikeSpotifyId = async (
+  spotify_id: string,
+  accessToken: string
+) => {
   try {
     await axios.delete(`${baseUrl}/like`, {
       headers: {
@@ -163,16 +162,16 @@ export const dropLikeSpotifyId = async (spotify_id: string, accessToken: string)
   }
 };
 
-export const checkIfLiked = async (nodeId: number, accessToken: string): Promise<boolean> => {
+export const checkIfLiked = async (
+  nodeId: number,
+  accessToken: string
+): Promise<boolean> => {
   try {
-    const result = await axios.get(
-      `${baseUrl}/like/db?nodeId=${nodeId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const result = await axios.get(`${baseUrl}/like/db?nodeId=${nodeId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
     return result.data;
   } catch (err) {
@@ -181,7 +180,10 @@ export const checkIfLiked = async (nodeId: number, accessToken: string): Promise
   }
 };
 
-export const checkIfLikedSpotifyId = async (spotify_id: string, accessToken: string): Promise<boolean> => {
+export const checkIfLikedSpotifyId = async (
+  spotify_id: string,
+  accessToken: string
+): Promise<boolean> => {
   try {
     const result = await axios.get(`${baseUrl}/like?spotifyId=${spotify_id}`, {
       headers: {
@@ -194,7 +196,7 @@ export const checkIfLikedSpotifyId = async (spotify_id: string, accessToken: str
     console.log(err);
     return false;
   }
-}
+};
 
 export const fetchUserProfileData = async (token: string) => {
   try {
@@ -203,21 +205,24 @@ export const fetchUserProfileData = async (token: string) => {
     });
 
     return response.data;
-  } catch(err) {
-    console.log(err);
-    return null;
-  }
-}
-
-export const fetchDatabaseStats = async () => {
-  try {
-    const response = await axios.get(`${baseUrl}/db-stats`);
-    return { nodes: response.data[0], relationships: response.data[1] } as DbStats;
   } catch (err) {
     console.log(err);
     return null;
   }
-}
+};
+
+export const fetchDatabaseStats = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/db-stats`);
+    return {
+      nodes: response.data[0],
+      relationships: response.data[1],
+    } as DbStats;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
 
 export const getSpotifyItem = async (type: string, id: string) => {
   try {
@@ -227,7 +232,7 @@ export const getSpotifyItem = async (type: string, id: string) => {
     console.log(err);
     return null;
   }
-}
+};
 
 export const isItemInDatabase = async (id: string): Promise<boolean | null> => {
   try {
@@ -237,4 +242,4 @@ export const isItemInDatabase = async (id: string): Promise<boolean | null> => {
     console.log(err);
     return null;
   }
-}
+};

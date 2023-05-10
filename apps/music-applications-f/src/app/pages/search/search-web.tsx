@@ -3,9 +3,11 @@ import Search from '../../components/search/search.component';
 import './search.styles.scss';
 import { parseSpotifyData } from '../../utils';
 import { DropdownItem } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 const SearchWebPage = () => {
   const urlToLogin = 'http://localhost:4200/api/login';
+  const router = useNavigate();
 
   const onUnlockButtonClick = () => {
     window.open(urlToLogin, '_blank');
@@ -13,10 +15,7 @@ const SearchWebPage = () => {
   };
 
   const callbackDetailsView = (instance: DropdownItem) => {
-    window.open(
-      `${window.location.origin}/${instance.type}/${instance.spotify_id}`,
-      '_blank'
-    );
+    router(`/web/${instance.type}/${instance.spotify_id}`);
   };
 
   const selectorParamsArray = [

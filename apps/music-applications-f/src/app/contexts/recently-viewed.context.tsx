@@ -1,9 +1,9 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
-import { RecentlyViewedItem } from '../types';
+import { ItemPreview } from '../types';
 
 interface RecentlyViewedContextType {
-  recentlyViewed: RecentlyViewedItem[];
-  addItem: (newItem: RecentlyViewedItem) => void;
+  recentlyViewed: ItemPreview[];
+  addItem: (newItem: ItemPreview) => void;
 }
 
 export const RecentlyViewedContext = createContext<RecentlyViewedContextType>({
@@ -17,7 +17,7 @@ export const RecentlyViewedContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewedItem[]>(
+  const [recentlyViewed, setRecentlyViewed] = useState<ItemPreview[]>(
     []
   );
 
@@ -32,7 +32,7 @@ export const RecentlyViewedContextProvider = ({
     }
   };
 
-  const addItem = (newItem: RecentlyViewedItem) => {
+  const addItem = (newItem: ItemPreview) => {
     if (
       !recentlyViewed.find(
         (value) => value.label === newItem.label && value.type === newItem.type

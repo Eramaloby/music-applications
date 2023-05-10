@@ -2,6 +2,7 @@ export interface DropdownItem {
   type: string;
   label: string;
   spotify_id?: string;
+  database_id?: number;
 }
 
 export interface Image {
@@ -104,6 +105,7 @@ export interface SpotifyPlaylist {
 export interface Neo4jDbItem {
   type: string;
   name: string;
+  id: number;
   properties:
     | TrackProperties
     | ArtistProperties
@@ -219,7 +221,8 @@ export enum ProfilePageStates {
   DEFAULT = 'default',
 }
 
-export interface RecentlyViewedItem {
+export interface ItemPreview {
+  databaseId?: number;
   spotify_id?: string;
   image?: Image;
   label: string;

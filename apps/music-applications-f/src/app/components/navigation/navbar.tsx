@@ -60,8 +60,8 @@ const ApplicationRouter = () => {
           <Route path="/ranking" element={<RankingNeuralNetworkPage />}></Route>
           <Route path="/search" element={<SearchPageDb />}></Route>
           <Route path="/search-web" element={<SearchWebPage />}></Route>
-          <Route path="/:type/:id" element={<SpotifyContentPage />}></Route>
-          <Route path='items/:type/:label' element={<DatabaseItemPage/>}></Route>
+          <Route path="web/:type/:id" element={<SpotifyContentPage />}></Route>
+          <Route path="db/:type/:id" element={<DatabaseItemPage />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
           <Route path="/signup" element={<SignUpPage />}></Route>
           <Route path="/signin" element={<SignInPage />}></Route>

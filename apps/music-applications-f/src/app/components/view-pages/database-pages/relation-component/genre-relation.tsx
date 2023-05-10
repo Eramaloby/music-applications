@@ -6,7 +6,7 @@ const GenreRelation = ({
   routingCallback,
 }: {
   item: Neo4jDbItem;
-  routingCallback: (type: string, name: string) => void;
+  routingCallback: (type: string, id: number) => void;
 }) => {
   const performsInGenreToArtistRelations = item.relations.filter(
     (relation: { type: string; target: Neo4jDbItem }) =>

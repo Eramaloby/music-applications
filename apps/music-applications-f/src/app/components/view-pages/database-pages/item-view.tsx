@@ -38,27 +38,31 @@ const DatabaseItemPage = () => {
     }
   };
 
-  const routingCallback = (type: string, label: string) =>
-    router(`/items/${type}/${label}`);
+  const routingCallback = (type: string, id: number) =>
+    router(`/db/${type}/${id}`);
 
   useEffect(() => {
     const asyncWrapper = async () => {
-      if (params['type'] && params['label']) {
+      if ((params['id'], params['type'])) {
         const fetchedItem = await fetchDatabaseItem(
-          params['type'],
-          params['label']
+          params['id'] as unknown as number,
+          params['type']
         );
 
         if (fetchedItem) {
           setItem(fetchedItem);
-          addItem({ type: fetchedItem.type, label: fetchedItem.name });
+          addItem({
+            type: fetchedItem.type,
+            label: fetchedItem.name,
+            databaseId: fetchedItem.id,
+          });
         }
       }
     };
 
     asyncWrapper();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params['type'], params['label']]);
+  }, [params['id'], params['type']]);
 
   useEffect(() => {
     const asyncWrapper = async () => {

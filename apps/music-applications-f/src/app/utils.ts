@@ -54,6 +54,7 @@ export const parseNeo4jData = (data: any[]) => {
   // check bug when length is 0
   const type = data[0]._fields[0].labels[0];
   const name = data[0]._fields[0].properties.name;
+  const id = data[0]._fields[0].properties.id;
   const properties = data[0]._fields[0].properties;
 
   const relations = [];
@@ -72,7 +73,13 @@ export const parseNeo4jData = (data: any[]) => {
     });
   }
 
-  return { type, name, properties, relations } as unknown as Neo4jDbItem;
+  return {
+    type,
+    name,
+    id,
+    properties,
+    relations,
+  } as unknown as Neo4jDbItem;
 };
 
 export const parseNeo4jRecords = (data: any) => {
@@ -82,6 +89,7 @@ export const parseNeo4jRecords = (data: any) => {
       type: record.labels.at(0),
       label: record.properties.name,
       spotify_id: record.properties.spotify_id,
+      database_id: record.properties.id,
     };
   });
 };

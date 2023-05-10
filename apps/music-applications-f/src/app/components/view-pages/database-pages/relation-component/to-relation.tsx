@@ -5,14 +5,12 @@ export const ToRelation = ({
   routingCallback,
 }: {
   target: Neo4jDbItem;
-  routingCallback: (type: string, name: string) => void;
+  routingCallback: (type: string, id: number) => void;
 }) => {
-  // target.name is not accessible because maloy is daun
-
   return (
     <div
       className="database-item-to-relation"
-      onClick={() => routingCallback(target.type, target.properties.name)}
+      onClick={() => routingCallback(target.type, target.properties.id)}
     >
       {target.properties.name}
     </div>

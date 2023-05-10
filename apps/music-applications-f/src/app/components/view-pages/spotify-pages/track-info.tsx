@@ -22,7 +22,7 @@ const TrackInfo = ({
   const [lyrics, setLyrics] = useState<string[]>([]);
   const router = useNavigate();
   const artistNameClickCallback = (spotify_id: string) =>
-    router(`/artist/${spotify_id}`);
+    router(`/web/artist/${spotify_id}`);
 
   const onMicrophoneClick = async () => {
     const wrapper = async () => {
