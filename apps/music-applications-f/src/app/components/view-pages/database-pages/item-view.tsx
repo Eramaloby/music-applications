@@ -13,6 +13,7 @@ import {
   pressLike,
 } from '../../../requests';
 import { useNavigate, useParams } from 'react-router-dom';
+import { RecentlyViewedContext } from '../../../contexts/recently-viewed.context';
 
 const DatabaseItemPage = () => {
   // default view is relation view
@@ -22,6 +23,7 @@ const DatabaseItemPage = () => {
   const [isRelationViewSelected, setIsRelationViewSelected] = useState(true);
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   const { currentUser } = useContext(UserContext);
+  const { addItem } = useContext(RecentlyViewedContext);
 
   // extract to different file later
   const handleLikeChanges = async (newState: boolean) => {
@@ -49,6 +51,7 @@ const DatabaseItemPage = () => {
 
         if (fetchedItem) {
           setItem(fetchedItem);
+          addItem({ type: fetchedItem.type, label: fetchedItem.name });
         }
       }
     };

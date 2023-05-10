@@ -12,7 +12,6 @@ const RelationViewPage = ({
   item: Neo4jDbItem;
   routingCallback: (type: string, name: string) => void;
 }) => {
-  console.log(item);
   return (
     <div className='relation-view-content-wrapper'>
       <div className='wrapper-kirilla-daunova'>

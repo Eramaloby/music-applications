@@ -1,12 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { ArtistTrackName } from './page-utils';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AppModal from '../../ui-elements/modal';
 import axios from 'axios';
 import { convertDuration, translateLyricsToVerses } from '../../../utils';
 import { SpotifyTrack } from '../../../types';
 import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
 import { ReactComponent as Heart } from '../../../../assets/heart.svg';
+import { RecentlyViewedContext } from '../../../contexts/recently-viewed.context';
 
 const TrackInfo = ({
   track,
@@ -38,6 +39,17 @@ const TrackInfo = ({
 
     await wrapper();
   };
+
+  const { addItem } = useContext(RecentlyViewedContext);
+  useEffect(() => {
+    addItem({
+      spotify_id: track.spotify_id,
+      type: track.type,
+      label: track.label,
+      image: track.album.images[2] ? track.album.images[2] : undefined,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="item-page-content">

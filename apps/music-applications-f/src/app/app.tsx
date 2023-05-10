@@ -3,7 +3,7 @@ import ApplicationRouter from './components/navigation/navbar';
 import './app-styles.scss';
 import { UserContextProvider } from './contexts/user.context';
 import { BrowserRouter } from 'react-router-dom';
-import { RecentlyViewedContextProvider } from './contexts/recently.viewed.content';
+import { RecentlyViewedContextProvider } from './contexts/recently-viewed.context';
 
 export function App() {
   return (

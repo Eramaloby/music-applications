@@ -25,15 +25,19 @@ import {
   SpotifyTrack,
 } from '../../types';
 import { UserContext } from '../../contexts/user.context';
-import { RecentlyViewedContext } from '../../contexts/recently.viewed.content';
-import { checkIfLikedSpotifyId, dropLikeSpotifyId, getSpotifyItem, isItemInDatabase, pressLikeSpotifyId } from '../../requests';
+import {
+  checkIfLikedSpotifyId,
+  dropLikeSpotifyId,
+  getSpotifyItem,
+  isItemInDatabase,
+  pressLikeSpotifyId,
+} from '../../requests';
 
 // todo: refactoring
 const SpotifyContentPage = () => {
   const urlToLogin = 'http://localhost:4200/api/login';
 
   const { currentUser } = useContext(UserContext);
-  const { addItem } = useContext(RecentlyViewedContext);
 
   const router = useNavigate();
   const params = useParams();
@@ -116,7 +120,10 @@ const SpotifyContentPage = () => {
     const asyncWrapper = async () => {
       if (currentUser && isSavedToDb && item) {
         if (currentUser && isSavedToDb) {
-          const isLiked = await checkIfLikedSpotifyId(item.spotify_id, currentUser.accessToken);
+          const isLiked = await checkIfLikedSpotifyId(
+            item.spotify_id,
+            currentUser.accessToken
+          );
           setIsLiked(isLiked);
         } else {
           setIsLiked(null);
@@ -131,12 +138,14 @@ const SpotifyContentPage = () => {
     const asyncWrapper = async () => {
       if (parsingStrategy) {
         try {
-          const rawData = await getSpotifyItem(params['type'] as string, params['id'] as string);
+          const rawData = await getSpotifyItem(
+            params['type'] as string,
+            params['id'] as string
+          );
           if (rawData) {
-            const item = parsingStrategy(rawData); 
-            setItem(item);
+            const parsedItem = parsingStrategy(rawData);
+            setItem(parsedItem);
           }
-          
 
           const isExists = await isItemInDatabase(params['id'] as string);
 

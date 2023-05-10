@@ -1,6 +1,8 @@
 import { SpotifyArtist } from '../../../types';
 import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
 import { ReactComponent as Heart } from '../../../../assets/heart.svg';
+import { useContext, useEffect } from 'react';
+import { RecentlyViewedContext } from '../../../contexts/recently-viewed.context';
 
 const ArtistInfo = ({
   artist,
@@ -11,6 +13,17 @@ const ArtistInfo = ({
   isLiked: boolean | null;
   handleLikeChanges: (value: boolean) => void;
 }) => {
+  const { addItem } = useContext(RecentlyViewedContext);
+  useEffect(() => {
+    addItem({
+      spotify_id: artist.spotify_id,
+      type: artist.type,
+      label: artist.label,
+      image: artist.images[2] ? artist.images[2] : undefined,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="item-page-content">
       <div className="artist-item-page-details-header">

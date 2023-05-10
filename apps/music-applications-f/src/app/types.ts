@@ -220,8 +220,8 @@ export enum ProfilePageStates {
 }
 
 export interface RecentlyViewedItem {
-  spotify_id: string;
-  image: Image;
+  spotify_id?: string;
+  image?: Image;
   label: string;
   type: string;
 }
