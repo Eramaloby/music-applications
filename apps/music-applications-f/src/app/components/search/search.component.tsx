@@ -1,9 +1,11 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import './search.styles.scss';
 import { DropdownItem } from '../../types';
 import InteractiveDropdown from '../interactive-dropdown/interactive-dropdown.component';
 import ApplicationSelector from '../ui-elements/selector';
+import ViewPanelContainer from '../recently-viewed-panel/view-panel-container';
+import { RecentlyViewedContext } from '../../contexts/recently-viewed.context';
 
 type SearchComponentProps = {
   isInputDisabled: boolean;
@@ -25,6 +27,7 @@ const Search = ({
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState('');
   const [searchWord, setSearchWord] = useState('all');
+  const { recentlyViewed } = useContext(RecentlyViewedContext);
 
   const [errorText, setErrorText] = useState('');
 
@@ -71,11 +74,16 @@ const Search = ({
         options={selectorOptions}
         onChange={(value: string) => setSearchWord(value)}
       ></ApplicationSelector>
-      {query && (
+      {query ? (
         <InteractiveDropdown
           onItemClickCallback={instanceClickCallback}
           results={results}
         ></InteractiveDropdown>
+      ) : (
+        <ViewPanelContainer
+          title="Recently viewed"
+          items={recentlyViewed}
+        ></ViewPanelContainer>
       )}
       {results.length === 0 && query && (
         <div className="error-message">{errorText}</div>
