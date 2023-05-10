@@ -14,8 +14,8 @@ const RelationViewPage = ({
 }) => {
   console.log(item);
   return (
-    <div>
-      <div>
+    <div className='relation-view-content-wrapper'>
+      <div className='wrapper-kirilla-daunova'>
         {item && (
           <>
             {item.type === 'Genre' && (

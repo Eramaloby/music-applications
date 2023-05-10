@@ -1,13 +1,7 @@
-import { useState } from 'react';
-
-import DatabaseItemPage from '../../components/view-pages/database-pages/item-view';
-import AppModal from '../../components/ui-elements/modal';
-
 import './search.styles.scss';
 import { parseNeo4jRecords } from '../../utils';
 import Search from '../../components/search/search.component';
-import { DropdownItem, Neo4jDbItem } from '../../types';
-import { fetchDatabaseItem } from '../../requests';
+import { DropdownItem } from '../../types';
 
 const SearchPageDb = () => {
   const selectorParamsArray = [
@@ -19,23 +13,13 @@ const SearchPageDb = () => {
     { value: 'playlist', name: 'Playlist' },
   ];
   const endpointUrl = 'http://localhost:4200/api/search?';
-  const [modal, setModal] = useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = useState<Neo4jDbItem>();
-
   // callbacks to pass
   const callbackOnInstanceClick = async (instance: DropdownItem) => {
-    const item = await fetchDatabaseItem(instance.type, instance.label);
-    if (item) {
-      setSelectedItem(item);
-      setModal(true);
-    }
-  };
-
-  const handleRelationClick = async (type: string, name: string) => {
-    const item = await fetchDatabaseItem(type, name);
-    if (item) {
-      setSelectedItem(item);
-    }
+    // route to db page
+    window.open(
+      `${window.location.origin}/items/${instance.type}/${instance.label}`,
+      '_blank'
+    );
   };
 
   return (
@@ -51,21 +35,6 @@ const SearchPageDb = () => {
         parser={parseNeo4jRecords}
         selectorClassName="livesearch-selector"
       ></Search>
-      <div>
-        {selectedItem && (
-          <AppModal
-            visible={modal}
-            setVisible={setModal}
-            isHiddenOnClick={false}
-          >
-            {/* Write Classes That decompose item */}
-            <DatabaseItemPage
-              item={selectedItem}
-              routingCallback={handleRelationClick}
-            ></DatabaseItemPage>
-          </AppModal>
-        )}
-      </div>
     </div>
   );
 };

@@ -6,16 +6,19 @@ import RelationViewPage from './relation';
 import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
 import { ReactComponent as Heart } from '../../../../assets/heart.svg';
 import { UserContext } from '../../../contexts/user.context';
-import { checkIfLiked, dropLike, pressLike } from '../../../requests';
+import {
+  checkIfLiked,
+  dropLike,
+  fetchDatabaseItem,
+  pressLike,
+} from '../../../requests';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const DatabaseItemPage = ({
-  item,
-  routingCallback,
-}: {
-  item: Neo4jDbItem;
-  routingCallback: (type: string, name: string) => void;
-}) => {
+const DatabaseItemPage = () => {
   // default view is relation view
+  const params = useParams();
+  const router = useNavigate();
+  const [item, setItem] = useState<Neo4jDbItem>();
   const [isRelationViewSelected, setIsRelationViewSelected] = useState(true);
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   const { currentUser } = useContext(UserContext);
@@ -33,9 +36,30 @@ const DatabaseItemPage = ({
     }
   };
 
+  const routingCallback = (type: string, label: string) =>
+    router(`/items/${type}/${label}`);
+
   useEffect(() => {
     const asyncWrapper = async () => {
-      if (currentUser) {
+      if (params['type'] && params['label']) {
+        const fetchedItem = await fetchDatabaseItem(
+          params['type'],
+          params['label']
+        );
+
+        if (fetchedItem) {
+          setItem(fetchedItem);
+        }
+      }
+    };
+
+    asyncWrapper();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params['type'], params['label']]);
+
+  useEffect(() => {
+    const asyncWrapper = async () => {
+      if (currentUser && item) {
         if (currentUser) {
           const result = await checkIfLiked(
             item.properties.id,
@@ -83,17 +107,19 @@ const DatabaseItemPage = ({
           </div>
         )}
       </div>
-      <div className="database-item-page-content">
-        {isRelationViewSelected ? (
-          <RelationViewPage
-            item={item}
-            routingCallback={routingCallback}
-          ></RelationViewPage>
-        ) : (
-          // <RelationViewPage item={item}></RelationViewPage>
-          <GraphViewPage item={item}></GraphViewPage>
-        )}
-      </div>
+      {item && (
+        <div className="database-item-page-content">
+          {isRelationViewSelected ? (
+            <RelationViewPage
+              item={item}
+              routingCallback={routingCallback}
+            ></RelationViewPage>
+          ) : (
+            // <RelationViewPage item={item}></RelationViewPage>
+            <GraphViewPage item={item}></GraphViewPage>
+          )}
+        </div>
+      )}
     </div>
   );
 };
