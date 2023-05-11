@@ -233,3 +233,13 @@ export interface DbStats {
   nodes: number;
   relationships: number;
 }
+
+
+export interface LyricsNeuralNetworkParams {
+  author: string;
+  first_line: string;
+  length: number;
+  freedom_index: number;
+  stop_words: string[];
+  isExplicit: boolean;
+}
