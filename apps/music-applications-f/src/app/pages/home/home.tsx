@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 
 import background_image from '../../../assets/backgr.png';
@@ -21,7 +20,7 @@ const HomePage = () => {
 
   const { currentUser } = useContext(UserContext);
 
-  const [info, setInfo] = useState([
+  const [info] = useState([
     {
       header: 'User system',
       src: '../../../assets/user.png',
