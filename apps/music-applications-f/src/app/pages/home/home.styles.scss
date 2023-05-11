@@ -1,16 +1,47 @@
+
+
 .home-page-wrapper {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
-  margin-top: 3%;
+  height: 1000px;
+  overflow-y:scroll;
   flex-direction: column;
-
+  background-size: 75%;
+  background-repeat:repeat-x;
+  filter: saturate(85%); 
+  .home-page-welcome{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+    padding: 10px;
+    height: 91px;
+    width: 500px;
+    background: radial-gradient(black, rgba(0,0,0,0));
+  }
   .home-page-db-stats {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
+    .element-list{
+      display: flex;
+      flex-wrap: nowrap;
+      .element{
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      justify-content: space-evenly;
+      align-items: center; 
+      height: 350px;
+      width: 300px;
+      margin: 10px;
+      padding: 10px;
+      background-color: rgba(109, 109, 109, 0.9);
+      border-radius: 5px;
+      }
+    }
     .db-stats-count-of-nodes,
     .db-stats-count-of-relationships {
       height: 50px;
@@ -22,6 +53,7 @@
     }
 
     .refresh-button-container {
+
       .refresh-button {
         margin-top: 10px;
         height: 40px;
@@ -42,13 +74,29 @@
   }
 
   .info-container {
+    
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
+    vertical-align: middle;
 
+    align-items: center;
+    height: 200px;
+    width: 300px;
+    margin: 10px;
+    padding: 10px;
+    background-color: rgba(109, 109, 109, 0.8);
+    border-radius: 5px;
+    .text {
+      display:flex;
+      text-align: center;
+      }
     .link {
-      font-size: xx-large;
-      color: blue;
+      background-color: rgba(82, 82, 82, 0.9);
+      border-radius: 5px;
+      margin: 10px;
+      padding: 10px;
+      font-size: x-large;
       font-weight: bold;
 
       &:hover {
