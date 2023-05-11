@@ -79,11 +79,13 @@ const Search = ({
           onItemClickCallback={instanceClickCallback}
           results={results}
         ></InteractiveDropdown>
-      ) : (
+      ) : recentlyViewed ? (
         <ViewPanelContainer
           title="Recently viewed"
           items={recentlyViewed}
         ></ViewPanelContainer>
+      ) : (
+        <div></div>
       )}
       {results.length === 0 && query && (
         <div className="error-message">{errorText}</div>
