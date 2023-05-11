@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { User } from '../types';
-import axios from 'axios';
+import { fetchUserProfileData } from '../requests';
 
 export interface UserContextType {
   currentUser: User | null;
@@ -25,20 +25,20 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const logInUser = async (accessToken: string) => {
-    const response = await axios.get(`http://localhost:4200/api/currentUser`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const response = await fetchUserProfileData(accessToken);
 
-    setCurrentUser({
-      ...currentUser,
-      accessToken: accessToken,
-      username: response.data.username,
-      password: response.data.password,
-      email: response.data.email,
-      gender: response.data.gender,
-      id: response.data.id,
-      dateOfBirth: response.data.dateOfBirth,
-    });
+    if (response) {
+      setCurrentUser({
+        ...currentUser,
+        accessToken: accessToken,
+        username: response.username,
+        password: response.password,
+        email: response.email,
+        gender: response.gender,
+        id: response.id,
+        dateOfBirth: response.dateOfBirth,
+      });
+    }
   };
 
   const setUser = async (accessToken: string | null) => {
@@ -47,11 +47,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
       // store token in local storage exposes application to XSS attacks
       const receivedAt = new Date().getTime();
+      console.log('store access token', accessToken);
       localStorage.setItem(
         'tokenData',
         JSON.stringify({
-          accessToken: accessToken,
-          receivedAt: receivedAt,
+          accessToken,
+          receivedAt,
         } as AccessTokenMetadata)
       );
     } else {
@@ -69,11 +70,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
       const unparsed = localStorage.getItem('tokenData');
       if (unparsed) {
         const tokenMetadata = JSON.parse(unparsed) as AccessTokenMetadata;
-
         const elapsedTimeMinutes = Math.floor(
           (new Date().getTime() - tokenMetadata.receivedAt) / 60000
         );
-
 
         if (elapsedTimeMinutes < 45) {
           await logInUser(tokenMetadata.accessToken);
@@ -82,7 +81,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     asyncWrapper();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value = { currentUser, setUser, signOut };

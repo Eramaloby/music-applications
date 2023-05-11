@@ -26,12 +26,9 @@ export class DatabaseManager {
   private searchPlaylistQuery = (playlistName: string) =>
     `MATCH (obj: Playlist) WHERE ToLower(obj.name) CONTAINS "${playlistName}" return obj`;
 
-  public findNodeAndRelationsByName = async (
-    instanceType: string,
-    name: string
-  ) => {
+  public findNodeAndRelationsWithId = async (id: number, type: string) => {
     const res = await this.dbService.read(
-      `MATCH (obj: ${instanceType} {name: "${name}"})-[rel]-(o_obj) return obj, rel, o_obj`
+      `MATCH (obj: ${type} { id: "${id}" })-[rel]-(o_obj) return obj, rel, o_obj`
     );
 
     return res.records;

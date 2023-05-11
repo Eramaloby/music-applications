@@ -1,14 +1,19 @@
 //Main form
 .database-item-page-wrapper {
+  margin: 50px;
   display: flex;
   flex-direction: row;
-  // fix later to auto adjust
-  width: 100vh;
-  height: 30vw;
-  height: 600px;
+  justify-content: center;
+  border: 2px solid #1fdf64;
 }
 
+.relation-view-content-wrapper {
+  padding: 10px;
+}
+
+
 .database-item-page-sidebar-menu {
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -49,9 +54,14 @@
     display: flex;
     justify-content: space-between;
     padding-bottom: 3%;
+    width: 100%;
 
     .database-item-name-text {
+      width: 100%;
       font-size: xx-large;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .database-item-author-toartist-relation {
@@ -63,6 +73,11 @@
   }
 }
 
+.database-item-text {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 .database-item-author-description-text,
 .database-item-author-text {
   display: flex;
@@ -91,12 +106,13 @@
 .database-item-scroll {
   overflow: scroll;
   overflow-x: hidden;
-  height: 530px;
+  height: 500px;
   width: 250px;
 }
 
-.database-item-torelation {
+.database-item-to-relation {
   padding: 1%;
+  cursor: pointer;
 }
 
 .database-item-scroll::-webkit-scrollbar {
@@ -121,6 +137,7 @@
 
 //Graph-form
 .database-graph-form {
+  padding: 10px;
   font-family: sans-serif;
   text-align: center;
   display: flex;

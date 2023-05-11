@@ -1,16 +1,13 @@
-import { useState } from 'react';
-import axios from 'axios';
-
-import DatabaseItemPage from '../../components/view-pages/database-pages/item-view';
-import AppModal from '../../components/ui-elements/modal';
-
 import './search.styles.scss';
-import { parseNeo4jData, parseNeo4jRecords } from '../../utils';
+import { parseNeo4jRecords } from '../../utils';
 import Search from '../../components/search/search.component';
-import { DropdownItem, Neo4jDbItem } from '../../types';
+import { DropdownItem } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
-const SearchPageDb = () =>  {
+const SearchPageDb = () => {
+  const router = useNavigate();
   const selectorParamsArray = [
+    { value: 'all', name: 'All' },
     { value: 'artist', name: 'Artists' },
     { value: 'track', name: 'Tracks' },
     { value: 'genre', name: 'Genres' },
@@ -18,22 +15,12 @@ const SearchPageDb = () =>  {
     { value: 'playlist', name: 'Playlist' },
   ];
   const endpointUrl = 'http://localhost:4200/api/search?';
-  const searchWordInitialState = 'All';
-
-  const [modal, setModal] = useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = useState<Neo4jDbItem>();
-
   // callbacks to pass
-  const callbackOnInstanceClick = (instance: DropdownItem) => {
-    axios
-      .get(
-        `http://localhost:4200/api/node-relation/${instance.type}/${instance.label}`
-      )
-      .then((response) => {
-        setSelectedItem(parseNeo4jData(response.data));
-      });
-
-    setModal(true);
+  const callbackOnInstanceClick = async (instance: DropdownItem) => {
+    // route to db page
+    if (instance.database_id) {
+      router(`/db/${instance.type}/${instance.database_id}`);
+    }
   };
 
   return (
@@ -45,26 +32,12 @@ const SearchPageDb = () =>  {
         isInputDisabled={false}
         selectorOptions={selectorParamsArray}
         instanceClickCallback={callbackOnInstanceClick}
-        isSelectorDefaultValueDisabled={false}
-        searchWordInitialState={searchWordInitialState}
         endpointUrl={endpointUrl}
         parser={parseNeo4jRecords}
         selectorClassName="livesearch-selector"
       ></Search>
-      <div>
-        {selectedItem && (
-          <AppModal
-            visible={modal}
-            setVisible={setModal}
-            isHiddenOnClick={false}
-          >
-            {/* Write Classes That decompose item */}
-            <DatabaseItemPage item={selectedItem}></DatabaseItemPage>
-          </AppModal>
-        )}
-      </div>
     </div>
   );
-}
+};
 
 export default SearchPageDb;

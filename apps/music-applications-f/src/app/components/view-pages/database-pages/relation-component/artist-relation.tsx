@@ -1,28 +1,40 @@
-import { AlbumProperties, GenreProperties, Neo4jDbItem, PlaylistProperties, TrackProperties } from "../../../../types";
+import { Neo4jDbItem } from '../../../../types';
+import ToRelation from './to-relation';
 
-const ArtistRelation = ({ item }: { item: Neo4jDbItem }) => {
+const ArtistRelation = ({
+  item,
+  routingCallback,
+}: {
+  item: Neo4jDbItem;
+  routingCallback: (type: string, id: number) => void;
+}) => {
   const authorToTrackRelations = item.relations.filter(
-    (relation: any) =>
+    (relation: { type: string; target: Neo4jDbItem }) =>
       relation.type === 'Author' && relation.target.type === 'Track'
   );
+
+  // const authorToTracks_TrackProperties = item.relations
+  //   .filter(
+  //     (relation: any) =>
+  //       relation.type === 'Author' && relation.target.type === 'Track'
+  //   )
+  //   .map((obj) => obj.target.properties) as TrackProperties[];
+
   const performsInGenreToGenreRelations = item.relations.filter(
-    (relation: any) =>
+    (relation: { type: string; target: Neo4jDbItem }) =>
       relation.type === 'PerformsInGenre' && relation.target.type === 'Genre'
   );
   const appearedAtToTrackRelations = item.relations.filter(
-    (relation: any) =>
+    (relation: { type: string; target: Neo4jDbItem }) =>
       relation.type === 'AppearedAt' && relation.target.type === 'Track'
-  );  
-
+  );
 
   return (
     <div className="database-item-page-text">
       <div className="database-item-name-author-text">
-        <div className="database-item-name-text">
-          {item.properties.name.toUpperCase()}
-        </div>
+        <div className="database-item-name-text">{item.name.toUpperCase()}</div>
         <div>
-          <div className="database-item-by">Added by:{' '}</div>
+          <div className="database-item-by">Added by: </div>
           <div>{item.properties.added_by}</div>
         </div>
       </div>
@@ -32,9 +44,13 @@ const ArtistRelation = ({ item }: { item: Neo4jDbItem }) => {
             <div>
               <div className="database-item-contains-head-text">Genres</div>
               {performsInGenreToGenreRelations.map(
-                (relation: any, index: number) => {
+                (
+                  relation: { type: string; target: Neo4jDbItem },
+                  index: number
+                ) => {
                   return (
                     <ToRelation
+                      routingCallback={routingCallback}
                       target={relation.target}
                       key={index}
                     ></ToRelation>
@@ -51,14 +67,20 @@ const ArtistRelation = ({ item }: { item: Neo4jDbItem }) => {
             <div>
               <div className="database-item-contains-head-text">Tracks</div>
               <div className="database-item-scroll">
-                {authorToTrackRelations.map((relation: any, index: number) => {
-                  return (
-                    <ToRelation
-                      target={relation.target}
-                      key={index}
-                    ></ToRelation>
-                  );
-                })}
+                {authorToTrackRelations.map(
+                  (
+                    relation: { type: string; target: Neo4jDbItem },
+                    index: number
+                  ) => {
+                    return (
+                      <ToRelation
+                        routingCallback={routingCallback}
+                        target={relation.target}
+                        key={index}
+                      ></ToRelation>
+                    );
+                  }
+                )}
               </div>
             </div>
           ) : (
@@ -72,9 +94,13 @@ const ArtistRelation = ({ item }: { item: Neo4jDbItem }) => {
                 AppearedTracks
               </div>
               {appearedAtToTrackRelations.map(
-                (relation: any, index: number) => {
+                (
+                  relation: { type: string; target: Neo4jDbItem },
+                  index: number
+                ) => {
                   return (
                     <ToRelation
+                      routingCallback={routingCallback}
                       target={relation.target}
                       key={index}
                     ></ToRelation>
@@ -86,15 +112,9 @@ const ArtistRelation = ({ item }: { item: Neo4jDbItem }) => {
             <div></div>
           )}
         </div>
-        </div>
+      </div>
     </div>
   );
 };
 
 export default ArtistRelation;
-
-const ToRelation = ({ target }: { target: any }) => {
-  return (
-    <div className="database-item-torelation">{target.properties.name}</div>
-  );
-};

@@ -5,6 +5,8 @@ import background_image from '../../../assets/backgr.png'
 
 import './home.styles.scss';
 import { useNavigate } from 'react-router-dom';
+import { DbStats } from '../../types';
+import { fetchDatabaseStats } from '../../requests';
 
 import ElementList from '../../components/ui-elements/el-list';
 
@@ -12,9 +14,9 @@ import ElementList from '../../components/ui-elements/el-list';
 const HomePage = () => {
   const router = useNavigate();
 
-  const [stats, setStats] = useState<{ nodesCount: number; relCount: number }>({
-    nodesCount: 0,
-    relCount: 0,
+  const [stats, setStats] = useState<DbStats>({
+    nodes: 0,
+    relationships: 0,
   });
 
   const [info, setInfo] = useState([
@@ -32,18 +34,15 @@ const HomePage = () => {
   ])
 
   const fetchResults = async () => {
-    axios.get('http://localhost:4200/api/db-stats').then((response) => {
-      setStats({ nodesCount: response.data[0], relCount: response.data[1] });
-    });
+    const result = await fetchDatabaseStats();
+    if (result) {
+      setStats({...result})
+    }
   };
 
   useEffect(() => {
     fetchResults();
   }, []);
-
-  // const onRefreshButtonClick = () => {
-  //   fetchResults();
-  // };
 
   return (
     <div className="home-page-wrapper" style={{'backgroundImage': `url(${background_image})`}}>

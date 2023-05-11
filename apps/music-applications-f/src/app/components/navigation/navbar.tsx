@@ -13,6 +13,7 @@ import { UserContext } from '../../contexts/user.context';
 import Profile from '../../pages/profile/profile.component';
 import SignUpPage from '../../pages/sign-up/sign-up';
 import { SignInPage } from '../../pages/sign-in/sign-in';
+import DatabaseItemPage from '../view-pages/database-pages/item-view';
 
 const ApplicationRouter = () => {
   const { currentUser } = useContext(UserContext);
@@ -59,7 +60,8 @@ const ApplicationRouter = () => {
           <Route path="/ranking" element={<RankingNeuralNetworkPage />}></Route>
           <Route path="/search" element={<SearchPageDb />}></Route>
           <Route path="/search-web" element={<SearchWebPage />}></Route>
-          <Route path="/:type/:id" element={<SpotifyContentPage />}></Route>
+          <Route path="web/:type/:id" element={<SpotifyContentPage />}></Route>
+          <Route path="db/:type/:id" element={<DatabaseItemPage />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
           <Route path="/signup" element={<SignUpPage />}></Route>
           <Route path="/signin" element={<SignInPage />}></Route>

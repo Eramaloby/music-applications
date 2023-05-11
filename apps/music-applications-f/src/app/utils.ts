@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
 import {
   Neo4jDbItem,
   SpotifyAlbum,
@@ -9,8 +8,11 @@ import {
   UserSignUpForm,
   UserSignInForm,
 } from './types';
-
-export const baseUrl = 'http://localhost:4200/api';
+import {
+  sendChangePasswordRequest,
+  sendSignInRequest,
+  sendSignUpRequest,
+} from './requests';
 
 export const convertDuration = (ms: number) => {
   const minutes = Math.floor(ms / 60000);
@@ -51,6 +53,8 @@ export const translateLyricsToVerses = (lyrics: string): string[] => {
 export const parseNeo4jData = (data: any[]) => {
   // check bug when length is 0
   const type = data[0]._fields[0].labels[0];
+  const name = data[0]._fields[0].properties.name;
+  const id = data[0]._fields[0].properties.id;
   const properties = data[0]._fields[0].properties;
 
   const relations = [];
@@ -58,10 +62,10 @@ export const parseNeo4jData = (data: any[]) => {
   for (const item of data) {
     const relation = item._fields[1];
     const targetNode = item._fields[2];
-
     // refactor this to multiple.
     relations.push({
       type: relation.type,
+      name: targetNode.properties.name,
       target: {
         type: targetNode.labels[0],
         properties: targetNode.properties,
@@ -69,7 +73,13 @@ export const parseNeo4jData = (data: any[]) => {
     });
   }
 
-  return { type, properties, relations } as unknown as Neo4jDbItem;
+  return {
+    type,
+    name,
+    id,
+    properties,
+    relations,
+  } as unknown as Neo4jDbItem;
 };
 
 export const parseNeo4jRecords = (data: any) => {
@@ -79,6 +89,7 @@ export const parseNeo4jRecords = (data: any) => {
       type: record.labels.at(0),
       label: record.properties.name,
       spotify_id: record.properties.spotify_id,
+      database_id: record.properties.id,
     };
   });
 };
@@ -340,18 +351,8 @@ export const subtractYearsFromDate = (date: Date, years: number) => {
 };
 
 export const tryToSignIn = async (form: UserSignInForm) => {
-  try {
-    const response = await axios.post(`${baseUrl}/auth/signin`, {
-      ...form,
-    });
-    if (response.status === 201) {
-      return response.data;
-    } else {
-      return null;
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  const token: string = (await sendSignInRequest(form)).accessToken;
+  return token;
 };
 
 export const tryToChangePassword = async (
@@ -359,29 +360,15 @@ export const tryToChangePassword = async (
   newPassword: string,
   accessToken: string
 ) => {
-  try {
-    const response = await axios.post(
-      `${baseUrl}/password/update`,
-      { password: currentPassword, newPassword: newPassword },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-
-    if (response.statusText === 'Created') {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
+  return await sendChangePasswordRequest(
+    currentPassword,
+    newPassword,
+    accessToken
+  );
 };
 
 export const tryToSignUp = async (form: UserSignUpForm) => {
+  // add validation from server
   const formValidationMessages = [
     validateUsername(form.username),
     validateEmail(form.email),
@@ -395,25 +382,10 @@ export const tryToSignUp = async (form: UserSignUpForm) => {
     (error: string) => error.length === 0
   );
 
+  // add validation from server
   if (isFormValid) {
-    try {
-      const response = await axios.post(`${baseUrl}/auth/signup`, {
-        username: form.username,
-        password: form.password,
-        email: form.email,
-        dateOfBirth: form.dateOfBirth,
-        gender: form.gender.toString(),
-      });
-
-      return response.statusText === 'Created';
-    } catch (error) {
-      console.log(error.response.data.message);
-
-      return false;
-    }
+    return await sendSignUpRequest(form);
   } else {
-    // show messages
-
     return false;
   }
 };

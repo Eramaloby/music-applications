@@ -1,16 +1,16 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import ApplicationSelect from '../ui-elements/select';
+import { useContext, useEffect, useState } from 'react';
 import './search.styles.scss';
 import { DropdownItem } from '../../types';
 import InteractiveDropdown from '../interactive-dropdown/interactive-dropdown.component';
+import ApplicationSelector from '../ui-elements/selector';
+import ViewPanelContainer from '../recently-viewed-panel/view-panel-container';
+import { RecentlyViewedContext } from '../../contexts/recently-viewed.context';
 
 type SearchComponentProps = {
   isInputDisabled: boolean;
-  isSelectorDefaultValueDisabled: boolean;
   selectorOptions: { value: string; name: string }[];
   instanceClickCallback: (item: DropdownItem) => void;
-  searchWordInitialState: string;
   endpointUrl: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parser: (data: any) => any;
@@ -18,9 +18,7 @@ type SearchComponentProps = {
 };
 const Search = ({
   isInputDisabled,
-  isSelectorDefaultValueDisabled,
   selectorOptions,
-  searchWordInitialState,
   endpointUrl,
   selectorClassName,
   instanceClickCallback,
@@ -28,14 +26,14 @@ const Search = ({
 }: SearchComponentProps) => {
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState('');
-  const [searchWord, setSearchWord] = useState(
-    searchWordInitialState.toLowerCase()
-  );
+  const [searchWord, setSearchWord] = useState('all');
+  const { recentlyViewed } = useContext(RecentlyViewedContext);
 
   const [errorText, setErrorText] = useState('');
 
   useEffect(() => {
     // move request code to different class later
+    // test
     const searchDelayTimer = setTimeout(() => {
       if (query !== '' && searchWord !== '') {
         axios.get(`${endpointUrl}${searchWord}=${query.toLowerCase()}`).then(
@@ -61,15 +59,6 @@ const Search = ({
   return (
     <div className="livesearch-wrapper">
       <div className="livesearch-input-container">
-        <ApplicationSelect
-          isDefaultDisabled={isSelectorDefaultValueDisabled}
-          defaultValueName={searchWordInitialState}
-          defaultValue={searchWordInitialState.toLowerCase()}
-          value={searchWord}
-          onChange={(value: string) => setSearchWord(value)}
-          options={selectorOptions}
-          selectorClassName={selectorClassName}
-        ></ApplicationSelect>
         <input
           disabled={isInputDisabled}
           className="livesearch-input"
@@ -79,11 +68,22 @@ const Search = ({
           onChange={(e) => setQuery(e.target.value)}
         ></input>
       </div>
-      {query && (
+      <ApplicationSelector
+        selectorClassName={selectorClassName}
+        value={searchWord}
+        options={selectorOptions}
+        onChange={(value: string) => setSearchWord(value)}
+      ></ApplicationSelector>
+      {query ? (
         <InteractiveDropdown
           onItemClickCallback={instanceClickCallback}
           results={results}
         ></InteractiveDropdown>
+      ) : (
+        <ViewPanelContainer
+          title="Recently viewed"
+          items={recentlyViewed}
+        ></ViewPanelContainer>
       )}
       {results.length === 0 && query && (
         <div className="error-message">{errorText}</div>

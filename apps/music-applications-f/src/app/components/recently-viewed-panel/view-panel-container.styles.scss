@@ -1,0 +1,20 @@
+.view-panel-wrapper {
+  width: 500px;
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  .view-panel-title {
+    font-weight: 700;
+    font-size: xx-large;
+  }
+
+  .view-panel-items {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+}

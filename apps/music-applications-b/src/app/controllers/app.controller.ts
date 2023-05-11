@@ -35,16 +35,6 @@ export class AppController {
     return user;
   }
 
-  @Get('node-relation/:type/:name')
-  async getNodeAndRelations(@Param() params) {
-    const res = await this.dbManager.findNodeAndRelationsByName(
-      params.type,
-      params.name
-    );
-
-    return res;
-  }
-
   @Get('exists/:id')
   async isThereInstanceWithId(@Param() params) {
     return await this.dbManager.isThereInstanceWithId(params.id);

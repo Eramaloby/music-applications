@@ -2,62 +2,78 @@ import { useContext, useEffect, useState } from 'react';
 import GraphViewPage from './graph-view';
 import './style.scss';
 import { Neo4jDbItem } from '../../../types';
-import RelationViewPage_2 from './relation';
+import RelationViewPage from './relation';
 import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
 import { ReactComponent as Heart } from '../../../../assets/heart.svg';
-import axios from 'axios';
 import { UserContext } from '../../../contexts/user.context';
+import {
+  checkIfLiked,
+  dropLike,
+  fetchDatabaseItem,
+  pressLike,
+} from '../../../requests';
+import { useNavigate, useParams } from 'react-router-dom';
+import { RecentlyViewedContext } from '../../../contexts/recently-viewed.context';
 
-const DatabaseItemPage = ({ item }: { item: Neo4jDbItem }) => {
+const DatabaseItemPage = () => {
   // default view is relation view
+  const params = useParams();
+  const router = useNavigate();
+  const [item, setItem] = useState<Neo4jDbItem>();
   const [isRelationViewSelected, setIsRelationViewSelected] = useState(true);
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   const { currentUser } = useContext(UserContext);
+  const { addItem } = useContext(RecentlyViewedContext);
 
   // extract to different file later
   const handleLikeChanges = async (newState: boolean) => {
     if (currentUser && item) {
       if (newState) {
-        await axios.post(
-          `http://localhost:4200/api/like/db`,
-          { nodeId: item.properties.id },
-          {
-            headers: {
-              Authorization: `Bearer ${currentUser.accessToken}`,
-            },
-          }
-        );
+        await pressLike(item.properties.id, currentUser.accessToken);
       } else {
-        await axios.delete(`http://localhost:4200/api/like/db`, {
-          headers: {
-            Authorization: `Bearer ${currentUser.accessToken}`,
-          },
-          params: { nodeId: item.properties.id },
-        });
+        await dropLike(item.properties.id, currentUser.accessToken);
       }
       // after awaiting
       setIsLiked(newState);
     }
   };
 
+  const routingCallback = (type: string, id: number) =>
+    router(`/db/${type}/${id}`);
+
   useEffect(() => {
     const asyncWrapper = async () => {
-      if (currentUser) {
+      if ((params['id'], params['type'])) {
+        const fetchedItem = await fetchDatabaseItem(
+          params['id'] as unknown as number,
+          params['type']
+        );
+
+        if (fetchedItem) {
+          setItem(fetchedItem);
+          addItem({
+            type: fetchedItem.type,
+            label: fetchedItem.name,
+            databaseId: fetchedItem.id,
+          });
+        }
+      }
+    };
+
+    asyncWrapper();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params['id'], params['type']]);
+
+  useEffect(() => {
+    const asyncWrapper = async () => {
+      if (currentUser && item) {
         if (currentUser) {
-          const result = await axios.get(
-            `http://localhost:4200/api/like/db?nodeId=${item.properties.id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${currentUser.accessToken}`,
-              },
-            }
+          const result = await checkIfLiked(
+            item.properties.id,
+            currentUser.accessToken
           );
 
-          if (result.data) {
-            setIsLiked(true);
-          } else {
-            setIsLiked(false);
-          }
+          setIsLiked(result);
         } else {
           setIsLiked(null);
         }
@@ -98,14 +114,19 @@ const DatabaseItemPage = ({ item }: { item: Neo4jDbItem }) => {
           </div>
         )}
       </div>
-      <div className="database-item-page-content">
-        {isRelationViewSelected ? (
-          <RelationViewPage_2 item={item}></RelationViewPage_2>
-        ) : (
-          // <RelationViewPage item={item}></RelationViewPage>
-          <GraphViewPage item={item}></GraphViewPage>
-        )}
-      </div>
+      {item && (
+        <div className="database-item-page-content">
+          {isRelationViewSelected ? (
+            <RelationViewPage
+              item={item}
+              routingCallback={routingCallback}
+            ></RelationViewPage>
+          ) : (
+            // <RelationViewPage item={item}></RelationViewPage>
+            <GraphViewPage item={item}></GraphViewPage>
+          )}
+        </div>
+      )}
     </div>
   );
 };

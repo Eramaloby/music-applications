@@ -6,7 +6,7 @@ import {
   validateEmailConfirm,
   validatePassword,
   validatePasswordConfirm,
-  validateUsername,
+  validateUsername
 } from '../../utils';
 import TextField from '@mui/material/TextField';
 import dayjs, { Dayjs } from 'dayjs';
@@ -29,7 +29,7 @@ const SignUpPage = () => {
     confirmPassword: '',
     username: '',
     dateOfBirth: new Date(),
-    gender: 'prefer not to say',
+    gender: 'prefer not to say'
   });
 
   const [signUpFormErrors, setSignUpFormErrors] =
@@ -38,7 +38,7 @@ const SignUpPage = () => {
       confirmEmail: '',
       password: '',
       confirmPassword: '',
-      username: '',
+      username: ''
     });
 
   const router = useNavigate();
@@ -52,7 +52,7 @@ const SignUpPage = () => {
     setSignUpForm({ ...signUpForm, confirmEmail: emailConfirm });
     setSignUpFormErrors({
       ...signUpFormErrors,
-      confirmEmail: validateEmailConfirm(emailConfirm, signUpForm.email),
+      confirmEmail: validateEmailConfirm(emailConfirm, signUpForm.email)
     });
   };
 
@@ -60,7 +60,7 @@ const SignUpPage = () => {
     setSignUpForm({ ...signUpForm, password: password });
     setSignUpFormErrors({
       ...signUpFormErrors,
-      password: validatePassword(password),
+      password: validatePassword(password)
     });
   };
 
@@ -71,7 +71,7 @@ const SignUpPage = () => {
       confirmPassword: validatePasswordConfirm(
         passwordConfirm,
         signUpForm.password
-      ),
+      )
     });
   };
 
@@ -79,7 +79,7 @@ const SignUpPage = () => {
     setSignUpForm({ ...signUpForm, username: username });
     setSignUpFormErrors({
       ...signUpFormErrors,
-      username: validateUsername(username),
+      username: validateUsername(username)
     });
   };
 
@@ -115,8 +115,8 @@ const SignUpPage = () => {
               style: {
                 color: 'white',
                 fontWeight: '400',
-                height: '15px',
-              },
+                height: '15px'
+              }
             }}
             color={'primary'}
             error={signUpFormErrors.email ? true : false}
@@ -132,7 +132,7 @@ const SignUpPage = () => {
             className="form-value-input"
             InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
             inputProps={{
-              style: { color: 'white', fontWeight: '400', height: '15px' },
+              style: { color: 'white', fontWeight: '400', height: '15px' }
             }}
             error={signUpFormErrors.confirmEmail ? true : false}
             label={'Enter your email again'}
@@ -170,52 +170,6 @@ const SignUpPage = () => {
           ></TextField>
         </div>
         <div className="form-value">
-          <div className="form-value-label">How should we call you?</div>
-          <TextField
-            className="form-value-input"
-            InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
-            inputProps={{
-              style: { color: 'white', fontWeight: '400', height: '15px' },
-            }}
-            error={signUpFormErrors.username ? true : false}
-            label={'Enter a profile name'}
-            value={signUpForm.username}
-            onChange={(e) => handleUsernameChange(e.target.value)}
-            helperText={signUpFormErrors.username}
-          ></TextField>
-          <div className="form-value-label-remark">
-            This will appear on your profile
-          </div>
-        </div>
-        <div className="form-value">
-          <div className="form-value-label">What's your date of birth?</div>
-          <div className="date-picker-wrapper form-value-input">
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                views={['year', 'month', 'day']}
-                value={dayjs(signUpForm.dateOfBirth)}
-                onChange={(e) => handleDateChange(e)}
-                slotProps={{
-                  textField: {
-                    InputLabelProps: {
-                      style: { color: 'white', fontWeight: '500' },
-                    },
-                    InputProps: {
-                      style: {
-                        color: 'white',
-                        fontWeight: '400',
-                        width: '200px',
-                      },
-                    },
-                  },
-                  layout: {},
-                }}
-                disableFuture
-              />
-            </LocalizationProvider>
-          </div>
-        </div>
-        <div className="form-value">
           <FormControl>
             <div className="form-value-label" id="radio-buttons-gender">
               What's your gender
@@ -244,6 +198,53 @@ const SignUpPage = () => {
               ></FormControlLabel>
             </RadioGroup>
           </FormControl>
+        </div>
+        <div className="form-value">
+          <div className="form-value-label">What's your date of birth?</div>
+          <div className="date-picker-wrapper form-value-input">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                views={['year', 'month', 'day']}
+                value={dayjs(signUpForm.dateOfBirth)}
+                onChange={(e) => handleDateChange(e)}
+                slotProps={{
+                  textField: {
+                    InputLabelProps: {
+                      style: { color: 'white', fontWeight: '500' }
+                    },
+                    InputProps: {
+                      style: {
+                        color: 'white',
+                        fontWeight: '400',
+                        height: '50px',
+                        width: '400px'
+                      }
+                    }
+                  },
+                  layout: {}
+                }}
+                disableFuture
+              />
+            </LocalizationProvider>
+          </div>
+        </div>
+        <div className="form-value form-value-username">
+          <div className="form-value-label">How should we call you?</div>
+          <TextField
+            className="form-value-input"
+            InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
+            inputProps={{
+              style: { color: 'white', fontWeight: '400', height: '15px' }
+            }}
+            error={signUpFormErrors.username ? true : false}
+            label={'Enter a profile name'}
+            value={signUpForm.username}
+            onChange={(e) => handleUsernameChange(e.target.value)}
+            helperText={signUpFormErrors.username}
+          ></TextField>
+          <div className="form-value-label-remark">
+            This will appear on your profile
+          </div>
         </div>
       </div>
       <div className="submit-btn-wrapper">

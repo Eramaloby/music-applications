@@ -2,28 +2,7 @@ export interface DropdownItem {
   type: string;
   label: string;
   spotify_id?: string;
-}
-
-export interface Neo4jDbItem {
-  type: string;
-  properties:
-    | TrackProperties
-    | ArtistProperties
-    | GenreProperties
-    | AlbumProperties
-    | PlaylistProperties;
-  relations: {
-    type: string;
-    target: {
-      type: string;
-      properties:
-        | TrackProperties
-        | ArtistProperties
-        | GenreProperties
-        | AlbumProperties
-        | PlaylistProperties;
-    };
-  }[];
+  database_id?: number;
 }
 
 export interface Image {
@@ -121,11 +100,29 @@ export interface SpotifyPlaylist {
     };
   }[];
 }
+
+/* Db related interfaces */
+export interface Neo4jDbItem {
+  type: string;
+  name: string;
+  id: number;
+  properties:
+    | TrackProperties
+    | ArtistProperties
+    | GenreProperties
+    | AlbumProperties
+    | PlaylistProperties;
+  relations: {
+    type: string;
+    target: Neo4jDbItem;
+  }[];
+}
+
 export interface TrackProperties {
   id: number;
+  name: string;
   duration_ms: string;
   explicit: boolean;
-  name: string;
   spotify_id: string;
   added_by: string;
 }
@@ -140,15 +137,15 @@ export interface ArtistProperties {
 
 export interface GenreProperties {
   id: number;
-  name: string;
   added_by: string;
+  name: string;
 }
 
 export interface AlbumProperties {
   id: number;
+  name: string;
   count_of_tracks: number;
   label: string;
-  name: string;
   release: string;
   spotify_id: string;
   type: string;
@@ -222,4 +219,17 @@ export enum ProfilePageStates {
   SEARCH_SAVED_ITEMS = 'saved',
   LIKED_ITEMS = 'favorite',
   DEFAULT = 'default',
+}
+
+export interface ItemPreview {
+  databaseId?: number;
+  spotify_id?: string;
+  image?: Image;
+  label: string;
+  type: string;
+}
+
+export interface DbStats {
+  nodes: number;
+  relationships: number;
 }

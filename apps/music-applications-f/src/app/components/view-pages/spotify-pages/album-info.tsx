@@ -4,6 +4,8 @@ import { AlbumTrackInfo } from './page-utils';
 import { SpotifyAlbum } from '../../../types';
 import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
 import { ReactComponent as Heart } from '../../../../assets/heart.svg';
+import { useContext, useEffect } from 'react';
+import { RecentlyViewedContext } from '../../../contexts/recently-viewed.context';
 
 const AlbumInfo = ({
   album,
@@ -16,9 +18,20 @@ const AlbumInfo = ({
 }) => {
   const router = useNavigate();
   const trackNameClickCallback = (spotify_id: string) =>
-    router(`/track/${spotify_id}`);
+    router(`/web/track/${spotify_id}`);
   const artistNameClickCallback = (spotify_id: string) =>
-    router(`/artist/${spotify_id}`);
+    router(`/web/artist/${spotify_id}`);
+
+  const { addItem } = useContext(RecentlyViewedContext);
+  useEffect(() => {
+    addItem({
+      spotify_id: album.spotify_id,
+      type: album.type,
+      label: album.label,
+      image: album.images[2] ? album.images[2] : undefined,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="item-page-content">

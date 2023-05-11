@@ -3,14 +3,18 @@ import ApplicationRouter from './components/navigation/navbar';
 import './app-styles.scss';
 import { UserContextProvider } from './contexts/user.context';
 import { BrowserRouter } from 'react-router-dom';
+import { RecentlyViewedContextProvider } from './contexts/recently-viewed.context';
 
 export function App() {
   return (
     <div className="application-wrapper">
+      
       <BrowserRouter>
-        <UserContextProvider>
-          <ApplicationRouter></ApplicationRouter>
-        </UserContextProvider>
+        <RecentlyViewedContextProvider>
+          <UserContextProvider>
+            <ApplicationRouter></ApplicationRouter>
+          </UserContextProvider>
+      </RecentlyViewedContextProvider>
       </BrowserRouter>
     </div>
   );

@@ -5,27 +5,47 @@ import GenreRelation from './relation-component/genre-relation';
 import PlaylistRelation from './relation-component/playlist-relation';
 import TrackRelation from './relation-component/track-relation';
 
-const RelationViewPage_2 = ({ item }: { item: Neo4jDbItem }) => {
-  console.log(item.properties.id);
+const RelationViewPage = ({
+  item,
+  routingCallback,
+}: {
+  item: Neo4jDbItem;
+  routingCallback: (type: string, id: number) => void;
+}) => {
   return (
-    <div>
-      <div>
+    <div className='relation-view-content-wrapper'>
+      <div className='wrapper-kirilla-daunova'>
         {item && (
           <>
             {item.type === 'Genre' && (
-              <GenreRelation item={item}></GenreRelation>
+              <GenreRelation
+                item={item}
+                routingCallback={routingCallback}
+              ></GenreRelation>
             )}
             {item.type === 'Track' && (
-              <TrackRelation item={item}></TrackRelation>
+              <TrackRelation
+                item={item}
+                routingCallback={routingCallback}
+              ></TrackRelation>
             )}
             {item.type === 'Artist' && (
-              <ArtistRelation item={item}></ArtistRelation>
+              <ArtistRelation
+                item={item}
+                routingCallback={routingCallback}
+              ></ArtistRelation>
             )}
             {item.type === 'Album' && (
-              <AlbumRelation item={item}></AlbumRelation>
+              <AlbumRelation
+                item={item}
+                routingCallback={routingCallback}
+              ></AlbumRelation>
             )}
             {item.type === 'Playlist' && (
-              <PlaylistRelation item={item}></PlaylistRelation>
+              <PlaylistRelation
+                item={item}
+                routingCallback={routingCallback}
+              ></PlaylistRelation>
             )}
           </>
         )}
@@ -34,4 +54,4 @@ const RelationViewPage_2 = ({ item }: { item: Neo4jDbItem }) => {
   );
 };
 
-export default RelationViewPage_2;
+export default RelationViewPage;
