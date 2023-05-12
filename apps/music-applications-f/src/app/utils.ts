@@ -105,6 +105,14 @@ export const parseNeo4jRecommendation = (data: any, type: string): ItemPreview =
   }
 }
 
+export const parseNeo4jLikes = (data: any): ItemPreview => {
+  return {
+    databaseId: data.properties.id,
+    type: data.labels[0],
+    label: data.properties.name
+  }
+}
+
 export const parseSpotifyData = (data: any) => {
   if (Object.keys(data).length > 1) {
     const parsedTracks = data.tracks.items.map((track: any) =>

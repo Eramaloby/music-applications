@@ -125,6 +125,18 @@ export class DatabaseManager {
     return query.records.length != 0;
   }
 
+  public async getAllLikedInstances(separatedIds: string) {
+    const query = await this.dbService.read(`
+      UNWIND [${separatedIds}] AS X
+      MATCH (p {id: X})
+      RETURN p
+      `);
+
+    const results = query.records.map((value) => value.toObject());
+
+    return results;
+  }
+
   public async getGenresRecommendations(separatedIds: string) {
     const query = await this.dbService.read(`
       UNWIND [${separatedIds}] AS X

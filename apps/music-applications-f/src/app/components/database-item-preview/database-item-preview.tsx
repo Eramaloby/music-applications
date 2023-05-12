@@ -10,8 +10,6 @@ const DatabaseItemPreview = ({
 }) => {
   const S_COLOR = 'rgb(' + Math.floor((Math.random() * 255)) + ', ' + Math.floor((Math.random() * 255)) + ', ' + Math.floor((Math.random() * 255)) + ')';
   const M_COLOR ='rgb(' + Math.floor((Math.random() * 255)) + ', ' + Math.floor((Math.random() * 255)) + ', ' + Math.floor((Math.random() * 255)) + ')';
-  console.log(S_COLOR);
-  console.log(M_COLOR);
   return (
     <div className='database-preview-wrapper' >
       <div

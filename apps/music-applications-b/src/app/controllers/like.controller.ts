@@ -77,8 +77,23 @@ export class LikeController {
     return this.likeService.deleteLike(user, createDeleteLikeDb.nodeId);
   }
 
+  @Get('all')
+  async getUserLikes(@GetUser() user: User) {
+    const nodeIdsUserLikes = (await this.likeService.findUserLikes(user)).map(
+      (value) => value.nodeId
+    );
+
+    const idsArray = nodeIdsUserLikes
+      .map((value) => `'${value}'`)
+      .join(', ');
+
+    const allLikes = await this.dbManager.getAllLikedInstances(idsArray);
+
+    return allLikes.map((likeObj) => likeObj['p']);
+  }
+
   @Get('/recommendations')
-  async getAllUserLikes(@GetUser() user: User) {
+  async getRecommendations(@GetUser() user: User) {
     const nodeIdsUserLikes = (await this.likeService.findUserLikes(user)).map(
       (value) => value.nodeId
     );

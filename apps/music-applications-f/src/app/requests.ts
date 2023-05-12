@@ -6,7 +6,11 @@ import {
   UserSignUpForm,
   ItemPreview,
 } from './types';
-import { parseNeo4jData, parseNeo4jRecommendation } from './utils';
+import {
+  parseNeo4jData,
+  parseNeo4jLikes,
+  parseNeo4jRecommendation,
+} from './utils';
 
 export const baseUrl = 'http://localhost:4200/api';
 
@@ -201,6 +205,26 @@ export const checkIfLikedSpotifyId = async (
   } catch (err) {
     console.log(err);
     return false;
+  }
+};
+
+export const getAllUserLikes = async (
+  token: string
+): Promise<ItemPreview[] | undefined> => {
+  try {
+    const result = await axios.get(`${baseUrl}/like/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const parsed = result.data.map((value: any) => parseNeo4jLikes(value));
+
+    return parsed;
+  } catch (err) {
+    console.log(err);
+    return undefined;
   }
 };
 
