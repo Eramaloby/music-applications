@@ -40,7 +40,7 @@ export const RecentlyViewedContextProvider = ({
     ) {
       let newArrayState = [];
       if (recentlyViewed.length === 3) {
-        newArrayState = [...recentlyViewed.slice(0, 1), { ...newItem }];
+        newArrayState = [...recentlyViewed.slice(1), { ...newItem }];
       } else {
         newArrayState = [...recentlyViewed, { ...newItem }];
       }
