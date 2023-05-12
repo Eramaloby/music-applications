@@ -79,7 +79,7 @@ const Search = ({
           onItemClickCallback={instanceClickCallback}
           results={results}
         ></InteractiveDropdown>
-      ) : recentlyViewed ? (
+      ) : recentlyViewed.length !== 0 ? (
         <ViewPanelContainer
           title="Recently viewed"
           items={recentlyViewed}
