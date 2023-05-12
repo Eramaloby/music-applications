@@ -125,6 +125,114 @@ export class DatabaseManager {
     return query.records.length != 0;
   }
 
+  public async getGenresRecommendations(separatedIds: string) {
+    const query = await this.dbService.read(`
+      UNWIND [${separatedIds}] AS X
+      MATCH (p{id: X})  
+      WITH p as everything
+      CALL{
+
+      WITH everything
+      MATCH (everything)--(art:Artist)--(other:Genre)
+      WHERE everything <> other
+      RETURN other
+      LIMIT 3
+
+      UNION
+
+      WITH everything
+      MATCH (everything:Artist)--(other:Genre)
+      RETURN other
+      LIMIT 3
+
+      }
+      RETURN DISTINCT other
+      LIMIT 10
+    `);
+
+    return query.records;
+  }
+
+  public async getAlbumRecommendations(separatedIds: string) {
+    const query = await this.dbService.read(`
+    UNWIND [${separatedIds}] AS X
+    MATCH (p{id: X})  
+    WITH p as everything
+    CALL{
+        WITH everything
+        MATCH (everything)--(art:Artist)--(other:Album)
+        WHERE everything <> other
+        RETURN other
+        LIMIT 3
+    
+        UNION
+    
+        WITH everything
+        MATCH (everything:Artist)--(other:Album)
+        RETURN other
+        LIMIT 3
+    
+    }
+    RETURN DISTINCT other
+    LIMIT 10`);
+
+    return query.records;
+  }
+
+  public async getTrackRecommendations(separatedIds: string) {
+    const query = await this.dbService.read(`
+    UNWIND [${separatedIds}] AS X
+    MATCH (p{id: X})  
+    WITH p as everything
+    CALL{
+        WITH everything
+        MATCH (everything)--(art:Artist)--(other:Track)
+        WHERE everything <> other
+        RETURN other
+        LIMIT 3
+    
+        UNION
+    
+        WITH everything
+        MATCH (everything:Artist)--(other:Track)
+        RETURN other
+        LIMIT 3
+    
+    }
+    RETURN DISTINCT other
+    LIMIT 10
+    `);
+
+    return query.records;
+  }
+
+  public async getArtistRecommendations(separatedIds: string) {
+    const query = await this.dbService.read(`
+    UNWIND [${separatedIds}] AS X
+    MATCH (p{id: X})  
+    WITH p as everything
+    CALL{
+        WITH everything
+        MATCH (everything)--(art:Artist)--(gen:Genre)--(other:Artist)
+        WHERE everything <> other
+        RETURN other
+        LIMIT 3
+    
+        UNION
+    
+        WITH everything
+        MATCH (art:Artist)--(gen:Genre)--(other:Artist)
+        RETURN other
+        LIMIT 3
+    
+    }
+    RETURN DISTINCT other
+    LIMIT 10
+    `);
+
+    return query.records;
+  }
+
   public async generateNewNodeId(): Promise<number> {
     const query = await this.dbService.write(`MERGE (id:GlobalUniqueId)
       ON CREATE SET id.count = 1

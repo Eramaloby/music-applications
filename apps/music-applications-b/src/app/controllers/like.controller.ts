@@ -76,4 +76,41 @@ export class LikeController {
   ) {
     return this.likeService.deleteLike(user, createDeleteLikeDb.nodeId);
   }
+
+  @Get('/recommendations')
+  async getAllUserLikes(@GetUser() user: User) {
+    const nodeIdsUserLikes = (await this.likeService.findUserLikes(user)).map(
+      (value) => value.nodeId
+    );
+
+    const relatedItemsAsList = nodeIdsUserLikes
+      .map((value) => `'${value}'`)
+      .join(', ');
+
+    const genres = (
+      await this.dbManager.getGenresRecommendations(relatedItemsAsList)
+    )
+      .map((value) => value.toObject())
+      .map((obj) => obj['other']['properties']);
+
+    const artists = (
+      await this.dbManager.getArtistRecommendations(relatedItemsAsList)
+    )
+      .map((value) => value.toObject())
+      .map((obj) => obj['other']['properties']);
+
+    const albums = (
+      await this.dbManager.getAlbumRecommendations(relatedItemsAsList)
+    )
+      .map((value) => value.toObject())
+      .map((obj) => obj['other']['properties']);
+
+    const tracks = (
+      await this.dbManager.getTrackRecommendations(relatedItemsAsList)
+    )
+      .map((value) => value.toObject())
+      .map((obj) => obj['other']['properties']);
+
+    return { albums, genres, artists, tracks };
+  }
 }
