@@ -46,7 +46,7 @@ const TrackInfo = ({
       spotify_id: track.spotify_id,
       type: track.type,
       label: track.label,
-      image: track.album.images[2] ? track.album.images[2] : undefined,
+      image: track.album.images[1] ? track.album.images[1] : undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

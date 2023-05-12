@@ -27,7 +27,7 @@ const PlaylistInfo = ({
       spotify_id: playlist.spotify_id,
       type: playlist.type,
       label: playlist.name,
-      image: playlist.images[0] ? playlist.images[0] : undefined,
+      image: playlist.images[1] ? playlist.images[1] : undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
