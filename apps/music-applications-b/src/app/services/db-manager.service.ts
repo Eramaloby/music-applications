@@ -233,7 +233,8 @@ export class DatabaseManager {
         UNION
     
         WITH everything
-        MATCH (art:Artist)--(gen:Genre)--(other:Artist)
+        MATCH (everything:Artist)--(gen:Genre)--(other:Artist)
+        WHERE everything <> other
         RETURN other
         LIMIT 3
     

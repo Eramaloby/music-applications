@@ -53,7 +53,7 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
           </div>
         </div>
       </div>
-      {recommendations.length !== 0 && (
+      {recommendations.length !== 0 ? (
         <div className="recommendation-panel">
           <ViewPanelContainer
             title="According to your taste, you would like:"
@@ -61,6 +61,8 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
             containerClassName="recommendation-panel"
           ></ViewPanelContainer>
         </div>
+      ) : (
+        <div></div>
       )}
     </div>
   );

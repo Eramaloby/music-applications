@@ -19,7 +19,10 @@ const ViewLikedItemsComponent = () => {
   };
 
   useEffect(() => {
-    fetchUserLikes();
+    const asyncWrapper = async () => {
+      await fetchUserLikes();
+    }
+    asyncWrapper();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return likes.length !== 0 ? (
