@@ -8,15 +8,16 @@ import { useNavigate } from 'react-router-dom';
 type ViewPanelContainerProps = {
   title: string;
   items: ItemPreview[];
+  containerClassName: string;
 };
 
-const ViewPanelContainer = ({ title, items }: ViewPanelContainerProps) => {
+const ViewPanelContainer = ({ title, items, containerClassName }: ViewPanelContainerProps) => {
   const router = useNavigate();
 
   return (
-    <div className="view-panel-wrapper">
-      <div className="view-panel-title">{title}</div>
-      <div className="view-panel-items">
+    <div className={`${containerClassName}-wrapper`}>
+      <div className={`${containerClassName}-title`}>{title}</div>
+      <div className={`${containerClassName}-items`}>
         {items.map((value, key) => {
           if (value.spotify_id) {
             return (

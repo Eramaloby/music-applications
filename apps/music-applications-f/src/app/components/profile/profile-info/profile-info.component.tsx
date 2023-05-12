@@ -1,15 +1,28 @@
-import { DbStats, User } from '../../../types';
+import { DbStats, ItemPreview, User } from '../../../types';
 
 import './profile-info.styles.scss';
 
-import { useEffect, useState } from 'react';
-import { fetchProfileStats } from '../../../requests';
+import { useContext, useEffect, useState } from 'react';
+import { fetchProfileStats, receiveRecommendations } from '../../../requests';
+import { UserContext } from '../../../contexts/user.context';
+import ViewPanelContainer from '../../recently-viewed-panel/view-panel-container';
 
 const ProfileInfoComponent = ({ user }: { user: User }) => {
   const [stats, setStats] = useState<DbStats>({
     nodes: 0,
     relationships: 0,
   });
+
+  const { currentUser } = useContext(UserContext);
+
+  const [recommendations, setRecommendations] = useState<ItemPreview[]>([]);
+
+  const fetchRecommendations = async () => {
+    const response = await receiveRecommendations(currentUser!.accessToken);
+    if (response) {
+      setRecommendations([...response]);
+    }
+  };
 
   useEffect(() => {
     const asyncWrapper = async () => {
@@ -22,6 +35,7 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
       }
     };
 
+    fetchRecommendations();
     asyncWrapper();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -40,9 +54,11 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
         </div>
       </div>
       <div className="recommendation-panel">
-        <div className="recommendation-title">
-          According to your taste, you would like:
-        </div>
+        <ViewPanelContainer
+          title="According to your taste, you would like:"
+          items={recommendations}
+          containerClassName='recommendation-panel'
+        ></ViewPanelContainer>
       </div>
     </div>
   );

@@ -8,7 +8,6 @@ import ProfileInfoComponent from '../../components/profile/profile-info/profile-
 import ViewLikedItemsComponent from '../../components/profile/view-liked-items/view-liked-items.component';
 import ChangePasswordComponent from '../../components/profile/change-password/change-password.component';
 import SearchSavedItemsComponent from '../../components/profile/search-saved-items/search-saved-items.component';
-import { receiveGenreRecommendation } from '../../requests';
 
 const Profile = () => {
   const [pageState, setPageState] = useState<ProfilePageStates>(
@@ -25,11 +24,6 @@ const Profile = () => {
     signOut();
   };
 
-  const fetchRecommendations = async () => {
-    const response = await receiveGenreRecommendation(currentUser.accessToken);
-    console.log(response);
-  }
-
   return (
     <div className="profile-page-wrapper">
       <div className="profile-page-action-panel">
@@ -39,18 +33,13 @@ const Profile = () => {
         >
           You
         </div>
-        <div
-          className="export-saved-records-btn btn"
-          onClick={() => fetchRecommendations()}
-        >
-          Export saved items
-        </div>
+        {/* <div className="export-saved-records-btn btn">Export saved items</div>
         <div
           className="search-saved-records-btn btn"
           onClick={() => setPageState(ProfilePageStates.SEARCH_SAVED_ITEMS)}
         >
           Search saved items
-        </div>
+        </div> */}
         <div
           className="view-liked-records-btn btn"
           onClick={() => setPageState(ProfilePageStates.LIKED_ITEMS)}

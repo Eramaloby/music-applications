@@ -11,13 +11,13 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-  
+
     .greeting-message {
       font-size: xx-large;
       font-weight: 800;
       margin-top: 10px;
     }
-  
+
     .user-stats {
       margin-top: 30px;
       display: flex;
@@ -25,7 +25,7 @@
       align-items: flex-start;
       flex-direction: column;
       gap: 5px;
-  
+
       .stats-relation,
       .stats-instances {
         font-size: medium;
@@ -37,11 +37,33 @@
   .recommendation-panel {
     margin-top: 30px;
 
-    .recommendation-title {
-      font-size: xx-large;
-      font-weight: bold;
+    .recommendation-panel-wrapper {
+      margin-top: 50px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+
+      .recommendation-panel-title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        font-size: xx-large;
+      }
+
+      .recommendation-panel-items::-webkit-scrollbar {
+        display: none;
+      }
+
+      .recommendation-panel-items {
+        margin-top: 20px;
+        height: 400px;
+        overflow-y: scroll;
+        display: grid;
+        gap: 5px;
+        grid-template-columns: repeat(4, minmax(212px, 1fr));
+      }
     }
   }
 
 }
-

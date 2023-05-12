@@ -81,6 +81,7 @@ const Search = ({
         ></InteractiveDropdown>
       ) : recentlyViewed.length !== 0 ? (
         <ViewPanelContainer
+          containerClassName='view-panel'
           title="Recently viewed"
           items={recentlyViewed}
         ></ViewPanelContainer>

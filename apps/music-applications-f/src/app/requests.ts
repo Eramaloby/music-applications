@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { Neo4jDbItem, DbStats, UserSignInForm, UserSignUpForm } from './types';
+import {
+  Neo4jDbItem,
+  DbStats,
+  UserSignInForm,
+  UserSignUpForm,
+  ItemPreview,
+} from './types';
 import { parseNeo4jData, parseNeo4jRecommendation } from './utils';
 
 export const baseUrl = 'http://localhost:4200/api';
@@ -198,7 +204,9 @@ export const checkIfLikedSpotifyId = async (
   }
 };
 
-export const receiveGenreRecommendation = async (token: string) => {
+export const receiveRecommendations = async (
+  token: string
+): Promise<ItemPreview[] | undefined> => {
   try {
     const result = await axios.get(`${baseUrl}/like/recommendations`, {
       headers: {
@@ -209,25 +217,25 @@ export const receiveGenreRecommendation = async (token: string) => {
     const [albums, genres, artists, tracks] = [
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       result.data.albums.map((obj: any) =>
-        parseNeo4jRecommendation(obj, 'album')
+        parseNeo4jRecommendation(obj, 'Album')
       ),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       result.data.genres.map((obj: any) =>
-        parseNeo4jRecommendation(obj, 'genre')
+        parseNeo4jRecommendation(obj, 'Genre')
       ),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       result.data.artists.map((obj: any) =>
-        parseNeo4jRecommendation(obj, 'artist')
+        parseNeo4jRecommendation(obj, 'Artist')
       ),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       result.data.tracks.map((obj: any) =>
-        parseNeo4jRecommendation(obj, 'track')
+        parseNeo4jRecommendation(obj, 'Track')
       ),
     ];
-    return [...albums, ...genres, ...artists, ...tracks];
+    return [...albums, ...genres, ...artists, ...tracks] as ItemPreview[];
   } catch (err) {
     console.log(err);
-    return false;
+    return undefined;
   }
 };
 
