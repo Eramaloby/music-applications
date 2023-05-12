@@ -12,14 +12,26 @@
     font-weight: 600;
     margin-top: 1%;
     margin-left: 2%;
+    width: 80%;
+
+    .dropdown-item-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      
+    }
 
     .dropdown-item-type {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
       font-weight: 300;
     }
   }
 
   .view-details-btn {
     color: #ffffff;
+    width: 15%;
     border-radius: 5px;
     border: none;
     padding: 7px;
