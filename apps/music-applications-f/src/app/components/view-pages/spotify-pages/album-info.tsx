@@ -28,7 +28,7 @@ const AlbumInfo = ({
       spotify_id: album.spotify_id,
       type: album.type,
       label: album.label,
-      image: album.images[2] ? album.images[2] : undefined,
+      image: album.images[1] ? album.images[1] : undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

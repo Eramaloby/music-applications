@@ -10,15 +10,17 @@ const SpotifyItemPreview = ({
   onClickCallback: (spotify_id: string, type: string) => void;
 }) => {
   return (
-    <div
+    <div className='spotify-preview-wrapper'>
+      <div
       className="spotify-preview-item-wrapper"
       style={{ backgroundImage: `url(${item.image?.url})` }}
       onClick={() => onClickCallback(item.spotify_id as string, item.type)}
-    >
-      <div className="spotify-preview-info-container">
-        <div className="spotify-preview-item-type">{item.type}</div>
-        <div className="spotify-preview-item-label">{item.label}</div>
+      >
       </div>
+      <div className="spotify-preview-info-container">
+          <div className="spotify-preview-item-label">{item.label}</div>
+          <div className="spotify-preview-item-type">{item.type}</div>
+        </div>
     </div>
   );
 };
