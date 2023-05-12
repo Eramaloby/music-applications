@@ -22,14 +22,16 @@ const ViewLikedItemsComponent = () => {
     fetchUserLikes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return (
-    <div className='liked-panel'>
+  return likes.length !== 0 ? (
+    <div className="liked-panel">
       <ViewPanelContainer
         title="Items that your liked"
         items={likes}
         containerClassName="liked-panel"
       ></ViewPanelContainer>
     </div>
+  ) : (
+    <div className='no-likes-message'>No items liked</div>
   );
 };
 

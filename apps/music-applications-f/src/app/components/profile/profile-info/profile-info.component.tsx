@@ -53,13 +53,15 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
           </div>
         </div>
       </div>
-      <div className="recommendation-panel">
-        <ViewPanelContainer
-          title="According to your taste, you would like:"
-          items={recommendations}
-          containerClassName='recommendation-panel'
-        ></ViewPanelContainer>
-      </div>
+      {recommendations.length !== 0 && (
+        <div className="recommendation-panel">
+          <ViewPanelContainer
+            title="According to your taste, you would like:"
+            items={recommendations}
+            containerClassName="recommendation-panel"
+          ></ViewPanelContainer>
+        </div>
+      )}
     </div>
   );
 };
