@@ -7,6 +7,7 @@ import {
   SpotifyPlaylist,
   UserSignUpForm,
   UserSignInForm,
+  ItemPreview,
 } from './types';
 import {
   sendChangePasswordRequest,
@@ -51,6 +52,8 @@ export const translateLyricsToVerses = (lyrics: string): string[] => {
 };
 
 export const parseNeo4jData = (data: any[]) => {
+  console.log(data);
+  
   // check bug when length is 0
   const type = data[0]._fields[0].labels[0];
   const name = data[0]._fields[0].properties.name;
@@ -93,6 +96,14 @@ export const parseNeo4jRecords = (data: any) => {
     };
   });
 };
+
+export const parseNeo4jRecommendation = (data: any, type: string): ItemPreview => {
+  return {
+    databaseId: data.id,
+    type: type,
+    label: data.name
+  }
+}
 
 export const parseSpotifyData = (data: any) => {
   if (Object.keys(data).length > 1) {

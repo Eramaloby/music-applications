@@ -12,8 +12,8 @@ const ElementList = (
 ) => {
     return ( 
         <div className='element-list'>
-            {list.map((post) => 
-                <ListItem item={post}></ListItem>)}
+            {list.map((post, index) => 
+                <ListItem item={post} key={index}></ListItem>)}
         </div>
      );
 }

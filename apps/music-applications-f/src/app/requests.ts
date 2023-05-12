@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Neo4jDbItem, DbStats, UserSignInForm, UserSignUpForm } from './types';
-import { parseNeo4jData } from './utils';
+import { parseNeo4jData, parseNeo4jRecommendation } from './utils';
 
 export const baseUrl = 'http://localhost:4200/api';
 
@@ -192,6 +192,39 @@ export const checkIfLikedSpotifyId = async (
     });
 
     return result.data;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
+
+export const receiveGenreRecommendation = async (token: string) => {
+  try {
+    const result = await axios.get(`${baseUrl}/like/recommendations`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const [albums, genres, artists, tracks] = [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      result.data.albums.map((obj: any) =>
+        parseNeo4jRecommendation(obj, 'album')
+      ),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      result.data.genres.map((obj: any) =>
+        parseNeo4jRecommendation(obj, 'genre')
+      ),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      result.data.artists.map((obj: any) =>
+        parseNeo4jRecommendation(obj, 'artist')
+      ),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      result.data.tracks.map((obj: any) =>
+        parseNeo4jRecommendation(obj, 'track')
+      ),
+    ];
+    return [...albums, ...genres, ...artists, ...tracks];
   } catch (err) {
     console.log(err);
     return false;
