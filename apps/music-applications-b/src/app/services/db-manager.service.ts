@@ -81,24 +81,42 @@ export class DatabaseManager {
   }
 
   public async getDbStats() {
-    // WARNING: part of following query is deprecated and will be removed in future
-    const result = await this.dbService.read(
-      `match (n) return count(n) as countOfNodes, sum ( size( (n)-[]->())) as counfOfRelationShip`
-    );
+    // unwrap queries
+    const nodesCount = (
+      await this.dbService.read(`MATCH (n) RETURN count(n) AS nodeCount`)
+    ).records[0]['_fields']
+      .map((obj: { low: number }) => obj.low)
+      .at(0);
 
-    return result;
+    const relationshipsCount = (
+      await this.dbService.read(
+        `MATCH ()-[r]->() RETURN count(r) AS relationshipCount`
+      )
+    ).records[0]['_fields']
+      .map((obj: { low: number }) => obj.low)
+      .at(0);
+
+    return [nodesCount, relationshipsCount];
   }
 
   public async getUserDbStats(username: string) {
-    const result = await this.dbService.read(
-      `match (n) where n.added_by = "${username}" return count(n) as countOfNodes, sum ( size( (n)-[]->())) as counfOfRelationShip`
-    );
+    const nodesCount = (
+      await this.dbService.read(
+        `MATCH (n) WHERE n.added_by = "${username}" RETURN count(n) AS nodeCount`
+      )
+    ).records[0]['_fields']
+      .map((obj: { low: number }) => obj.low)
+      .at(0);
 
-    const values = result.records[0]['_fields'].map(
-      (obj: { low: number }) => obj.low
-    );
+    const relationshipsCount = (
+      await this.dbService.read(
+        `MATCH (n)-[r]->() WHERE n.added_by = "${username}" RETURN count(r) AS relationshipCount`
+      )
+    ).records[0]['_fields']
+      .map((obj: { low: number }) => obj.low)
+      .at(0);
 
-    return values;
+    return [nodesCount, relationshipsCount];
   }
 
   /*
