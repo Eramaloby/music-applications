@@ -53,7 +53,7 @@ export const translateLyricsToVerses = (lyrics: string): string[] => {
 
 export const parseNeo4jData = (data: any[]) => {
   console.log(data);
-  
+
   // check bug when length is 0
   const type = data[0]._fields[0].labels[0];
   const name = data[0]._fields[0].properties.name;
@@ -97,21 +97,24 @@ export const parseNeo4jRecords = (data: any) => {
   });
 };
 
-export const parseNeo4jRecommendation = (data: any, type: string): ItemPreview => {
+export const parseNeo4jRecommendation = (
+  data: any,
+  type: string
+): ItemPreview => {
   return {
     databaseId: data.id,
     type: type,
-    label: data.name
-  }
-}
+    label: data.name,
+  };
+};
 
 export const parseNeo4jLikes = (data: any): ItemPreview => {
   return {
     databaseId: data.properties.id,
     type: data.labels[0],
-    label: data.properties.name
-  }
-}
+    label: data.properties.name,
+  };
+};
 
 export const parseSpotifyData = (data: any) => {
   if (Object.keys(data).length > 1) {
@@ -370,8 +373,13 @@ export const subtractYearsFromDate = (date: Date, years: number) => {
 };
 
 export const tryToSignIn = async (form: UserSignInForm) => {
-  const token: string = (await sendSignInRequest(form)).accessToken;
-  return token;
+  try {
+    const token: string = (await sendSignInRequest(form)).accessToken;
+    return token;
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
 };
 
 export const tryToChangePassword = async (

@@ -5,6 +5,8 @@ import TrackInfo from '../../components/view-pages/spotify-pages/track-info';
 import AlbumInfo from '../../components/view-pages/spotify-pages/album-info';
 import ArtistInfo from '../../components/view-pages/spotify-pages/artist-info';
 import PlaylistInfo from '../../components/view-pages/spotify-pages/playlist-info';
+import toast from 'react-hot-toast';
+
 import {
   LoadingSpinner,
   PopupMessage,
@@ -46,12 +48,13 @@ const SpotifyContentPage = () => {
     SpotifyAlbum | SpotifyArtist | SpotifyPlaylist | SpotifyTrack | undefined
   >(undefined);
 
+  // fix save to db button
   const [isSavedToDb, setIsSavedToDb] = useState<boolean>(false);
   const [error] = useState<string>('');
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [popup, setPopup] = useState(false);
-  const [popupMessage, setPopupMessage] = useState('');
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [popup, setPopup] = useState(false);
+  // const [popupMessage, setPopupMessage] = useState('');
 
   // update state from server later
   const [isLiked, setIsLiked] = useState<null | boolean>(null);
@@ -68,7 +71,7 @@ const SpotifyContentPage = () => {
     }
   };
 
-  const togglePopup = () => setPopup(!popup);
+  // const togglePopup = () => setPopup(!popup);
 
   const recognizeParsingStrategy = (type: string | undefined) => {
     switch (type) {
@@ -89,7 +92,7 @@ const SpotifyContentPage = () => {
 
   const postItem = () => {
     if (item && currentUser) {
-      setIsLoading(true);
+      // setIsLoading(true);
       axios
         .post(
           `http://localhost:4200/api/add/${params['type']}/${item.spotify_id}`,
@@ -101,17 +104,18 @@ const SpotifyContentPage = () => {
           }
         )
         .then((response) => {
-          setIsLoading(false);
+          //setIsLoading(false);
           if (response.data) {
-            setPopupMessage('Instance was successfully added!');
+            toast.success('Instance was added to db');
+            setIsSavedToDb(true);
           } else {
-            setPopupMessage('Instance already added!');
+            toast.success('Instance already in db');
           }
 
-          togglePopup();
+          //togglePopup();
         })
         .catch(() => {
-          setIsLoading(false);
+          //setIsLoading(false);
         });
     }
   };
@@ -203,32 +207,19 @@ const SpotifyContentPage = () => {
         <button
           onClick={() => router(-1)}
           className="go-back-btn"
-          disabled={isLoading}
+          // disabled={isLoading}
         >
           Back
         </button>
         <button
           className="save-to-db-btn"
           onClick={() => postItem()}
-          disabled={isLoading}
+          // disabled={isLoading}
           style={{ display: currentUser && !isSavedToDb ? '' : 'none' }}
         >
           Save to db
         </button>
       </div>
-      {popup && (
-        <PopupMessage
-          handleClose={togglePopup}
-          message={popupMessage}
-        ></PopupMessage>
-      )}
-      <AppModal
-        visible={isLoading}
-        setVisible={setIsLoading}
-        isHiddenOnClick={true}
-      >
-        <LoadingSpinner></LoadingSpinner>
-      </AppModal>
       {item && (
         <>
           {item.type === 'track' && (

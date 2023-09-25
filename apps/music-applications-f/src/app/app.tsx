@@ -4,17 +4,18 @@ import './app-styles.scss';
 import { UserContextProvider } from './contexts/user.context';
 import { BrowserRouter } from 'react-router-dom';
 import { RecentlyViewedContextProvider } from './contexts/recently-viewed.context';
+import { Toaster } from 'react-hot-toast';
 
 export function App() {
   return (
     <div className="application-wrapper">
-      
       <BrowserRouter>
         <RecentlyViewedContextProvider>
           <UserContextProvider>
             <ApplicationRouter></ApplicationRouter>
           </UserContextProvider>
-      </RecentlyViewedContextProvider>
+        </RecentlyViewedContextProvider>
+        <Toaster />
       </BrowserRouter>
     </div>
   );
