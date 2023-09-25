@@ -4,7 +4,7 @@ import {
   getDataSourceToken,
   getRepositoryToken,
 } from '@nestjs/typeorm';
-import { AuthModule } from '../auth/auth.module';
+import { AuthModule } from '../../auth/auth.module';
 import { DataSource } from 'typeorm';
 import { Like } from './like.entity';
 import { customLikeRepository } from './like.repository';

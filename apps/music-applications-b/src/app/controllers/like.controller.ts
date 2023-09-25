@@ -8,12 +8,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from '../auth/get-user.decorator';
+import { GetUser } from '../../auth/get-user.decorator';
 import { DatabaseManager } from '../services/db-manager.service';
 import { LikeService } from '../likes/like.service';
 import { CreateDeleteLikeSpotifyDto } from '../dto/create-delete-like-spotify.dto';
 import { CreateDeleteLikeDto } from '../dto/create-delete-like.dto';
-import { User } from '../auth/user.entity';
+import { User } from '../../auth/user.entity';
 
 @UseGuards(AuthGuard())
 @Controller('like')

@@ -6,7 +6,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from '../user.entity';
 import { UserRepository } from '../user.repository';
 import { JwtPayload } from './jwt.payload';
-import { ApplicationConfig } from '../../../../../config/config';
+import { ApplicationConfig } from '../../../../config/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -25,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.userRepository.findOne({ where: { username } });
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Something went wrong...');
     }
 
     return user;

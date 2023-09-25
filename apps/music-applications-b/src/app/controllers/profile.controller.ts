@@ -1,8 +1,8 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { DatabaseManager } from '../services/db-manager.service';
-import { GetUser } from '../auth/get-user.decorator';
-import { User } from '../auth/user.entity';
+import { GetUser } from '../../auth/get-user.decorator';
+import { User } from '../../auth/user.entity';
 
 @UseGuards(AuthGuard())
 @Controller('profile')

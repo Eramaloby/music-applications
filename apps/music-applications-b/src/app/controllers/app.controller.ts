@@ -11,8 +11,8 @@ import { DatabaseManager } from '../services/db-manager.service';
 import { GeniusService } from '../services/genius.service';
 import { SpotifyService } from '../services/spotify.service';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from '../auth/user.entity';
-import { GetUser } from '../auth/get-user.decorator';
+import { User } from '../../auth/user.entity';
+import { GetUser } from '../../auth/get-user.decorator';
 
 @Controller()
 export class AppController {
@@ -32,6 +32,7 @@ export class AppController {
   @UseGuards(AuthGuard())
   @Get('currentUser')
   async getCurrentUser(@GetUser() user: User) {
+    console.log('CURRENT USER', user);
     return user;
   }
 

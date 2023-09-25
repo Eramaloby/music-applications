@@ -39,7 +39,12 @@ export const sendSignInRequest = async (
     });
 
     // undefined is required to point out
-    return { isSuccessful: true, token: response.data, reason: undefined };
+    // little trick with access token avoiding object wrapping?
+    return {
+      isSuccessful: true,
+      token: response.data.accessToken,
+      reason: undefined,
+    };
   } catch (err) {
     return {
       isSuccessful: false,
@@ -269,13 +274,13 @@ export const receiveRecommendations = async (
 
 export const fetchUserProfileData = async (token: string) => {
   try {
+    console.log(baseUrl, 'base url', token, 'token');
     const response = await axios.get(`${baseUrl}/currentUser`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     return response.data;
   } catch (err) {
-    console.log(err);
     return null;
   }
 };

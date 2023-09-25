@@ -4,7 +4,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../auth/user.entity';
+import { User } from '../../auth/user.entity';
 
 @Entity()
 export class Like {

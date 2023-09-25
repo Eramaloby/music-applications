@@ -1,4 +1,4 @@
-import { ChangePasswordFlowController } from './controllers/change-password.controller';
+import { ChangePasswordFlowController } from '../auth/controllers/change-password.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import {
@@ -9,12 +9,12 @@ import {
 import { DataSource } from 'typeorm';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthController } from './controllers/auth.controller';
 import { User } from './user.entity';
 
-import { customUserRepository } from './user.repository';
-import { ApplicationConfig } from '../../../../config/config';
+import { ApplicationConfig } from '../../../config/config';
 import { JwtStrategy } from './jwt/jwt.strategy';
+import { AuthController } from './controllers/auth.controller';
+import { customUserRepository } from './user.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
