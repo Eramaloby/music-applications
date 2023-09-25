@@ -6,7 +6,7 @@ import {
   validateEmailConfirm,
   validatePassword,
   validatePasswordConfirm,
-  validateUsername
+  validateUsername,
 } from '../../utils';
 import TextField from '@mui/material/TextField';
 import dayjs, { Dayjs } from 'dayjs';
@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom';
 
 const SignUpPage = () => {
   // states of form
+  /* CODE TODO: add proper error handling during sign up process */
   const [signUpForm, setSignUpForm] = useState<UserSignUpForm>({
     email: '',
     confirmEmail: '',
@@ -29,7 +30,7 @@ const SignUpPage = () => {
     confirmPassword: '',
     username: '',
     dateOfBirth: new Date(),
-    gender: 'prefer not to say'
+    gender: 'prefer not to say',
   });
 
   const [signUpFormErrors, setSignUpFormErrors] =
@@ -38,7 +39,7 @@ const SignUpPage = () => {
       confirmEmail: '',
       password: '',
       confirmPassword: '',
-      username: ''
+      username: '',
     });
 
   const router = useNavigate();
@@ -52,7 +53,7 @@ const SignUpPage = () => {
     setSignUpForm({ ...signUpForm, confirmEmail: emailConfirm });
     setSignUpFormErrors({
       ...signUpFormErrors,
-      confirmEmail: validateEmailConfirm(emailConfirm, signUpForm.email)
+      confirmEmail: validateEmailConfirm(emailConfirm, signUpForm.email),
     });
   };
 
@@ -60,7 +61,7 @@ const SignUpPage = () => {
     setSignUpForm({ ...signUpForm, password: password });
     setSignUpFormErrors({
       ...signUpFormErrors,
-      password: validatePassword(password)
+      password: validatePassword(password),
     });
   };
 
@@ -71,7 +72,7 @@ const SignUpPage = () => {
       confirmPassword: validatePasswordConfirm(
         passwordConfirm,
         signUpForm.password
-      )
+      ),
     });
   };
 
@@ -79,7 +80,7 @@ const SignUpPage = () => {
     setSignUpForm({ ...signUpForm, username: username });
     setSignUpFormErrors({
       ...signUpFormErrors,
-      username: validateUsername(username)
+      username: validateUsername(username),
     });
   };
 
@@ -115,8 +116,8 @@ const SignUpPage = () => {
               style: {
                 color: 'white',
                 fontWeight: '400',
-                height: '15px'
-              }
+                height: '15px',
+              },
             }}
             color={'primary'}
             error={signUpFormErrors.email ? true : false}
@@ -132,7 +133,7 @@ const SignUpPage = () => {
             className="form-value-input"
             InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
             inputProps={{
-              style: { color: 'white', fontWeight: '400', height: '15px' }
+              style: { color: 'white', fontWeight: '400', height: '15px' },
             }}
             error={signUpFormErrors.confirmEmail ? true : false}
             label={'Enter your email again'}
@@ -210,18 +211,18 @@ const SignUpPage = () => {
                 slotProps={{
                   textField: {
                     InputLabelProps: {
-                      style: { color: 'white', fontWeight: '500' }
+                      style: { color: 'white', fontWeight: '500' },
                     },
                     InputProps: {
                       style: {
                         color: 'white',
                         fontWeight: '400',
                         height: '50px',
-                        width: '400px'
-                      }
-                    }
+                        width: '400px',
+                      },
+                    },
                   },
-                  layout: {}
+                  layout: {},
                 }}
                 disableFuture
               />
@@ -234,7 +235,7 @@ const SignUpPage = () => {
             className="form-value-input"
             InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
             inputProps={{
-              style: { color: 'white', fontWeight: '400', height: '15px' }
+              style: { color: 'white', fontWeight: '400', height: '15px' },
             }}
             error={signUpFormErrors.username ? true : false}
             label={'Enter a profile name'}
