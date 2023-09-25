@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ApplicationConfig } from '../../../config/config';
 import Genius = require('genius-lyrics');
 
 @Injectable()
@@ -6,7 +7,7 @@ export class GeniusService {
   private readonly geniusClient!: Genius.Client;
   constructor() {
     this.geniusClient = new Genius.Client(
-      'x-6rvPcfhlITShI5g-PE3nhGZccIIF7SYWtlKmc_FMbsp_usZ-yzMyn_K2bWGohe'
+      ApplicationConfig.genius_api_key
     );
   }
 

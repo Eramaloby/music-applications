@@ -20,7 +20,7 @@ export const fetchDatabaseItem = async (
   type: string
 ): Promise<Neo4jDbItem | null> => {
   try {
-    const response = await axios.get(`${baseUrl}/item/db/${type}/${id}`);
+    const response = await axios.get(`${baseUrl}/neo4j/${type}/${id}`);
 
     return parseNeo4jData(response.data);
   } catch (error) {
@@ -99,9 +99,10 @@ export const sendChangePasswordRequest = async (
   }
 };
 
+// TODO BACKEND: move controller to separate module(Profile module) and refactor 
 export const fetchProfileStats = async (accessToken: string) => {
   try {
-    const response = await axios.get(`${baseUrl}/profile/stats`, {
+    const response = await axios.get(`${baseUrl}/neo4j/stats`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -287,7 +288,7 @@ export const fetchUserProfileData = async (token: string) => {
 
 export const fetchDatabaseStats = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/db-stats`);
+    const response = await axios.get(`${baseUrl}/neo4j/db-stats`);
     return {
       nodes: response.data[0],
       relationships: response.data[1],
@@ -298,9 +299,10 @@ export const fetchDatabaseStats = async () => {
   }
 };
 
+// TODO BACKEND: add alias to controller on backend
 export const getSpotifyItem = async (type: string, id: string) => {
   try {
-    const response = await axios.get(`${baseUrl}/item/${type}/${id}`);
+    const response = await axios.get(`${baseUrl}/${type}/${id}`);
     return response.data;
   } catch (err) {
     console.log(err);
@@ -310,7 +312,7 @@ export const getSpotifyItem = async (type: string, id: string) => {
 
 export const isItemInDatabase = async (id: string): Promise<boolean | null> => {
   try {
-    const response = await axios.get(`${baseUrl}/exists/${id}`);
+    const response = await axios.get(`${baseUrl}/neo4j/exists/${id}`);
     return response.data;
   } catch (err) {
     console.log(err);

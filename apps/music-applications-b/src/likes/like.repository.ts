@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { Like } from './like.entity';
-import { User } from '../../auth/user.entity';
+import { User } from '../auth/user.entity';
 
 export interface LikeRepository extends Repository<Like> {
   this: Repository<Like>;

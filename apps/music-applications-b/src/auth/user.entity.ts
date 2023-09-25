@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Like } from '../app/likes/like.entity';
+import { Like } from '../likes/like.entity';
 
 @Entity()
 export class User {

@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 
 @Controller('network')
 export class NetworkController {
+  // delete?
   @Get('comment/:commentText')
   async fetchComments(@Param() params) {
     const fetchNeuralNetworkResult = async (data) => {

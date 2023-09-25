@@ -14,7 +14,7 @@ const SearchPageDb = () => {
     { value: 'album', name: 'Albums' },
     { value: 'playlist', name: 'Playlist' },
   ];
-  const endpointUrl = 'http://localhost:4200/api/search?';
+  const endpointUrl = 'http://localhost:4200/api/neo4j/search?';
   // callbacks to pass
   const callbackOnInstanceClick = async (instance: DropdownItem) => {
     // route to db page

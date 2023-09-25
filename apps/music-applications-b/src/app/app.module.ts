@@ -2,20 +2,16 @@ import { ApplicationConfig } from './../../../config/config';
 import { Module } from '@nestjs/common';
 
 import { AppController } from './controllers/app.controller';
-import { GeniusService } from './services/genius.service';
+import { GeniusService } from '../genius/genius.service';
 
-import { Neo4jModule, Neo4jScheme } from 'nest-neo4j/dist';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NetworkController } from './controllers/network.controller';
 import { AuthModule } from '../auth/auth.module';
-import { DatabaseManager } from './services/db-manager.service';
-import { SpotifyService } from './services/spotify.service';
-import { AddItemController } from './controllers/add-item.controller';
-import { GetItemController } from './controllers/get-item.controller';
-import { LikesModule } from './likes/likes.module';
-import { LikeController } from './controllers/like.controller';
-import { ProfileController } from './controllers/profile.controller';
+import { LikesModule } from '../likes/likes.module';
+import { Neo4jDatabaseModule } from '../neo4j/db.module';
+import { SpotifyModule } from '../spotify/spotify.module';
+import { GeniusModule } from '../genius/genius.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -27,24 +23,14 @@ import { ProfileController } from './controllers/profile.controller';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    Neo4jModule.forRoot({
-      scheme: ApplicationConfig.scheme_neo4j as Neo4jScheme,
-      host: ApplicationConfig.host_neo4j,
-      port: '',
-      username: ApplicationConfig.username_neo4j,
-      password: ApplicationConfig.password_neo4j,
-    }),
+
     AuthModule,
     LikesModule,
+    Neo4jDatabaseModule,
+    SpotifyModule,
+    GeniusModule,
   ],
-  controllers: [
-    AppController,
-    NetworkController,
-    AddItemController,
-    GetItemController,
-    LikeController,
-    ProfileController,
-  ],
-  providers: [GeniusService, DatabaseManager, SpotifyService],
+  controllers: [AppController, NetworkController],
+  providers: [GeniusService],
 })
 export class AppModule {}

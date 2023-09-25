@@ -33,7 +33,7 @@ const Search = ({
 
   useEffect(() => {
     // move request code to different class later
-    // test
+    // TODO SEARCH: fix access token requirements to search through database
     const searchDelayTimer = setTimeout(() => {
       if (query !== '' && searchWord !== '') {
         axios.get(`${endpointUrl}${searchWord}=${query.toLowerCase()}`).then(
@@ -45,6 +45,7 @@ const Search = ({
             }
           },
           (reason) => {
+            console.log(reason);
             setErrorText('Before using search acquire access token');
           }
         );

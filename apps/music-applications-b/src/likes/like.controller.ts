@@ -8,19 +8,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from '../../auth/get-user.decorator';
-import { DatabaseManager } from '../services/db-manager.service';
-import { LikeService } from '../likes/like.service';
-import { CreateDeleteLikeSpotifyDto } from '../dto/create-delete-like-spotify.dto';
-import { CreateDeleteLikeDto } from '../dto/create-delete-like.dto';
-import { User } from '../../auth/user.entity';
+import { GetUser } from '../auth/get-user.decorator';
+import { LikeService } from './like.service';
+import { CreateDeleteLikeDto } from './create-delete-like.dto';
+import { User } from '../auth/user.entity';
+import { DatabaseService } from '../neo4j/db.service';
+import { CreateDeleteLikeSpotifyDto } from './dto/create-delete-like-spotify.dto';
 
 @UseGuards(AuthGuard())
 @Controller('like')
 export class LikeController {
   constructor(
     private readonly likeService: LikeService,
-    private readonly dbManager: DatabaseManager
+    private readonly dbManager: DatabaseService
   ) {}
 
   @Get()
@@ -83,9 +83,7 @@ export class LikeController {
       (value) => value.nodeId
     );
 
-    const idsArray = nodeIdsUserLikes
-      .map((value) => `'${value}'`)
-      .join(', ');
+    const idsArray = nodeIdsUserLikes.map((value) => `'${value}'`).join(', ');
 
     const allLikes = await this.dbManager.getAllLikedInstances(idsArray);
 

@@ -1,4 +1,4 @@
-import { ApplicationConfig } from './../../../../config/config';
+import { ApplicationConfig } from '../../../config/config';
 import { Injectable } from '@nestjs/common';
 import SpotifyWebApi = require('spotify-web-api-node');
 

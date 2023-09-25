@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Neo4jService } from 'nest-neo4j/dist';
-import { SpotifyService } from './spotify.service';
+import { SpotifyService } from '../spotify/spotify.service';
 
 @Injectable()
-export class DatabaseManager {
+export class DatabaseService {
   constructor(
     private readonly dbService: Neo4jService,
     private readonly spotifyService: SpotifyService
