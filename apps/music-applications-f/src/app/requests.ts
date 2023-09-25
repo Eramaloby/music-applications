@@ -5,6 +5,7 @@ import {
   UserSignInForm,
   UserSignUpForm,
   ItemPreview,
+  UserSignInRequestResult,
 } from './types';
 import {
   parseNeo4jData,
@@ -29,19 +30,22 @@ export const fetchDatabaseItem = async (
   }
 };
 
-export const sendSignInRequest = async (form: UserSignInForm) => {
+export const sendSignInRequest = async (
+  form: UserSignInForm
+): Promise<UserSignInRequestResult> => {
   try {
     const response = await axios.post(`${baseUrl}/auth/signin`, {
       ...form,
     });
 
-    if (response.status === 201) {
-      return response.data;
-    } else {
-      return null;
-    }
+    // undefined is required to point out
+    return { isSuccessful: true, token: response.data, reason: undefined };
   } catch (err) {
-    console.log(err);
+    return {
+      isSuccessful: false,
+      token: undefined,
+      reason: err.response.data.message,
+    };
   }
 };
 

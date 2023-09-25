@@ -6,12 +6,10 @@ import {
   SpotifyTrack,
   SpotifyPlaylist,
   UserSignUpForm,
-  UserSignInForm,
   ItemPreview,
 } from './types';
 import {
   sendChangePasswordRequest,
-  sendSignInRequest,
   sendSignUpRequest,
 } from './requests';
 
@@ -372,15 +370,15 @@ export const subtractYearsFromDate = (date: Date, years: number) => {
   return date;
 };
 
-export const tryToSignIn = async (form: UserSignInForm) => {
-  try {
-    const token: string = (await sendSignInRequest(form)).accessToken;
-    return token;
-  } catch (error) {
-    console.log(error);
-    return undefined;
-  }
-};
+// export const tryToSignIn = async (form: UserSignInForm) => {
+//   try {
+//     const token: string = (await sendSignInRequest(form)).accessToken;
+//     return token;
+//   } catch (error) {
+//     console.log(error);
+//     return undefined;
+//   }
+// };
 
 export const tryToChangePassword = async (
   currentPassword: string,

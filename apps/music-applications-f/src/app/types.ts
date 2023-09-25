@@ -180,6 +180,12 @@ export interface UserSignUpFormErrors {
   username: string;
 }
 
+export interface UserSignUpRequestResult {
+  isSuccessful: boolean;
+  message: string;
+}
+
+// sign in page abstractions
 export interface UserSignInForm {
   username: string;
   password: string;
@@ -188,8 +194,16 @@ export interface UserSignInForm {
 export interface UserSignInFormErrors {
   username: string;
   password: string;
+  errorMessage: string;
 }
 
+export interface UserSignInRequestResult {
+  token: string | undefined;
+  isSuccessful: boolean;
+  reason: string | undefined;
+}
+
+// change password abstractions
 export interface ChangePasswordForm {
   currentPassword: string;
   newPassword: string;
@@ -202,6 +216,7 @@ export interface ChangePasswordFormErrors {
   confirmNewPassword: string;
 }
 
+// user abstractions
 export interface User {
   email: string;
   username: string;
@@ -233,7 +248,6 @@ export interface DbStats {
   nodes: number;
   relationships: number;
 }
-
 
 export interface LyricsNeuralNetworkParams {
   author: string;

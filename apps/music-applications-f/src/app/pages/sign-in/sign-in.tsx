@@ -4,8 +4,8 @@ import TextField from '@mui/material/TextField';
 
 import './sign-in.styles.scss';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { tryToSignIn } from '../../utils';
 import { UserContext } from '../../contexts/user.context';
+import { sendSignInRequest } from '../../requests';
 
 export const SignInPage = () => {
   const { setUser, currentUser } = useContext(UserContext);
@@ -16,30 +16,36 @@ export const SignInPage = () => {
     username: '',
   });
 
-  const [signInFormErrors, setSignInformErrors] =
+  const [signInFormErrors, setSignInFormErrors] =
     useState<UserSignInFormErrors>({
       password: '',
       username: '',
+      errorMessage: '',
     });
 
   // handlers
   const handleUsernameChange = (username: string) => {
     setSignInForm({ ...signInForm, username: username });
-    setSignInformErrors({ ...signInFormErrors, username: '' });
+    setSignInFormErrors({ ...signInFormErrors, username: '' });
   };
 
   const handlePasswordChange = (password: string) => {
     setSignInForm({ ...signInForm, password: password });
-    setSignInformErrors({
+    setSignInFormErrors({
       ...signInFormErrors,
       password: '',
     });
   };
 
   const onFormSubmit = async () => {
-    const token = await tryToSignIn(signInForm);
-    if (token) {
-      setUser(token);
+    const result = await sendSignInRequest(signInForm);
+    if (result.isSuccessful) {
+      setUser(result.token as string);
+    } else {
+      setSignInFormErrors({
+        ...signInFormErrors,
+        errorMessage: result.reason as string,
+      });
     }
   };
 
@@ -86,6 +92,12 @@ export const SignInPage = () => {
             helperText={signInFormErrors.password}
           ></TextField>
         </div>
+        {/*STYLES TODO: write styles for error message.*/}
+        {signInFormErrors.errorMessage && (
+          <div className="sign-in-form-error">
+            {signInFormErrors.errorMessage}
+          </div>
+        )}
         <div className="log-in-link">
           You don't have an account?{' '}
           <span className="link" onClick={() => router('/signup')}>
