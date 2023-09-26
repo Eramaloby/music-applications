@@ -8,10 +8,7 @@ import {
   UserSignUpForm,
   ItemPreview,
 } from './types';
-import {
-  sendChangePasswordRequest,
-  sendSignUpRequest,
-} from './requests';
+import { sendChangePasswordRequest, sendSignUpRequest } from './requests';
 
 export const convertDuration = (ms: number) => {
   const minutes = Math.floor(ms / 60000);
@@ -174,6 +171,7 @@ export const parseSpotifyData = (data: any) => {
 };
 
 // refactor functions below
+// TODO FRONTEND: create dtos on backend to avoid parsing necessity
 export const extractSpotifyTrackProperties = (track: any) => {
   return {
     type: track.type,

@@ -300,8 +300,8 @@ export class DatabaseService {
 
     if (!alreadyExists) {
       const album = await this.spotifyService.getAlbumById(spotify_id);
-
       const nodeId = await this.generateNewNodeId();
+
       await this.dbService.write(`
         CREATE (album: Album {
           name: "${album.name}",
@@ -311,6 +311,7 @@ export class DatabaseService {
           label: "${album.label}",
           release: "${album.release_date}",
           added_by: "${username}",
+          image_url: "${album.images.at(0).url}",
           id: "${nodeId}"
         })`);
 
@@ -376,6 +377,7 @@ export class DatabaseService {
           spotify_id: "${artist.id}",
           type: "${artist.type}",
           added_by: "${username}",
+          image_url: "${artist.images.at(0).url}",
           id: "${nodeId}"
         })`);
 
@@ -414,6 +416,7 @@ export class DatabaseService {
           owner_name: "${playlist.owner.display_name}",
           collaborative: "${playlist.collaborative}",
           added_by: "${username}",
+          image_url: "${playlist.images.at(0).url}",
           id: "${nodeId}"
         })
       `);
@@ -451,6 +454,7 @@ export class DatabaseService {
           explicit: "${track.explicit}",
           spotify_id: "${track.id}",
           added_by: "${username}",
+          image_url: "${track.album.images.at(0).url}",
           id: "${nodeId}"
         })`);
 

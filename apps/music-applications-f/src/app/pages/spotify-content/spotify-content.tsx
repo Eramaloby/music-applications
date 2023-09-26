@@ -151,6 +151,7 @@ const SpotifyContentPage = () => {
 
           if (isExists !== null) {
             setIsSavedToDb(isExists);
+            console.log('is item exists', isExists);
           }
         } catch (error) {
           console.log(error);

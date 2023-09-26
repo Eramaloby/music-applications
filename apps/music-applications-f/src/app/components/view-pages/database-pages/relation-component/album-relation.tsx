@@ -1,6 +1,7 @@
 import { AlbumProperties, Neo4jDbItem } from '../../../../types';
 import ToRelation from './to-relation';
 
+// TODO: REFACTOR ALL COMPONENTS RELATED TO DYATEL KIRILL DYATEL
 const AlbumRelation = ({
   item,
   routingCallback,

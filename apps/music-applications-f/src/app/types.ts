@@ -125,6 +125,7 @@ export interface TrackProperties {
   explicit: boolean;
   spotify_id: string;
   added_by: string;
+  image_url: string;
 }
 
 export interface ArtistProperties {
@@ -133,8 +134,10 @@ export interface ArtistProperties {
   spotify_id: string;
   type: string;
   added_by: string;
+  image_url: string;
 }
 
+// genre properties is rather useless
 export interface GenreProperties {
   id: number;
   added_by: string;
@@ -150,6 +153,7 @@ export interface AlbumProperties {
   spotify_id: string;
   type: string;
   added_by: string;
+  image_url: string;
 }
 
 export interface PlaylistProperties {
@@ -160,6 +164,7 @@ export interface PlaylistProperties {
   owner_name: string;
   spotify_id: string;
   added_by: string;
+  image_url: string;
 }
 
 export interface UserSignUpForm {

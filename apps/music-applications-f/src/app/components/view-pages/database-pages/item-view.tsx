@@ -48,13 +48,15 @@ const DatabaseItemPage = () => {
           params['id'] as unknown as number,
           params['type']
         );
-
+        console.log(fetchedItem);
         if (fetchedItem) {
           setItem(fetchedItem);
+          // TODO: GENERATE IMAGES FOR GENRE
           addItem({
             type: fetchedItem.type,
             label: fetchedItem.name,
             databaseId: fetchedItem.id,
+            // image: fetchedItem.properties.image_url
           });
         }
       }
