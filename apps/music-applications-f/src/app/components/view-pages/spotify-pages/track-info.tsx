@@ -27,7 +27,7 @@ const TrackInfo = ({
   const onMicrophoneClick = async () => {
     const wrapper = async () => {
       axios
-        .get(`http://localhost:4200/api/lyrics/`, {
+        .get(`http://localhost:4200/api/genius/lyrics/`, {
           params: { query: `${track.artists[0].label}-${track.label}` },
         })
         .then((response) => {

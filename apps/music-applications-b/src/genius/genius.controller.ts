@@ -1,7 +1,7 @@
 import { Controller, Get, Request } from '@nestjs/common';
 import { GeniusService } from './genius.service';
 
-@Controller()
+@Controller('genius')
 export class GeniusController {
   constructor(private readonly geniusService: GeniusService) {}
 

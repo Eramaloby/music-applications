@@ -15,6 +15,7 @@ import {
 
 export const baseUrl = 'http://localhost:4200/api';
 
+/* NEO4J DB REQUESTS */
 export const fetchDatabaseItem = async (
   id: number,
   type: string
@@ -30,6 +31,49 @@ export const fetchDatabaseItem = async (
   }
 };
 
+export const fetchDatabaseStats = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/neo4j/db-stats`);
+    return {
+      nodes: response.data[0],
+      relationships: response.data[1],
+    } as DbStats;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+// TODO BACKEND: move controller to separate module(Profile module) and refactor
+export const fetchProfileStats = async (accessToken: string) => {
+  try {
+    const response = await axios.get(`${baseUrl}/neo4j/stats`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return {
+      nodes: response.data[0],
+      relationships: response.data[1],
+    } as DbStats;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const isItemInDatabase = async (id: string): Promise<boolean | null> => {
+  try {
+    const response = await axios.get(`${baseUrl}/neo4j/${id}`);
+    return response.data;
+  } catch (err) {
+    console.log(err, 'error in request');
+    return null;
+  }
+};
+
+/* AUTH REQUESTS */
 export const sendSignInRequest = async (
   form: UserSignInForm
 ): Promise<UserSignInRequestResult> => {
@@ -72,6 +116,7 @@ export const sendSignUpRequest = async (form: UserSignUpForm) => {
   }
 };
 
+/* PASSWORD REQUESTS */
 export const sendChangePasswordRequest = async (
   currentPassword: string,
   newPassword: string,
@@ -99,25 +144,7 @@ export const sendChangePasswordRequest = async (
   }
 };
 
-// TODO BACKEND: move controller to separate module(Profile module) and refactor 
-export const fetchProfileStats = async (accessToken: string) => {
-  try {
-    const response = await axios.get(`${baseUrl}/neo4j/stats`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return {
-      nodes: response.data[0],
-      relationships: response.data[1],
-    } as DbStats;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
-
+/* LIKE MODULE REQUESTS */
 export const pressLikeSpotifyId = async (
   spotify_id: string,
   accessToken: string
@@ -228,6 +255,7 @@ export const getAllUserLikes = async (
       },
     });
 
+    // TODO FRONTEND REFACTORING: review all parsing strategies
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const parsed = result.data.map((value: any) => parseNeo4jLikes(value));
 
@@ -273,9 +301,9 @@ export const receiveRecommendations = async (
   }
 };
 
+// Currently controller in app module, but could be moved to different instance
 export const fetchUserProfileData = async (token: string) => {
   try {
-    console.log(baseUrl, 'base url', token, 'token');
     const response = await axios.get(`${baseUrl}/currentUser`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -286,33 +314,10 @@ export const fetchUserProfileData = async (token: string) => {
   }
 };
 
-export const fetchDatabaseStats = async () => {
-  try {
-    const response = await axios.get(`${baseUrl}/neo4j/db-stats`);
-    return {
-      nodes: response.data[0],
-      relationships: response.data[1],
-    } as DbStats;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-};
-
-// TODO BACKEND: add alias to controller on backend
+/* SPOTIFY MODULE REQUESTS */
 export const getSpotifyItem = async (type: string, id: string) => {
   try {
-    const response = await axios.get(`${baseUrl}/${type}/${id}`);
-    return response.data;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-};
-
-export const isItemInDatabase = async (id: string): Promise<boolean | null> => {
-  try {
-    const response = await axios.get(`${baseUrl}/neo4j/exists/${id}`);
+    const response = await axios.get(`${baseUrl}/spotify/${type}/${id}`);
     return response.data;
   } catch (err) {
     console.log(err);

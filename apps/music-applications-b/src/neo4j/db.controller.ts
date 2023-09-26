@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { DatabaseService } from './db.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
@@ -21,31 +21,6 @@ export class DatabaseController {
       case 'playlist':
         return await this.dbService.addPlaylist(params.id, user.username);
     }
-  }
-
-  @Get(':type/:id')
-  async getDatabaseItem(@Param() params) {
-    return await this.dbService.findNodeAndRelationsWithId(
-      params.id,
-      params.type
-    );
-  }
-
-  @Get('search')
-  async getData(@Query() query) {
-    const res = await this.dbService.getData(query);
-    return res;
-  }
-
-  @Get('exists/:id')
-  async isThereInstanceWithId(@Param() params) {
-    return await this.dbService.isThereInstanceWithId(params.id);
-  }
-
-  @Get('db-stats')
-  async getDatabaseStats() {
-    const res = await this.dbService.getDbStats();
-    return res;
   }
 
   @Get('stats')

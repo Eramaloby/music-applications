@@ -7,12 +7,6 @@ import ArtistInfo from '../../components/view-pages/spotify-pages/artist-info';
 import PlaylistInfo from '../../components/view-pages/spotify-pages/playlist-info';
 import toast from 'react-hot-toast';
 
-import {
-  LoadingSpinner,
-  PopupMessage,
-} from '../../components/view-pages/spotify-pages/page-utils';
-import AppModal from '../../components/ui-elements/modal';
-
 import './spotify-content.styles.scss';
 import {
   extractSpotifyAlbumProperties,
@@ -37,7 +31,7 @@ import {
 
 // todo: refactoring
 const SpotifyContentPage = () => {
-  const urlToLogin = 'http://localhost:4200/api/login';
+  const urlToLogin = 'http://localhost:4200/api/spotify/login';
 
   const { currentUser } = useContext(UserContext);
 
@@ -93,9 +87,10 @@ const SpotifyContentPage = () => {
   const postItem = () => {
     if (item && currentUser) {
       // setIsLoading(true);
+      // TODO REFACTORING: Move request from component
       axios
         .post(
-          `http://localhost:4200/api/add/${params['type']}/${item.spotify_id}`,
+          `http://localhost:4200/api/neo4j/${params['type']}/${item.spotify_id}`,
           {},
           {
             headers: {
@@ -142,6 +137,7 @@ const SpotifyContentPage = () => {
     const asyncWrapper = async () => {
       if (parsingStrategy) {
         try {
+          // TODO REFACTORING: add error handling for situations where there is no access token
           const rawData = await getSpotifyItem(
             params['type'] as string,
             params['id'] as string

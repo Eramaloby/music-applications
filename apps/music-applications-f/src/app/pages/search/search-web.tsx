@@ -6,7 +6,7 @@ import { DropdownItem } from '../../types';
 import { useNavigate } from 'react-router-dom';
 
 const SearchWebPage = () => {
-  const urlToLogin = 'http://localhost:4200/api/login';
+  const urlToLogin = 'http://localhost:4200/api/spotify/login';
   const router = useNavigate();
 
   const onUnlockButtonClick = () => {
@@ -39,7 +39,7 @@ const SearchWebPage = () => {
       <Search
         isInputDisabled={false}
         selectorOptions={selectorParamsArray}
-        endpointUrl="http://localhost:4200/api/web-search?"
+        endpointUrl="http://localhost:4200/api/spotify/search?"
         instanceClickCallback={callbackDetailsView}
         selectorClassName="livesearch-selector"
         parser={parseSpotifyData}

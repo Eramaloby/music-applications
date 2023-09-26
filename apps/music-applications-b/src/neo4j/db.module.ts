@@ -5,6 +5,7 @@ import { DatabaseService } from './db.service';
 import { AuthModule } from '../auth/auth.module';
 import { SpotifyModule } from '../spotify/spotify.module';
 import { DatabaseController } from './db.controller';
+import { DatabaseNoAuthController } from './db-no-auth.controller';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { DatabaseController } from './db.controller';
     AuthModule,
     SpotifyModule,
   ],
-  controllers: [DatabaseController],
+  controllers: [DatabaseController, DatabaseNoAuthController],
   providers: [DatabaseService],
   exports: [DatabaseService],
 })
