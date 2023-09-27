@@ -5,19 +5,12 @@ export interface DropdownItem {
   database_id?: number;
 }
 
-export interface Image {
-  height: number;
-  url: string;
-  width: number;
-}
-
 export interface SpotifyArtist {
   type: string;
   label: string;
   spotify_id: string;
-  preview_url: string | undefined;
   genres: string[];
-  images: Image[];
+  image: { height?: number; url: string; width?: number };
 }
 
 export interface SpotifyTrack {
@@ -35,7 +28,7 @@ export interface SpotifyTrack {
   album: {
     release_date: string;
     label: string;
-    images: Image[];
+    image: { height?: number; url: string; width?: number };
     spotify_id: string;
     album_type: string;
     type: string;
@@ -50,7 +43,7 @@ export interface SpotifyAlbum {
   tracks_num: number;
   label: string;
   actual_label: string;
-  images: Image[];
+  image: { height?: number; url: string; width?: number };
   tracks: {
     type: string;
     label: string;
@@ -75,7 +68,7 @@ export interface SpotifyPlaylist {
   spotify_id: string;
   description: string;
   owner_name: string;
-  images: Image[];
+  image: { height?: number; url: string; width?: number };
   name: string;
   collaborative: boolean;
   type: string;
@@ -244,7 +237,7 @@ export enum ProfilePageStates {
 export interface ItemPreview {
   databaseId?: number;
   spotify_id?: string;
-  image?: Image;
+  image?: { height?: number; url: string; width?: number };
   label: string;
   type: string;
 }

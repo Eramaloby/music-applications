@@ -27,7 +27,7 @@ const PlaylistInfo = ({
       spotify_id: playlist.spotify_id,
       type: playlist.type,
       label: playlist.name,
-      image: playlist.images[1] ? playlist.images[1] : undefined,
+      image: playlist.image ? playlist.image : undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -37,7 +37,7 @@ const PlaylistInfo = ({
         <div className="playlist-item-info">
           <div className="playlist-item-page-images">
             <img
-              src={playlist.images[0].url}
+              src={playlist.image.url}
               height={400}
               width={400}
               alt="playlist-cover"

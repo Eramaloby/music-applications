@@ -19,7 +19,7 @@ const ArtistInfo = ({
       spotify_id: artist.spotify_id,
       type: artist.type,
       label: artist.label,
-      image: artist.images[1] ? artist.images[1] : undefined,
+      image: artist.image ? artist.image : undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -28,11 +28,11 @@ const ArtistInfo = ({
     <div className="item-page-content">
       <div className="artist-item-page-details-header">
         <div className="artist-item-page-image">
-          {artist.images[1] ? (
+          {artist.image ? (
             <img
-              src={artist.images[1].url}
-              height={artist.images[1].height}
-              width={artist.images[1].width}
+              src={artist.image.url}
+              height={artist.image.height}
+              width={artist.image.width}
               alt="artist-cover"
             ></img>
           ) : (

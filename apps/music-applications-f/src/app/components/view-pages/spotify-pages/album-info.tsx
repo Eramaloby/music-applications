@@ -28,7 +28,7 @@ const AlbumInfo = ({
       spotify_id: album.spotify_id,
       type: album.type,
       label: album.label,
-      image: album.images[1] ? album.images[1] : undefined,
+      image: album.image ? album.image : undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -39,9 +39,9 @@ const AlbumInfo = ({
         <div className="album-item-page-details-header">
           <div className="album-item-page-images">
             <img
-              src={album.images[1].url}
-              height={album.images[1].height}
-              width={album.images[1].width}
+              src={album.image.url}
+              height={album.image.height}
+              width={album.image.width}
               alt="album-cover"
             ></img>
           </div>

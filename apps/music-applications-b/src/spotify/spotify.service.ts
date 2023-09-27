@@ -1,6 +1,18 @@
 import { ApplicationConfig } from '../../../config/config';
 import { Injectable } from '@nestjs/common';
 import SpotifyWebApi = require('spotify-web-api-node');
+import {
+  SpotifyArtist,
+  SpotifyAlbum,
+  SpotifyPlaylist,
+  SpotifyTrack,
+} from './spotify-types';
+import {
+  extractSpotifyAlbumProperties,
+  extractSpotifyArtistProperties,
+  extractSpotifyPlaylistProperties,
+  extractSpotifyTrackProperties,
+} from './spotify-types.parser';
 
 @Injectable()
 export class SpotifyService {
@@ -70,6 +82,26 @@ export class SpotifyService {
     const [params] = this.unwrapQuery(query);
     const result = await this.searchFromWeb(params[0], params[1]);
     return result.body;
+  }
+
+  public async getParsedArtistById(spotify_id: string): Promise<SpotifyArtist> {
+    return extractSpotifyArtistProperties(await this.getArtistById(spotify_id));
+  }
+
+  public async getParsedAlbumById(spotify_id: string): Promise<SpotifyAlbum> {
+    return extractSpotifyAlbumProperties(await this.getAlbumById(spotify_id));
+  }
+
+  public async getParsedPlaylistById(
+    spotify_id: string
+  ): Promise<SpotifyPlaylist> {
+    return extractSpotifyPlaylistProperties(
+      await this.getPlaylistById(spotify_id)
+    );
+  }
+
+  public async getParsedTrackById(spotify_id: string): Promise<SpotifyTrack> {
+    return extractSpotifyTrackProperties(await this.getTrackById(spotify_id));
   }
 
   public async getArtistById(spotify_id: string) {

@@ -46,7 +46,7 @@ const TrackInfo = ({
       spotify_id: track.spotify_id,
       type: track.type,
       label: track.label,
-      image: track.album.images[1] ? track.album.images[1] : undefined,
+      image: track.album.image ? track.album.image : undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -56,7 +56,7 @@ const TrackInfo = ({
       <div className="track-page-content-wrapper">
         <div className="track-album-image" onClick={() => onMicrophoneClick()}>
           <img
-            src={track.album.images[1].url}
+            src={track.album.image.url}
             height={300}
             width={300}
             alt="album-cover"

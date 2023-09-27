@@ -321,6 +321,6 @@ export const getSpotifyItem = async (type: string, id: string) => {
     return response.data;
   } catch (err) {
     console.log(err);
-    return null;
+    return undefined;
   }
 };

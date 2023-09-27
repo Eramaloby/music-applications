@@ -9,12 +9,6 @@ import toast from 'react-hot-toast';
 
 import './spotify-content.styles.scss';
 import {
-  extractSpotifyAlbumProperties,
-  extractSpotifyArtistProperties,
-  extractSpotifyPlaylistProperties,
-  extractSpotifyTrackProperties,
-} from '../../utils';
-import {
   SpotifyAlbum,
   SpotifyArtist,
   SpotifyPlaylist,
@@ -46,10 +40,6 @@ const SpotifyContentPage = () => {
   const [isSavedToDb, setIsSavedToDb] = useState<boolean>(false);
   const [error] = useState<string>('');
 
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [popup, setPopup] = useState(false);
-  // const [popupMessage, setPopupMessage] = useState('');
-
   // update state from server later
   const [isLiked, setIsLiked] = useState<null | boolean>(null);
 
@@ -65,25 +55,7 @@ const SpotifyContentPage = () => {
     }
   };
 
-  // const togglePopup = () => setPopup(!popup);
-
-  const recognizeParsingStrategy = (type: string | undefined) => {
-    switch (type) {
-      case 'track':
-        return extractSpotifyTrackProperties;
-      case 'artist':
-        return extractSpotifyArtistProperties;
-      case 'album':
-        return extractSpotifyAlbumProperties;
-      case 'playlist':
-        return extractSpotifyPlaylistProperties;
-      default:
-        return undefined;
-    }
-  };
-
-  const parsingStrategy = recognizeParsingStrategy(params['type']);
-
+  // post handler
   const postItem = () => {
     if (item && currentUser) {
       // setIsLoading(true);
@@ -115,6 +87,7 @@ const SpotifyContentPage = () => {
     }
   };
 
+  // check if liked
   useEffect(() => {
     const asyncWrapper = async () => {
       if (currentUser && isSavedToDb && item) {
@@ -133,45 +106,25 @@ const SpotifyContentPage = () => {
     asyncWrapper();
   }, [currentUser, isSavedToDb, item]);
 
+  // first invoked
   useEffect(() => {
     const asyncWrapper = async () => {
-      if (parsingStrategy) {
-        try {
-          // TODO REFACTORING: add error handling for situations where there is no access token
-          const rawData = await getSpotifyItem(
-            params['type'] as string,
-            params['id'] as string
-          );
-          if (rawData) {
-            const parsedItem = parsingStrategy(rawData);
-            setItem(parsedItem);
-          }
-
-          const isExists = await isItemInDatabase(params['id'] as string);
-
-          if (isExists !== null) {
-            setIsSavedToDb(isExists);
-            console.log('is item exists', isExists);
-          }
-        } catch (error) {
-          console.log(error);
+      try {
+        const type = params['type'] as string;
+        const id = params['id'] as string;
+        const data = await getSpotifyItem(type, id);
+        if (data) {
+          setItem(data);
         }
+
+        const isExists = await isItemInDatabase(id);
+        if (isExists !== null) {
+          setIsSavedToDb(isExists);
+        }
+      } catch (error) {
+        // add proper error handling
+        console.log(error);
       }
-      // .then(
-      //   (response) => {
-      //     setItem(parsingStrategy(response.data));
-      //     // check state of item whether it's added or not
-      //   },
-      //   (reason) => {
-      //     if (reason.response.status === 400) {
-      //       setError('Not found!');
-      //     } else {
-      //       setError(
-      //         'Unauthorized access. Before visiting this page you need to acquire or refresh access token.'
-      //       );
-      //     }
-      //   }
-      // );
     };
 
     asyncWrapper();
@@ -199,6 +152,7 @@ const SpotifyContentPage = () => {
   }
 
   return (
+    /* TODO REFACTORING: REFACTOR BUTTON SAVE AND GO BACK */
     <div className="item-page-wrapper">
       <div className="item-page-btns">
         <button
