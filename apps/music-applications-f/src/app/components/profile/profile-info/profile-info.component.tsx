@@ -4,8 +4,12 @@ import './profile-info.styles.scss';
 
 import { useContext, useEffect, useState } from 'react';
 import { fetchProfileStats, receiveRecommendations } from '../../../requests';
-import { UserContext } from '../../../contexts/user.context';
+import {
+  AsyncNeo4jTaskMetadata,
+  UserContext,
+} from '../../../contexts/user.context';
 import ViewPanelContainer from '../../recently-viewed-panel/view-panel-container';
+import AsyncTasksDashboard from '../async-tasks-dashboard/async-tasks-dashboard.component';
 
 const ProfileInfoComponent = ({ user }: { user: User }) => {
   const [stats, setStats] = useState<DbStats>({
@@ -13,14 +17,16 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
     relationships: 0,
   });
 
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, currentTasks } = useContext(UserContext);
 
   const [recommendations, setRecommendations] = useState<ItemPreview[]>([]);
 
   const fetchRecommendations = async () => {
-    const response = await receiveRecommendations(currentUser!.accessToken);
-    if (response) {
-      setRecommendations([...response]);
+    if (currentUser) {
+      const response = await receiveRecommendations(currentUser.accessToken);
+      if (response) {
+        setRecommendations([...response]);
+      }
     }
   };
 
@@ -36,7 +42,7 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
         }
       }
     };
-    
+
     asyncWrapper();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -54,6 +60,7 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
           </div>
         </div>
       </div>
+      <AsyncTasksDashboard tasks={currentTasks}></AsyncTasksDashboard>
       {recommendations.length !== 0 ? (
         <div className="recommendation-panel">
           <ViewPanelContainer

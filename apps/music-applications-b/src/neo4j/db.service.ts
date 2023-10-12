@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Neo4jService } from 'nest-neo4j/dist';
+import { Neo4jService, Transaction } from 'nest-neo4j/dist';
 import { SpotifyService } from '../spotify/spotify.service';
+import { AddTransactionRecordData, AddTransactionResult } from '../types';
 
 @Injectable()
 export class DatabaseService {
@@ -135,6 +136,17 @@ export class DatabaseService {
       5. Provide relations.
   */
 
+  public async isThereInstanceWithIdTransaction(
+    id: string,
+    transaction: Transaction
+  ) {
+    const query = await transaction.run(
+      `MATCH (instance) WHERE instance.spotify_id = "${id}" RETURN instance`
+    );
+
+    return query.records.length != 0;
+  }
+
   public async isThereInstanceWithId(id: string) {
     const query = await this.dbService.read(
       `MATCH (instance) WHERE instance.spotify_id = "${id}" RETURN instance`
@@ -264,8 +276,8 @@ export class DatabaseService {
     return query.records;
   }
 
-  public async generateNewNodeId(): Promise<number> {
-    const query = await this.dbService.write(`MERGE (id:GlobalUniqueId)
+  public async generateNewNodeId(transaction: Transaction): Promise<number> {
+    const query = await transaction.run(`MERGE (id:GlobalUniqueId)
       ON CREATE SET id.count = 1
       ON MATCH SET id.count = id.count + 1
       RETURN id.count AS generated_id`);
@@ -274,35 +286,205 @@ export class DatabaseService {
     return recordId.get('generated_id')['low'];
   }
 
-  public async addGenre(genreName: string, username: string) {
-    const checkQuery = await this.dbService.read(
-      `MATCH (genre: Genre) WHERE genre.name = "${genreName}" RETURN genre`
+  /* ADD functions */
+  public performAddTransaction = async (
+    type: 'track' | 'album' | 'artist' | 'playlist',
+    identity: string,
+    username: string
+  ): Promise<AddTransactionResult> => {
+    const accumulatedResult: AddTransactionRecordData[] = [];
+    const session = this.dbService.getDriver().session();
+    const transaction = await session.beginTransaction();
+
+    try {
+      switch (type) {
+        case 'track':
+          await this.addTrack(
+            identity,
+            username,
+            accumulatedResult,
+            transaction
+          );
+          break;
+        case 'album':
+          await this.addAlbum(
+            identity,
+            username,
+            accumulatedResult,
+            transaction
+          );
+          break;
+        case 'artist':
+          await this.addTrack(
+            identity,
+            username,
+            accumulatedResult,
+            transaction
+          );
+          break;
+        case 'playlist':
+          await this.addPlaylist(
+            identity,
+            username,
+            accumulatedResult,
+            transaction
+          );
+          break;
+      }
+
+      await transaction.commit();
+    } catch (error) {
+      // maybe useless
+      console.log(error, 'error in try');
+      transaction.rollback();
+      return { isSuccess: false, reason: error.message, records: [] };
+    } finally {
+      await transaction.close();
+      await session.close();
+    }
+
+    if (accumulatedResult.length > 0) {
+      return {
+        isSuccess: true,
+        records: accumulatedResult,
+      };
+    } else {
+      return {
+        isSuccess: false,
+        records: accumulatedResult,
+        reason: 'Record was already added.',
+      };
+    }
+  };
+
+  // add checked function later
+  public addGenre = async (
+    identity: string,
+    username: string,
+    accumulated: AddTransactionRecordData[],
+    transaction: Transaction
+  ) => {
+    const checkQuery = await transaction.run(
+      `MATCH (genre: Genre) WHERE genre.name = "${identity}" RETURN genre`
     );
 
-    const nodeId = await this.generateNewNodeId();
+    const nodeId = await this.generateNewNodeId(transaction);
     if (checkQuery.records.length === 0) {
-      await this.dbService.write(
+      await transaction.run(
         `CREATE (genre: Genre {
-          name: "${genreName}",
+          name: "${identity}",
           added_by: "${username}",
           id: "${nodeId}"
         })`
       );
 
+      accumulated.push({ name: identity, type: 'genre' });
       return true;
     }
 
     return false;
-  }
+  };
 
-  public async addAlbum(spotify_id: string, username: string) {
-    const alreadyExists = await this.isThereInstanceWithId(spotify_id);
+  public addAlbum = async (
+    identity: string,
+    username: string,
+    accumulated: AddTransactionRecordData[],
+    transaction: Transaction
+  ) => {
+    const alreadyExists = await this.isThereInstanceWithIdTransaction(
+      identity,
+      transaction
+    );
 
     if (!alreadyExists) {
-      const album = await this.spotifyService.getAlbumById(spotify_id);
-      const nodeId = await this.generateNewNodeId();
+      return await this.addAlbumChecked(
+        identity,
+        username,
+        accumulated,
+        transaction
+      );
+    }
 
-      await this.dbService.write(`
+    return false;
+  };
+
+  public addArtist = async (
+    identity: string,
+    username: string,
+    accumulated: AddTransactionRecordData[],
+    transaction: Transaction
+  ) => {
+    const alreadyExists = await this.isThereInstanceWithIdTransaction(
+      identity,
+      transaction
+    );
+
+    if (!alreadyExists) {
+      return await this.addArtistChecked(
+        identity,
+        username,
+        accumulated,
+        transaction
+      );
+    }
+
+    return false;
+  };
+
+  public addPlaylist = async (
+    identity: string,
+    username: string,
+    accumulated: AddTransactionRecordData[],
+    transaction: Transaction
+  ) => {
+    const alreadyExists = await this.isThereInstanceWithIdTransaction(
+      identity,
+      transaction
+    );
+
+    if (!alreadyExists) {
+      return await this.addPlaylistChecked(
+        identity,
+        username,
+        accumulated,
+        transaction
+      );
+    }
+
+    return false;
+  };
+
+  public addTrack = async (
+    identity: string,
+    username: string,
+    accumulated: AddTransactionRecordData[],
+    transaction: Transaction
+  ) => {
+    const alreadyExists = await this.isThereInstanceWithIdTransaction(
+      identity,
+      transaction
+    );
+
+    if (!alreadyExists) {
+      return this.addTrackChecked(identity, username, accumulated, transaction);
+    }
+
+    return false;
+  };
+
+  // add dtos to generalize functions for custom adding to db
+  // checked functions
+  public addAlbumChecked = async (
+    identity: string,
+    username: string,
+    accumulated: AddTransactionRecordData[],
+    transaction: Transaction
+  ) => {
+    const album = await this.spotifyService.getAlbumById(identity);
+    const nodeId = await this.generateNewNodeId(transaction);
+    const imageUrl: string | undefined = album.images.at(0).url;
+
+    await transaction.run(`
         CREATE (album: Album {
           name: "${album.name}",
           spotify_id: "${album.id}",
@@ -311,104 +493,120 @@ export class DatabaseService {
           label: "${album.label}",
           release: "${album.release_date}",
           added_by: "${username}",
-          image_url: "${album.images.at(0).url}",
+          image_url: "${imageUrl || 'none'}",
           id: "${nodeId}"
         })`);
 
-      for (const genre of album.genres) {
-        // create genre if possible
-        await this.addGenre(genre, username);
-        await this.dbService.write(`
+    accumulated.push({ name: album.name, type: 'album' });
+
+    for (const genre of album.genres) {
+      // create genre if possible
+      await this.addGenre(genre, username, accumulated, transaction);
+
+      await transaction.run(`
           MATCH
-            (album: Album {spotify_id: "${spotify_id}"}),
+            (album: Album {spotify_id: "${identity}"}),
             (genre: Genre {name: "${genre}"})
           MERGE (album)-[r:RelatedToGenre]->(genre)
           RETURN type(r)`);
-      }
+    }
 
-      for (const artist of album.artists) {
-        await this.addArtist(artist.id, username);
-      }
+    for (const artist of album.artists) {
+      await this.addArtist(artist.id, username, accumulated, transaction);
+    }
 
-      const albumAuthor = album.artists.shift();
-      await this.dbService.write(`
+    const albumAuthor = album.artists.shift();
+    await transaction.run(`
         MATCH
           (artist: Artist {spotify_id: "${albumAuthor.id}"}),
-          (album: Album {spotify_id: "${spotify_id}"})
+          (album: Album {spotify_id: "${identity}"})
         MERGE (artist)-[r:Author]->(album)
         RETURN type(r)`);
 
-      for (const artist of album.artists) {
-        await this.dbService.write(`
+    for (const artist of album.artists) {
+      await transaction.run(`
           MATCH
             (artist: Artist {spotify_id: "${artist.id}"}),
-            (album: Album {spotify_id: "${spotify_id}"})
+            (album: Album {spotify_id: "${identity}"})
           MERGE (artist)-[r:AppearedAt]->(album)
           RETURN type(r)`);
-      }
+    }
 
-      for (const track of album.tracks.items) {
-        await this.addTrack(track.id, username);
-        await this.dbService.write(`
+    for (const track of album.tracks.items) {
+      await this.addTrack(track.id, username, accumulated, transaction);
+      await transaction.run(`
           MATCH
-            (album: Album {spotify_id: "${spotify_id}"}),
+            (album: Album {spotify_id: "${identity}"}),
             (track: Track {spotify_id: "${track.id}"})
           MERGE (album)-[r:Contains]->(track)
           RETURN type(r)`);
-      }
-
-      return true;
     }
 
-    return false;
-  }
+    return true;
+  };
 
-  public async addArtist(spotify_id: string, username: string) {
-    const alreadyExists = await this.isThereInstanceWithId(spotify_id);
+  public addTrackChecked = async (
+    identity: string,
+    username: string,
+    accumulated: AddTransactionRecordData[],
+    transaction: Transaction
+  ) => {
+    const track = await this.spotifyService.getTrackById(identity);
+    const nodeId = await this.generateNewNodeId(transaction);
+    const imageUrl: string | undefined = track.album.images.at(0).url;
 
-    if (!alreadyExists) {
-      // create artist
-      const artist = await this.spotifyService.getArtistById(spotify_id);
-      const nodeId = await this.generateNewNodeId();
-
-      await this.dbService.write(`
-        CREATE (artist: Artist {
-          name: "${artist.name}",
-          spotify_id: "${artist.id}",
-          type: "${artist.type}",
+    // create track at first
+    await transaction.run(`
+        CREATE (track: Track {
+          name: "${track.name}",
+          duration_ms: "${track.duration_ms}",
+          explicit: "${track.explicit}",
+          spotify_id: "${track.id}",
           added_by: "${username}",
-          image_url: "${artist.images.at(0).url}",
+          image_url: "${imageUrl || 'none'}",
           id: "${nodeId}"
         })`);
 
-      // sequence
-      for (const genre of artist.genres) {
-        await this.addGenre(genre, username);
-      }
+    accumulated.push({ name: track.name, type: 'track' });
 
-      for (const genre of artist.genres) {
-        await this.dbService.write(`
-          MATCH
-            (artist: Artist {spotify_id: "${artist.id}"}),
-            (genre: Genre {name: "${genre}"})
-          MERGE (artist)-[r:PerformsInGenre]->(genre)
-          RETURN type(r)`);
-      }
-
-      return true;
+    // relate artists to track
+    // first add artists
+    for (const artist of track.artists) {
+      await this.addArtist(artist.id, username, accumulated, transaction);
     }
 
-    return false;
-  }
+    // add author relations
+    const trackAuthor = track.artists.shift();
+    await transaction.run(`
+        MATCH
+          (artist: Artist {spotify_id: "${trackAuthor.id}"}),
+          (track: Track {spotify_id: "${identity}"})
+        MERGE (artist)-[r:Author]->(track)
+        RETURN type(r)`);
 
-  public async addPlaylist(spotify_id: string, username: string) {
-    const alreadyExists = await this.isThereInstanceWithId(spotify_id);
+    for (const artist of track.artists) {
+      await transaction.run(`
+          MATCH
+            (artist: Artist {spotify_id: "${artist.id}"}),
+            (track: Track {spotify_id: "${identity}"})
+          MERGE (artist)-[r:AppearedAt]->(track)
+          RETURN type(r)`);
+    }
 
-    if (!alreadyExists) {
-      const playlist = await this.spotifyService.getPlaylistById(spotify_id);
-      const nodeId = await this.generateNewNodeId();
+    return true;
+  };
 
-      await this.dbService.write(`
+  public addPlaylistChecked = async (
+    identity: string,
+    username: string,
+    accumulated: AddTransactionRecordData[],
+    transaction: Transaction
+  ) => {
+    const playlist = await this.spotifyService.getPlaylistById(identity);
+    const nodeId = await this.generateNewNodeId(transaction);
+    const imageUrl: string | undefined = playlist.images.at(0).url;
+
+    await transaction.run(`
         CREATE (playlist: Playlist {
           name: "${playlist.name}",
           description: "${playlist.description}",
@@ -416,75 +614,67 @@ export class DatabaseService {
           owner_name: "${playlist.owner.display_name}",
           collaborative: "${playlist.collaborative}",
           added_by: "${username}",
-          image_url: "${playlist.images.at(0).url}",
+          image_url: "${imageUrl || 'none'}",
           id: "${nodeId}"
         })
       `);
 
-      // add tracks
-      for (const track of playlist.tracks.items) {
-        // if (track.track.id)
-        await this.addTrack(track.track.id, username);
-        await this.dbService.write(`
+    accumulated.push({ name: playlist.name, type: 'playlist' });
+
+    // add tracks
+    for (const track of playlist.tracks.items) {
+      await this.addTrack(track.track.id, username, accumulated, transaction);
+      await transaction.run(`
           MATCH
-            (playlist: Playlist {spotify_id: "${spotify_id}"}),
+            (playlist: Playlist {spotify_id: "${identity}"}),
             (track: Track {spotify_id: "${track.track.id}"})
           MERGE (playlist)-[r:Contains]->(track)
           RETURN type(r)`);
-      }
-
-      return true;
     }
 
-    return false;
-  }
+    return true;
+  };
 
-  public async addTrack(spotify_id: string, username: string) {
-    const alreadyExists = await this.isThereInstanceWithId(spotify_id);
+  public addArtistChecked = async (
+    identity: string,
+    username: string,
+    accumulated: AddTransactionRecordData[],
+    transaction: Transaction
+  ) => {
+    // create artist
+    const artist = await this.spotifyService.getArtistById(identity);
+    const nodeId = await this.generateNewNodeId(transaction);
+    // TODO refactor line
+    const imageUrl: string | undefined = artist.images.at(0)?.url
+      ? artist.images.at(0)?.url
+      : undefined;
 
-    if (!alreadyExists) {
-      const track = await this.spotifyService.getTrackById(spotify_id);
-      const nodeId = await this.generateNewNodeId();
+    await transaction.run(`
+      CREATE (artist: Artist {
+        name: "${artist.name}",
+        spotify_id: "${artist.id}",
+        type: "${artist.type}",
+        added_by: "${username}",
+        image_url: "${imageUrl || 'none'}",
+        id: "${nodeId}"
+      })`);
 
-      // create track at first
-      await this.dbService.write(`
-        CREATE (track: Track {
-          name: "${track.name}",
-          duration_ms: "${track.duration_ms}",
-          explicit: "${track.explicit}",
-          spotify_id: "${track.id}",
-          added_by: "${username}",
-          image_url: "${track.album.images.at(0).url}",
-          id: "${nodeId}"
-        })`);
+    accumulated.push({ name: artist.name, type: 'artist' });
 
-      // relate artists to track
-      // first add artists
-      for (const artist of track.artists) {
-        await this.addArtist(artist.id, username);
-      }
+    // sequence
+    for (const genre of artist.genres) {
+      await this.addGenre(genre, username, accumulated, transaction);
+    }
 
-      // add author relations
-      const trackAuthor = track.artists.shift();
-      await this.dbService.write(`
+    for (const genre of artist.genres) {
+      await transaction.run(`
         MATCH
-          (artist: Artist {spotify_id: "${trackAuthor.id}"}),
-          (track: Track {spotify_id: "${spotify_id}"})
-        MERGE (artist)-[r:Author]->(track)
+          (artist: Artist {spotify_id: "${artist.id}"}),
+          (genre: Genre {name: "${genre}"})
+        MERGE (artist)-[r:PerformsInGenre]->(genre)
         RETURN type(r)`);
-
-      for (const artist of track.artists) {
-        await this.dbService.write(`
-          MATCH
-            (artist: Artist {spotify_id: "${artist.id}"}),
-            (track: Track {spotify_id: "${spotify_id}"})
-          MERGE (artist)-[r:AppearedAt]->(track)
-          RETURN type(r)`);
-      }
-
-      return true;
     }
 
-    return false;
-  }
+    return true;
+  };
 }

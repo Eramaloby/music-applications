@@ -44,6 +44,47 @@ export const fetchDatabaseStats = async () => {
   }
 };
 
+export interface PostItemResponse {
+  isSuccess: boolean;
+  message?: string;
+  records: { name: string; type: string }[];
+}
+
+export const postItemToNeo4j = async (
+  itemType: string,
+  spotify_id: string,
+  accessToken: string
+): Promise<PostItemResponse> => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/neo4j/${itemType}/${spotify_id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    console.log(response, 'RESPONSE');
+
+    if (response.data.isSuccess) {
+      return {
+        isSuccess: true,
+        records: response.data.records,
+      };
+    } else {
+      return {
+        isSuccess: false,
+        records: [],
+        message: response.data.reason,
+      };
+    }
+  } catch (error) {
+    return { isSuccess: false, message: error.message, records: [] };
+  }
+};
+
 // TODO BACKEND: move controller to separate module(Profile module) and refactor
 export const fetchProfileStats = async (accessToken: string) => {
   try {
@@ -315,12 +356,19 @@ export const fetchUserProfileData = async (token: string) => {
 };
 
 /* SPOTIFY MODULE REQUESTS */
-export const getSpotifyItem = async (type: string, id: string) => {
+export const getSpotifyItem = async (
+  type: string,
+  id: string
+): Promise<GetSpotifyItemResponse> => {
   try {
     const response = await axios.get(`${baseUrl}/spotify/${type}/${id}`);
-    return response.data;
+    return { item: response.data, statusCode: 200 };
   } catch (err) {
-    console.log(err);
-    return undefined;
+    return { item: null, statusCode: err.response.status };
   }
 };
+
+export interface GetSpotifyItemResponse {
+  item: any;
+  statusCode: number;
+}

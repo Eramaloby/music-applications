@@ -4,12 +4,17 @@ import { fetchUserProfileData } from '../requests';
 
 export interface UserContextType {
   currentUser: User | null;
+  currentTasks: AsyncNeo4jTaskMetadata[];
+  addTask: (task: AsyncNeo4jTaskMetadata) => void;
   setUser: (accessToken: string | null) => void;
   signOut: () => void;
 }
 
 export const UserContext = createContext<UserContextType>({
   currentUser: null,
+  currentTasks: [],
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  addTask: () => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setUser: () => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -21,8 +26,19 @@ interface AccessTokenMetadata {
   receivedAt: number;
 }
 
+export interface AsyncNeo4jTaskMetadata {
+  startedAt: number; // Date.now()
+  finished: boolean;
+  finishedIn?: number; // Date.now()
+  failed: boolean;
+  details: { name: string; type: string }[];
+}
+
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentTasks, setCurrentTasks] = useState<AsyncNeo4jTaskMetadata[]>(
+    []
+  );
 
   const logInUser = async (accessToken: string) => {
     const response = await fetchUserProfileData(accessToken);
@@ -65,6 +81,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('tokenData');
   };
 
+  const addTask = (task: AsyncNeo4jTaskMetadata) =>
+    setCurrentTasks([...currentTasks, task]);
+
   useEffect(() => {
     const asyncWrapper = async () => {
       const unparsed = localStorage.getItem('tokenData');
@@ -84,7 +103,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const value = { currentUser, setUser, signOut };
+  const value = { currentUser, currentTasks, addTask, setUser, signOut };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

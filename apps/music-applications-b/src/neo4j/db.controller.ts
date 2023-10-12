@@ -10,17 +10,12 @@ export class DatabaseController {
   constructor(private readonly dbService: DatabaseService) {}
 
   @Post(':type/:id')
-  async addTrack(@Param() params, @GetUser() user: User) {
-    switch (params.type) {
-      case 'track':
-        return await this.dbService.addTrack(params.id, user.username);
-      case 'album':
-        return await this.dbService.addAlbum(params.id, user.username);
-      case 'artist':
-        return await this.dbService.addArtist(params.id, user.username);
-      case 'playlist':
-        return await this.dbService.addPlaylist(params.id, user.username);
-    }
+  async addItem(@Param() params, @GetUser() user: User) {
+    return await this.dbService.performAddTransaction(
+      params.type,
+      params.id,
+      user.username
+    );
   }
 
   @Get('stats')
