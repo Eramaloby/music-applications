@@ -24,18 +24,19 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
     }
   };
 
+  // TODO: write message what job is currently working
   useEffect(() => {
     const asyncWrapper = async () => {
       if (user) {
         // request
         const data = await fetchProfileStats(user.accessToken);
+        await fetchRecommendations();
         if (data) {
           setStats({ ...data });
         }
       }
     };
-
-    fetchRecommendations();
+    
     asyncWrapper();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
