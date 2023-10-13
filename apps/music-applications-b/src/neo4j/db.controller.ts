@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { DatabaseService } from './db.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
@@ -51,7 +51,7 @@ export class DatabaseController {
   }
 
   @Post('/genre')
-  async addUserGenre(dto: PostGenreDto, @GetUser() user: User) {
-    console.log(dto);
+  async addUserGenre(@Body() dto: PostGenreDto, @GetUser() user: User) {
+    console.log('post request passed dto', dto);
   }
 }

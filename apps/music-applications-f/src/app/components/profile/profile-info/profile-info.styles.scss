@@ -1,10 +1,12 @@
 .profile-page-content {
   // fix margin later
-  margin-top: 50px;
-  width: 80%;
+  flex: 0 0 100%;
   display: flex;
+  justify-content: center;
   align-items: center;
+
   flex-direction: column;
+  width: 80%;
 
   .profile-information-panel {
     display: flex;

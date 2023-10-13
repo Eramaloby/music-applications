@@ -3,13 +3,22 @@ import './add-item-section.styles.scss';
 import { postItemFromParameters } from '../../../requests';
 import { UserContext } from '../../../contexts/user.context';
 import AppModal from '../../ui-elements/modal';
-import GenreForm from '../genre-form/genre-form.component';
+import GenreForm, { GenreFormFields } from '../genre-form/genre-form.component';
 
 const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
   const { currentUser } = useContext(UserContext);
   const [modal, setModal] = useState<boolean>(false);
 
   const [tweak, setTweak] = useState<boolean>(false);
+
+  const [genreForm, setGenreForm] = useState<GenreFormFields>({
+    name: '',
+    description: '',
+    imageBase64: '',
+  });
+
+  const setFormWrapper = (formFields: GenreFormFields) =>
+    setGenreForm({ ...formFields });
 
   // could add third parameter as reference to related component
   const availableOptions = [
@@ -40,10 +49,8 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
     // request
 
     if (currentUser) {
-      await postItemFromParameters(currentUser.accessToken, {
-        field: 'value',
-        value: 'another value',
-      });
+      console.log(genreForm);
+      await postItemFromParameters(currentUser.accessToken, genreForm);
     }
 
     // operation in queue
@@ -59,10 +66,15 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
     <>
       <div className="add-item-section-wrapper">
         {/*Selector that chooses type of record to add*/}
-        {tweak && <GenreForm></GenreForm>}
-        <button className="create-instance" onClick={onPostItem}>
+        {tweak && (
+          <GenreForm
+            activeForm={genreForm}
+            setActiveForm={setFormWrapper}
+          ></GenreForm>
+        )}
+        <div className="create-instance" onClick={onPostItem}>
           Click to send mock request
-        </button>
+        </div>
       </div>
 
       {/*Add animation to change opacity with time */}

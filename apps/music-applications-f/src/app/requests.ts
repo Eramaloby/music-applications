@@ -52,7 +52,7 @@ export interface PostItemResponse {
 
 export const postItemFromParameters = async (accessToken: string, dto: any) => {
   try {
-    const response = await axios.post(`${baseUrl}/neo4j`, dto, {
+    const response = await axios.post(`${baseUrl}/neo4j/genre`, dto, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

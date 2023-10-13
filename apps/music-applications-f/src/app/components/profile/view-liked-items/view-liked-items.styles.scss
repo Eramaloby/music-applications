@@ -1,10 +1,9 @@
 .liked-panel {
-  margin-left: 60px;
+  flex: 0 0 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin-top: 50px;
-  margin-left: 350px;
+  align-items: center;
+  width: 80%;
   flex-direction: column;
 
   .liked-panel-wrapper {
@@ -37,9 +36,10 @@
 }
 
 .no-likes-message {
+  font-size: xx-large;
+  flex: 0 0 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: xx-large;
-  margin-left: 550px;
+  width: 80%;
 }

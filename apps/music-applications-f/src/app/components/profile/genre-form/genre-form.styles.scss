@@ -1,0 +1,28 @@
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  gap: 3rem;
+  
+  .form-header {
+    width: 100%;
+    font-size: xx-large;
+    font-weight: 700;
+  }
+
+  .form-controls {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+
+    .control-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}

@@ -10,8 +10,11 @@
   },
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.13",
+    "@mui/material": "^5.14.13",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.1",
     "@mui/x-date-pickers": "^6.0.4",
     "@nestjs/cli": "^10.1.18",
     "@nestjs/common": "^9.0.0",
@@ -44,6 +47,7 @@
     "regenerator-runtime": "0.13.7",
     "rxjs": "^7.0.0",
     "spotify-web-api-node": "^5.0.2",
+    "styled-components": "^6.0.9",
     "typeorm": "^0.3.12"
   },
   "devDependencies": {

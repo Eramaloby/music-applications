@@ -1,0 +1,89 @@
+.add-item-section-wrapper {
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+
+  flex-direction: column;
+  gap: 100px;
+
+  .create-instance {
+    border: 3px solid green;
+    border-radius: 5px;
+    width: 20%;
+    height: 40px;
+    font-size: large;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+
+    &:hover {
+      cursor: pointer;
+      background-color: gray;
+    }
+  }
+}
+
+.modal-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 5rem;
+
+  .modal-header {
+    width: 100%;
+    font-weight: 700;
+    font-size: xx-large;
+    text-align: center;
+
+    margin-bottom: 1rem;
+  }
+
+  .selector-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    .clickable-list-option {
+      width: 80%;
+      display: flex;
+      justify-content: left;
+      align-items: flex-start;
+      text-align: left;
+      color: white; 
+
+      font-size: larger;
+      &:hover {
+        cursor: pointer;
+        color:beige;
+      }
+    }
+  }
+
+  .cancel-btn {
+    margin-top: 2rem;
+    border: 3px solid green;
+    border-radius: 5px;
+    width: 40%;
+    height: 40px;
+
+    font-size: x-large;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+
+    &:hover {
+      cursor: pointer;
+      background-color: gray;
+    }
+  }
+}
+
