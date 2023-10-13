@@ -4,7 +4,7 @@ import TrackInfo from '../../components/view-pages/spotify-pages/track-info';
 import AlbumInfo from '../../components/view-pages/spotify-pages/album-info';
 import ArtistInfo from '../../components/view-pages/spotify-pages/artist-info';
 import PlaylistInfo from '../../components/view-pages/spotify-pages/playlist-info';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 import './spotify-content.styles.scss';
 import {
@@ -66,15 +66,9 @@ const SpotifyContentPage = () => {
     if (item && currentUser) {
       setIsAddAvailable(false);
 
-      toast('In progress... \nCheck profile page to track operation.', {
-        duration: 2000,
+      toast.info('In progress... \nCheck profile page to track operation.', {
         position: 'top-center',
         icon: '😋',
-        iconTheme: {
-          primary: '#000',
-          secondary: '#fff',
-        },
-        ariaProps: { role: 'status', 'aria-live': 'polite' },
       });
 
       const task: AsyncNeo4jTaskMetadata = {
@@ -91,10 +85,14 @@ const SpotifyContentPage = () => {
           if (response.isSuccess) {
             task.finished = true;
             task.details = [...response.records];
-            toast.success('Instance was added to database.');
+            toast.success('Instance was added to database.', {
+              position: 'top-center',
+            });
           } else {
             task.failed = true;
-            toast.error('Failed in execution');
+            toast.error('Failed in execution', {
+              position: 'top-center',
+            });
           }
 
           task.finishedIn = (Date.now() - task.startedAt) / 1000;
