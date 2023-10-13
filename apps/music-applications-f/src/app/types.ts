@@ -232,6 +232,7 @@ export enum ProfilePageStates {
   SEARCH_SAVED_ITEMS = 'saved',
   LIKED_ITEMS = 'favorite',
   DEFAULT = 'default',
+  ADD_NEW_ITEM = 'add',
 }
 
 export interface ItemPreview {

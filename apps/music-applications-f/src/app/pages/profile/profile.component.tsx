@@ -8,11 +8,16 @@ import ProfileInfoComponent from '../../components/profile/profile-info/profile-
 import ViewLikedItemsComponent from '../../components/profile/view-liked-items/view-liked-items.component';
 import ChangePasswordComponent from '../../components/profile/change-password/change-password.component';
 import SearchSavedItemsComponent from '../../components/profile/search-saved-items/search-saved-items.component';
+import AddItemSection from '../../components/profile/add-item-section/add-item-section.component';
 
 const Profile = () => {
   const [pageState, setPageState] = useState<ProfilePageStates>(
     ProfilePageStates.DEFAULT
   );
+
+  const switchToDefaultView = () => {
+    setPageState(ProfilePageStates.DEFAULT);
+  };
 
   const { currentUser, signOut } = useContext(UserContext);
 
@@ -47,6 +52,12 @@ const Profile = () => {
           View liked items
         </div>
         <div
+          className="add-new-item-btn btn"
+          onClick={() => setPageState(ProfilePageStates.ADD_NEW_ITEM)}
+        >
+          Add new instance to database
+        </div>
+        <div
           className="change-password-btn btn"
           onClick={() => setPageState(ProfilePageStates.RESET_PASSWORD)}
         >
@@ -67,6 +78,9 @@ const Profile = () => {
       )}
       {pageState === ProfilePageStates.SEARCH_SAVED_ITEMS && (
         <SearchSavedItemsComponent></SearchSavedItemsComponent>
+      )}
+      {pageState === ProfilePageStates.ADD_NEW_ITEM && (
+        <AddItemSection navigateBack={switchToDefaultView}></AddItemSection>
       )}
     </div>
   );

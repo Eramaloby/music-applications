@@ -50,6 +50,18 @@ export interface PostItemResponse {
   records: { name: string; type: string }[];
 }
 
+export const postItemFromParameters = async (accessToken: string, dto: any) => {
+  try {
+    const response = await axios.post(`${baseUrl}/neo4j`, dto, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const postItemToNeo4j = async (
   itemType: string,
   spotify_id: string,

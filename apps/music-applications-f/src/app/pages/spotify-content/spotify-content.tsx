@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TrackInfo from '../../components/view-pages/spotify-pages/track-info';
