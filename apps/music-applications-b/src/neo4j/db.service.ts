@@ -100,6 +100,59 @@ export class DatabaseService {
     return [nodesCount, relationshipsCount];
   }
 
+  public async getUserAddedNodes(
+    username: string
+  ): Promise<{ type: string; name: string; nodeId: number }[]> {
+    const utility = async (type: string) =>
+      (
+        await this.dbService.read(
+          `MATCH (n: ${type}) WHERE n.added_by = "${username}" RETURN n.id AS id, n.name AS name`
+        )
+      ).records;
+
+    const genres = (await utility('Genre')).map((recordShape) => {
+      return {
+        name: String(recordShape.get('name')),
+        nodeId: Number(recordShape.get('id')),
+        type: 'genre',
+      };
+    });
+
+    const artists = (await utility('Artist')).map((recordShape) => {
+      return {
+        name: String(recordShape.get('name')),
+        nodeId: Number(recordShape.get('id')),
+        type: 'artist',
+      };
+    });
+
+    const albums = (await utility('Album')).map((recordShape) => {
+      return {
+        name: String(recordShape.get('name')),
+        nodeId: Number(recordShape.get('id')),
+        type: 'album',
+      };
+    });
+
+    const tracks = (await utility('Track')).map((recordShape) => {
+      return {
+        name: String(recordShape.get('name')),
+        nodeId: Number(recordShape.get('id')),
+        type: 'track',
+      };
+    });
+
+    const playlists = (await utility('Playlist')).map((recordShape) => {
+      return {
+        type: 'playlist',
+        name: String(recordShape.get('name')),
+        nodeId: Number(recordShape.get('id')),
+      };
+    });
+
+    return [...genres, ...artists, ...albums, ...tracks, ...playlists];
+  }
+
   public async getUserDbStats(username: string) {
     const nodesCount = (
       await this.dbService.read(

@@ -80,4 +80,8 @@ export class AuthService {
       return false;
     }
   }
+
+  async getUser(username: string): Promise<User> {
+    return await this.userRepository.findOne({ where: { username } });
+  }
 }

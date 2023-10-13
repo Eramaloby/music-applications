@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { DatabaseService } from './db.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
@@ -23,11 +23,6 @@ export class DatabaseController {
       params.id,
       user.username
     );
-  }
-
-  @Get('stats')
-  async getUserStats(@GetUser() user: User) {
-    return await this.dbService.getUserDbStats(user.username);
   }
 
   @Post('/track')

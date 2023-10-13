@@ -39,6 +39,6 @@ import { customUserRepository } from './user.repository';
     JwtStrategy,
   ],
   controllers: [AuthController, ChangePasswordFlowController],
-  exports: [PassportModule],
+  exports: [PassportModule, AuthService],
 })
 export class AuthModule {}
