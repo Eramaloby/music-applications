@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Neo4jDbItem, TrackProperties } from '../../../../types';
 import ToRelation from './to-relation';
 
@@ -8,6 +9,8 @@ const TrackRelation = ({
   item: Neo4jDbItem;
   routingCallback: (type: string, id: number) => void;
 }) => {
+  const router = useNavigate();
+
   const containsToAlbumRelations = item.relations.filter(
     (relation: { type: string; target: Neo4jDbItem }) =>
       relation.type === 'Contains' && relation.target.type === 'Album'
@@ -46,7 +49,11 @@ const TrackRelation = ({
                 )}
               </div>
               <div className="database-item-by">Added by: </div>
-              <div>{item.properties.added_by}</div>
+              <div
+                onClick={() => router(`/profile/${item.properties.added_by}`)}
+              >
+                {item.properties.added_by}
+              </div>
               <div>
                 {(item.properties as TrackProperties).explicit ? (
                   <div className="database-item-author-description-text">

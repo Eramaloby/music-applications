@@ -25,13 +25,15 @@ export class UserInteractionService {
       };
     }
 
+    const stats = await this.databaseService.getUserDbStats(username);
+
     const response: UserInformation = {
       exists: true,
       username: user.username,
       likes: await this.likeService.findUserLikes(user),
       added: await this.databaseService.getUserAddedNodes(username),
-      relationshipsCount: 0,
-      nodesCount: 0,
+      relationshipsCount: stats.at(1),
+      nodesCount: stats.at(0),
     };
 
     return response;

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Neo4jDbItem, PlaylistProperties } from '../../../../types';
 import ToRelation from './to-relation';
 
@@ -8,6 +9,8 @@ const PlaylistRelation = ({
   item: Neo4jDbItem;
   routingCallback: (type: string, id: number) => void;
 }) => {
+  const router = useNavigate();
+
   const containsToTrackRelations = item.relations.filter(
     (relation: { type: string; target: Neo4jDbItem }) =>
       relation.type === 'Contains' && relation.target.type === 'Track'
@@ -24,7 +27,9 @@ const PlaylistRelation = ({
         <div className="database-item-text">
           <div>
             <div className="database-item-by">Added by: </div>
-            <div>{item.properties.added_by}</div>
+            <div onClick={() => router(`/profile/${item.properties.added_by}`)}>
+              {item.properties.added_by}
+            </div>
           </div>
 
           {item.type === 'Playlist' ? (

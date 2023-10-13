@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Neo4jDbItem } from '../../../../types';
 import ToRelation from './to-relation';
 
@@ -8,6 +9,9 @@ const ArtistRelation = ({
   item: Neo4jDbItem;
   routingCallback: (type: string, id: number) => void;
 }) => {
+  //maloy debil
+  const router = useNavigate();
+
   const authorToTrackRelations = item.relations.filter(
     (relation: { type: string; target: Neo4jDbItem }) =>
       relation.type === 'Author' && relation.target.type === 'Track'
@@ -35,7 +39,9 @@ const ArtistRelation = ({
         <div className="database-item-name-text">{item.name.toUpperCase()}</div>
         <div>
           <div className="database-item-by">Added by: </div>
-          <div>{item.properties.added_by}</div>
+          <div onClick={() => router(`/profile/${item.properties.added_by}`)}>
+            {item.properties.added_by}
+          </div>
         </div>
       </div>
       <div className="database-item-description-text">

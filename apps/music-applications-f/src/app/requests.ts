@@ -380,6 +380,40 @@ export const getSpotifyItem = async (
   }
 };
 
+export interface GetUserInformationResponse {
+  username: string;
+  imageBase64?: string;
+  imageUrl?: string;
+  // add likes module
+  added: { type: string; name: string; nodeId: number }[];
+  relationshipsCount: number;
+  nodesCount: number;
+
+  exists: boolean;
+}
+
+/* USER INTERACTIONS REQUESTS */
+export const getUserInformation = async (
+  username: string
+): Promise<GetUserInformationResponse> => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/interactions/user/${username}`
+    );
+
+    console.log(response.data, 'response');
+    return response.data;
+  } catch (error) {
+    return {
+      username: username,
+      exists: false,
+      added: [],
+      relationshipsCount: 0,
+      nodesCount: 0,
+    };
+  }
+};
+
 export interface GetSpotifyItemResponse {
   item: any;
   statusCode: number;

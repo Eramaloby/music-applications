@@ -1,40 +1,53 @@
-import React, { useContext, useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
-import { useParams } from 'react-router-dom';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Id, toast } from 'react-toastify';
+import { useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../../contexts/user.context';
+import { getUserInformation } from '../../requests';
 
 const ForeignProfile = () => {
   const [isDataSettled, setIsDataSettled] = useState<boolean>(false);
   const { currentUser } = useContext(UserContext);
+  const toastRef = useRef<Id | null>(null);
 
   const params = useParams();
+  const router = useNavigate();
 
   useEffect(() => {
     if (!isDataSettled) {
-      toast.promise(
-        new Promise((resolve, reject) => {
-          const fetchDataAsync = async () => {
-            console.log('loading data profile');
-          };
+      const username = params['username'] as string;
+      if (currentUser && username === currentUser.username) {
+        router('/profile');
+      } else {
+        toastRef.current = toast.loading('Loading...', {
+          toastId: 'id',
+          position: toast.POSITION.TOP_CENTER,
+          style: { margin: '90px' },
+        });
 
-          if (currentUser && currentUser.username === params['username']) {
-            // viewing own page => redirect to profile
-            resolve('redirect');
+        getUserInformation(username).then((value) => {
+          if (value.exists) {
+            toast.update(toastRef.current as Id, {
+              render: 'Its cool',
+              position: toast.POSITION.TOP_CENTER,
+              type: 'success',
+              isLoading: false,
+              autoClose: 100,
+            });
           } else {
-            // fetch data
+            toast.update(toastRef.current as Id, {
+              render: 'No profile',
+              position: toast.POSITION.TOP_CENTER,
+              type: 'warning',
+              isLoading: false,
+              autoClose: 100,
+            });
           }
-        }),
-        {
-          loading: 'Loading...',
-          success: 'Page is ready!',
-          error: 'Something went wrong',
-        },
-        {
-          id: 'toastId',
-        }
-      );
+
+          setIsDataSettled(true);
+        });
+      }
     }
-  }, [params['username']]);
+  }, []);
 
   // not authorized => no actions
   // user is viewing his own page => redirect to profile page(or restrict actions)
@@ -45,10 +58,13 @@ const ForeignProfile = () => {
     <>
       {isDataSettled ? (
         <div className="foreign-page-wrapper">
-          <div className="foreign-page-title">Currently viewing profile of</div>
+          <div className="foreign-page-title">
+            Currently viewing profile of other person in either guest or logged
+            mode
+          </div>
         </div>
       ) : (
-        <div>Wait until page is loaded</div>
+        <div className="foreign-page-wait"></div>
       )}
     </>
   );
