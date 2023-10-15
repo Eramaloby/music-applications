@@ -1,10 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Neo4jDbItem,
-  UserSignUpForm,
-  ItemPreview,
-} from './types';
+import { Neo4jDbItem, UserSignUpForm, ItemPreview } from './types';
 import { sendChangePasswordRequest, sendSignUpRequest } from './requests';
+
+export const getBase64FromFile = (file: File) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+  });
+
+export const getDataURLtoFile = (dataUrl: string, filename: string): File => {
+  const arr = dataUrl.split(',');
+  const match = arr[0].match(/:(.*?);/);
+  if (match && match[1]) {
+    const mime = match[1] as string;
+    const bstr = atob(arr[arr.length - 1]);
+    const n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    for (let i = 0; i < n; i++) {
+      u8arr[i] = bstr.charCodeAt(i);
+    }
+
+    return new File([u8arr], filename, { type: mime });
+  } else {
+    throw new Error('Undefined mime type');
+  }
+};
 
 export const convertDuration = (ms: number) => {
   const minutes = Math.floor(ms / 60000);
@@ -242,10 +265,12 @@ export const validatePasswordConfirm = (
 export const validateUsername = (username: string) => {
   if (!username.trim()) {
     return 'Username is required';
+  } else if (username.includes(' ')) {
+    return `Username can't contain whitespace`;
   } else if (username.length < 4) {
-    return 'Username must be longer than 4 symbols.';
+    return 'Username must be longer than 4 symbols';
   } else if (username.length > 20) {
-    return 'Username must be shorter than 20 symbols.';
+    return 'Username must be shorter than 20 symbols';
   }
 
   return '';
