@@ -1,0 +1,17 @@
+.upload-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  background-color: black;
+  border: 1px solid greenyellow;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

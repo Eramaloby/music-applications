@@ -53,6 +53,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         gender: response.gender,
         id: response.id,
         dateOfBirth: response.dateOfBirth,
+        profileImageBase64: response.pictureBase64,
       });
     }
   };

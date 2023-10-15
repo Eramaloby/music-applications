@@ -7,6 +7,7 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { ApplicationConfig } from '../../../config/config';
 
 export interface UserRepository extends Repository<User> {
   this: Repository<User>;
@@ -35,6 +36,7 @@ export const customUserRepository: Pick<UserRepository, any> = {
     const user = this.create({
       ...userCredentialsSignUpDto,
       password: hashedPassword,
+      pictureBase64: ApplicationConfig.defaultProfilePictureBase64,
       likes: [],
     });
 

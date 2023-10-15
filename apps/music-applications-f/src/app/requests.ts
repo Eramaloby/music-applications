@@ -78,8 +78,6 @@ export const postItemToNeo4j = async (
       }
     );
 
-    console.log(response, 'RESPONSE');
-
     if (response.data.isSuccess) {
       return {
         isSuccess: true,

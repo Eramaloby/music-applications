@@ -21,6 +21,9 @@ export class User {
   @Column()
   gender: string;
 
+  @Column()
+  pictureBase64: string;
+
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
 }

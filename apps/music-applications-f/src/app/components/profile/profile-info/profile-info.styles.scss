@@ -8,6 +8,32 @@
   flex-direction: column;
   width: 80%;
 
+  .profile-page-picture-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 10px;
+
+    .profile-picture {
+      width: 200px;
+      height: 250px;
+      .profile-picture-img {
+        border-radius: 50%;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+      }
+    }
+
+    .file-uploader-wrapper {
+    }
+  }
+
   .profile-information-panel {
     display: flex;
     justify-content: center;

@@ -223,6 +223,7 @@ export interface User {
   dateOfBirth: string;
   gender: string;
   id: string;
+  profileImageBase64: string;
 
   // add image and other later
 }
