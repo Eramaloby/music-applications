@@ -1,9 +1,15 @@
 import { Neo4jDbItem } from '../../../types';
 import { useRef } from 'react';
-import { GraphCanvasRef, useSelection } from 'reagraph';
+import { GraphCanvasRef } from 'reagraph';
 import { GraphCanvas, darkTheme } from 'reagraph';
+import { useNavigate} from 'react-router-dom';
 
 const GraphViewPage = ({ item }: { item: Neo4jDbItem }) => {
+  const router = useNavigate();
+
+  const routingCallback = (type: string, id: number) =>
+    router(`/db/${type}/${id}`);
+
   const nodes_g = [];
   const edges_g = [];
   const RED = '#ff3333';
@@ -50,34 +56,21 @@ const GraphViewPage = ({ item }: { item: Neo4jDbItem }) => {
     size: 2,
   });
   const graphRef = useRef<GraphCanvasRef | null>(null);
-  const {
-    actives,
-    selections,
-    onNodeClick,
-    onCanvasClick,
-    onLasso,
-    onLassoEnd,
-  } = useSelection({
-    ref: graphRef,
-    nodes: nodes_g,
-    edges: edges_g,
-    type: 'multi',
-  });
   return (
     <div>
       <div>
         {item.relations.map(
           (relation: { type: string; target: Neo4jDbItem }, index: number) => {
             if (relation.target.type === 'Track') {
-              nodes_g.push({ id: '-2', label: 'Track', fill: RED });
+              nodes_g.push({ id: '-2', label: 'Track', fill: RED, data: {} });
             } else if (relation.target.type === 'Artist') {
-              nodes_g.push({ id: '-3', label: 'Artist', fill: BLUE });
+              nodes_g.push({ id: '-3', label: 'Artist', fill: BLUE, data: {} });
             } else if (relation.target.type === 'Album') {
-              nodes_g.push({ id: '-4', label: 'Album', fill: GREEN });
+              nodes_g.push({ id: '-4', label: 'Album', fill: GREEN, data: {} });
             } else if (relation.target.type === 'Genre') {
-              nodes_g.push({ id: '-5', label: 'Genre', fill: YELLOW });
+              nodes_g.push({ id: '-5', label: 'Genre', fill: YELLOW, data: {} });
             } else if (relation.target.type === 'Playlist') {
-              nodes_g.push({ id: '-6', label: 'Playlist', fill: GRAY });
+              nodes_g.push({ id: '-6', label: 'Playlist', fill: GRAY, data: {} });
             }
             return <div></div>;
           }
@@ -86,28 +79,35 @@ const GraphViewPage = ({ item }: { item: Neo4jDbItem }) => {
           (relation: { type: string; target: Neo4jDbItem }, index: number) => {
             let fill = '';
             let type = '';
+            let data = {};
 
             if (relation.target.type === 'Track') {
               fill = RED;
               type = '-2';
+              data = [relation.target.type, relation.target.properties.id];
             } else if (relation.target.type === 'Artist') {
               fill = BLUE;
               type = '-3';
+              data = [relation.target.type, relation.target.properties.id];
             } else if (relation.target.type === 'Album') {
               fill = GREEN;
               type = '-4';
+              data = [relation.target.type, relation.target.properties.id];
             } else if (relation.target.type === 'Genre') {
               fill = YELLOW;
               type = '-5';
+              data = [relation.target.type, relation.target.properties.id];
             } else if (relation.target.type === 'Playlist') {
               fill = GRAY;
               type = '-6';
+              data = [relation.target.type, relation.target.properties.id];
             }
 
             nodes_g.push({
               id: String(index),
               label: relation.target.properties.name,
               fill: fill,
+              data : data,
             });
             edges_g.push({
               source: type,
@@ -124,34 +124,13 @@ const GraphViewPage = ({ item }: { item: Neo4jDbItem }) => {
         <GraphCanvas
           ref={graphRef}
           draggable
-          selections={selections}
-          actives={actives}
-          onNodeClick={onNodeClick}
-          onCanvasClick={onCanvasClick}
           lassoType="node"
-          onLasso={onLasso}
-          onLassoEnd={onLassoEnd}
           // layoutType="radialOut2d"
           labelFontUrl="https://ey2pz3.csb.app/NotoSansSC-Regular.ttf"
           nodes={nodes_g}
           edges={edges_g}
           onEdgeClick={(edge) => alert(`${edge.label}`)}
-          contextMenu={({ data, onClose }) => (
-            <div
-              style={{
-                opacity: 0.9,
-                background: 'gray',
-                width: 150,
-                border: 'solid 1px blue',
-                borderRadius: 2,
-                padding: 5,
-                textAlign: 'center',
-              }}
-            >
-              <h1>{data.label}</h1>
-              <button onClick={onClose}>Close Menu</button>
-            </div>
-          )}
+          onNodeDoubleClick={(node) => routingCallback(node.data[0], node.data[1])}
           labelType="all"
           theme={darkTheme}
         />
