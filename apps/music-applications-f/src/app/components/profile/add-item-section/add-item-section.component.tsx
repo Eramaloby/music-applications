@@ -4,6 +4,10 @@ import { postItemFromParameters } from '../../../requests';
 import { UserContext } from '../../../contexts/user.context';
 import AppModal from '../../ui-elements/modal';
 import GenreForm, { GenreFormFields } from '../genre-form/genre-form.component';
+import AlbumForm from '../album-form/album-form.component';
+import PlaylistForm from '../playlist-form/playlist-form.component';
+import ArtistForm from '../artist-form/artist-form.component';
+import TrackForm from '../track-form/track-form.component';
 
 type AddSection = 'artist' | 'album' | 'genre' | 'playlist' | 'track';
 
@@ -56,11 +60,11 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
       <div className="add-item-section-wrapper">
         {currentSection && (
           <>
-            {currentSection === 'artist' && <div>SELECT ARTIST SECTION</div>}
-            {currentSection === 'playlist' && <div>playlist section</div>}
-            {currentSection === 'album' && <div>SELECT album SECTION</div>}
+            {currentSection === 'artist' && <ArtistForm></ArtistForm>}
+            {currentSection === 'playlist' && <PlaylistForm></PlaylistForm>}
+            {currentSection === 'album' && <AlbumForm></AlbumForm>}
             {currentSection === 'genre' && <GenreForm></GenreForm>}
-            {currentSection === 'track' && <div>SELECT Track SECTION</div>}
+            {currentSection === 'track' && <TrackForm></TrackForm>}
           </>
         )}
       </div>

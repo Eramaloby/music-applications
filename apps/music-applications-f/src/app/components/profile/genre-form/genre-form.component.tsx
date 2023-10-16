@@ -7,6 +7,7 @@ import {
   getBase64FromFile,
   validateFieldRequiredNotEmpty,
 } from '../../../utils';
+import { Tooltip } from '@mui/material';
 
 export interface GenreFormFields {
   genreDescription: string;
@@ -84,50 +85,57 @@ const GenreForm = () => {
       <div className="form-header">Fill required fields</div>
       <div className="form-controls">
         <div className="control-wrapper">
-          <TextField
-            name="genreName"
-            className="form-value-input"
-            InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
-            inputProps={{
-              style: {
-                color: 'white',
-                fontWeight: '400',
-                height: '15px',
-              },
-            }}
-            color={'primary'}
-            label={'Enter genre name'}
-            value={form.genreName}
-            onChange={onFormControlsChange}
-            error={Boolean(errors.genreName)}
-            helperText={errors.genreName}
-          ></TextField>
+          <Tooltip
+            title="Something that will identify genre among others"
+            placement="top"
+          >
+            <TextField
+              name="genreName"
+              className="form-value-input"
+              InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
+              inputProps={{
+                style: {
+                  color: 'white',
+                  fontWeight: '400',
+                  height: '15px',
+                },
+              }}
+              color={'primary'}
+              label={'Enter genre name'}
+              value={form.genreName}
+              onChange={onFormControlsChange}
+              error={Boolean(errors.genreName)}
+              helperText={errors.genreName}
+            ></TextField>
+          </Tooltip>
         </div>
         <div className="control-wrapper">
-          <TextField
-            name="genreDescription"
-            className="form-value-input"
-            InputLabelProps={{
-              style: { color: 'white', fontWeight: '500' },
-            }}
-            inputProps={{
-              style: {
-                color: 'white',
-                fontWeight: '400',
-                height: '15px',
-              },
-            }}
-            color={'primary'}
-            label={'Enter genre description'}
-            value={form.genreDescription}
-            onChange={onFormControlsChange}
-            error={Boolean(errors.genreDescription)}
-            helperText={errors.genreDescription}
-          ></TextField>
+          <Tooltip title="Describe music in genre in few words" placement='top'>
+            <TextField
+              name="genreDescription"
+              className="form-value-input"
+              InputLabelProps={{
+                style: { color: 'white', fontWeight: '500' },
+              }}
+              inputProps={{
+                style: {
+                  color: 'white',
+                  fontWeight: '400',
+                  height: '15px',
+                },
+              }}
+              color={'primary'}
+              label={'Enter genre description'}
+              value={form.genreDescription}
+              onChange={onFormControlsChange}
+              error={Boolean(errors.genreDescription)}
+              helperText={errors.genreDescription}
+            ></TextField>
+          </Tooltip>
         </div>
 
         <div className="control-wrapper">
-          <div style={{ width: '60%' }}>
+          <div style={{ width: '70%' }}>
             <FileUploader
               handleFile={onGenreFileSelected}
               buttonText="Upload genre image"
