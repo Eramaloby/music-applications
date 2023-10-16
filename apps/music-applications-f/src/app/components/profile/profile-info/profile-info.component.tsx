@@ -88,6 +88,7 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
         </div>
         <div className="file-uploader-wrapper">
           <FileUploader
+            showFileName={false}
             buttonText="Change profile picture"
             handleFile={handleFileUploading}
           ></FileUploader>

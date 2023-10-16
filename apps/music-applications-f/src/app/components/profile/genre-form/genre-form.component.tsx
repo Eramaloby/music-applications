@@ -127,10 +127,11 @@ const GenreForm = () => {
         </div>
 
         <div className="control-wrapper">
-          <div style={{ width: '80%' }}>
+          <div style={{ width: '60%' }}>
             <FileUploader
               handleFile={onGenreFileSelected}
               buttonText="Upload genre image"
+              showFileName={true}
             ></FileUploader>
           </div>
 
