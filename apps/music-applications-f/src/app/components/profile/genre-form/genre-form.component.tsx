@@ -1,41 +1,82 @@
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
 
 import './genre-form.styles.scss';
+import FileUploader from '../../file-uploader/file-uploader.component';
+import {
+  getBase64FromFile,
+  validateFieldRequiredNotEmpty,
+} from '../../../utils';
 
 export interface GenreFormFields {
-  description: string;
-  name: string;
+  genreDescription: string;
+  genreName: string;
   imageBase64: string;
 }
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+const GenreForm = () => {
+  const [form, setForm] = useState<GenreFormFields>({
+    genreDescription: '',
+    genreName: '',
+    imageBase64: '',
+  });
 
-const GenreForm = ({
-  activeForm,
-  setActiveForm,
-}: {
-  activeForm: GenreFormFields;
-  setActiveForm: (form: GenreFormFields) => void;
-}) => {
-  const onGenreNameChange = (name: string) => {
-    setActiveForm({ ...activeForm, name });
+  const [errors, setErrors] = useState<GenreFormFields>({
+    genreDescription: '',
+    genreName: '',
+    imageBase64: '',
+  });
+
+  const onGenreFileSelected = async (file: File) => {
+    if (!file.type.includes('image')) {
+      setErrors({
+        ...errors,
+        imageBase64: 'File is required to be an image.',
+      });
+
+      return;
+    } else {
+      const imageHash = (await getBase64FromFile(file)) as string;
+      setForm({ ...form, imageBase64: imageHash });
+      setErrors({ ...errors, imageBase64: '' });
+    }
   };
 
-  const onGenreDescriptionChange = (description: string) => {
-    setActiveForm({ ...activeForm, description });
+  const onFormControlsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [event.target.name]: event.target.value });
+
+    // introduce type that maps names and labels?
+    setErrors({
+      ...errors,
+      [event.target.name]: validateFieldRequiredNotEmpty(
+        event.target.value,
+        event.target.name
+      ),
+    });
+  };
+
+  const onSubmitButtonClick = () => {
+    // check for existing errors
+    if (Object.values(errors).some((msg) => Boolean(msg))) {
+      return;
+    }
+
+    const localErrors = {
+      genreName: validateFieldRequiredNotEmpty(form.genreName, 'Name'),
+      genreDescription: validateFieldRequiredNotEmpty(
+        form.genreDescription,
+        'Description'
+      ),
+      imageBase64: validateFieldRequiredNotEmpty(form.imageBase64, 'Image'),
+    };
+
+    if (Object.values(localErrors).some((msg) => Boolean(msg))) {
+      setErrors({ ...localErrors });
+      return;
+    }
+
+    // validation passed
+    // invoke callback
   };
 
   return (
@@ -44,6 +85,7 @@ const GenreForm = ({
       <div className="form-controls">
         <div className="control-wrapper">
           <TextField
+            name="genreName"
             className="form-value-input"
             InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
             inputProps={{
@@ -55,12 +97,15 @@ const GenreForm = ({
             }}
             color={'primary'}
             label={'Enter genre name'}
-            value={activeForm.name}
-            onChange={(e) => onGenreNameChange(e.target.value)}
+            value={form.genreName}
+            onChange={onFormControlsChange}
+            error={Boolean(errors.genreName)}
+            helperText={errors.genreName}
           ></TextField>
         </div>
         <div className="control-wrapper">
           <TextField
+            name="genreDescription"
             className="form-value-input"
             InputLabelProps={{
               style: { color: 'white', fontWeight: '500' },
@@ -74,21 +119,33 @@ const GenreForm = ({
             }}
             color={'primary'}
             label={'Enter genre description'}
-            value={activeForm.description}
-            onChange={(e) => onGenreDescriptionChange(e.target.value)}
+            value={form.genreDescription}
+            onChange={onFormControlsChange}
+            error={Boolean(errors.genreDescription)}
+            helperText={errors.genreDescription}
           ></TextField>
         </div>
 
         <div className="control-wrapper">
-          <Button component="label" variant="contained">
-            Upload genre image
-            <VisuallyHiddenInput
-              type="file"
-              onChange={(e) => console.log(e)}
-            ></VisuallyHiddenInput>
-          </Button>
+          <div style={{ width: '80%' }}>
+            <FileUploader
+              handleFile={onGenreFileSelected}
+              buttonText="Upload genre image"
+            ></FileUploader>
+          </div>
+
+          {errors.imageBase64 && (
+            <div className="image-validation-message">{errors.imageBase64}</div>
+          )}
         </div>
       </div>
+      <button
+        type="button"
+        className="create-btn"
+        onClick={onSubmitButtonClick}
+      >
+        Submit genre
+      </button>
     </div>
   );
 };

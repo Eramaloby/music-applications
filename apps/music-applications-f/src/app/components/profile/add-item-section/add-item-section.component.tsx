@@ -5,56 +5,45 @@ import { UserContext } from '../../../contexts/user.context';
 import AppModal from '../../ui-elements/modal';
 import GenreForm, { GenreFormFields } from '../genre-form/genre-form.component';
 
+type AddSection = 'artist' | 'album' | 'genre' | 'playlist' | 'track';
+
 const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
   const { currentUser } = useContext(UserContext);
   const [modal, setModal] = useState<boolean>(false);
-
-  const [tweak, setTweak] = useState<boolean>(false);
-
-  const [genreForm, setGenreForm] = useState<GenreFormFields>({
-    name: '',
-    description: '',
-    imageBase64: '',
-  });
-
-  const setFormWrapper = (formFields: GenreFormFields) =>
-    setGenreForm({ ...formFields });
+  const [currentSection, setCurrentSection] = useState<AddSection | null>(null);
 
   // could add third parameter as reference to related component
   const availableOptions = [
-    { label: 'I want to add new artist...', value: 'artist' },
-    { label: 'I want to add new album...', value: 'album' },
-    { label: 'I want to add new genre...', value: 'genre' },
-    { label: 'I want to add new playlist...', value: 'playlist' },
-    { label: 'I want to add new track...', value: 'track' },
+    {
+      label: 'I want to add new artist...',
+      value: 'artist',
+    },
+    {
+      label: 'I want to add new album...',
+      value: 'album',
+    },
+    {
+      label: 'I want to add new genre...',
+      value: 'genre',
+    },
+    {
+      label: 'I want to add new playlist...',
+      value: 'playlist',
+    },
+    {
+      label: 'I want to add new track...',
+      value: 'track',
+    },
   ];
 
-  const onSelectOption = (type: string) => {
-    console.log(`choosing an...${type}`);
-
-    if (type === 'genre') {
-      setTweak(true);
-    }
-
+  const onSelectOption = (option: { label: string; value: string }) => {
+    setCurrentSection(option.value as AddSection);
     setModal(false);
   };
 
   const navigateBackWrapper = () => {
     setModal(false);
     navigateBack();
-  };
-
-  const onPostItem = async () => {
-    // validation in progress
-    // request
-
-    if (currentUser) {
-      console.log(genreForm);
-      await postItemFromParameters(currentUser.accessToken, genreForm);
-    }
-
-    // operation in queue
-    // result
   };
 
   useEffect(() => {
@@ -65,16 +54,15 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
   return (
     <>
       <div className="add-item-section-wrapper">
-        {/*Selector that chooses type of record to add*/}
-        {tweak && (
-          <GenreForm
-            activeForm={genreForm}
-            setActiveForm={setFormWrapper}
-          ></GenreForm>
+        {currentSection && (
+          <>
+            {currentSection === 'artist' && <div>SELECT ARTIST SECTION</div>}
+            {currentSection === 'playlist' && <div>playlist section</div>}
+            {currentSection === 'album' && <div>SELECT album SECTION</div>}
+            {currentSection === 'genre' && <GenreForm></GenreForm>}
+            {currentSection === 'track' && <div>SELECT Track SECTION</div>}
+          </>
         )}
-        <div className="create-instance" onClick={onPostItem}>
-          Click to send mock request
-        </div>
       </div>
 
       {/*Add animation to change opacity with time */}
@@ -86,7 +74,7 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
               return (
                 <div
                   className="clickable-list-option"
-                  onClick={() => onSelectOption(option.value)}
+                  onClick={() => onSelectOption(option)}
                   key={index}
                 >
                   {option.label}

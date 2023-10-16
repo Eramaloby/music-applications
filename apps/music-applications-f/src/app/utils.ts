@@ -281,6 +281,17 @@ export const subtractYearsFromDate = (date: Date, years: number) => {
   return date;
 };
 
+export const validateFieldRequiredNotEmpty = (
+  value: string,
+  fieldName: string
+) => {
+  if (!value.trim()) {
+    return `${fieldName} is required.`;
+  }
+
+  return '';
+};
+
 // export const tryToSignIn = async (form: UserSignInForm) => {
 //   try {
 //     const token: string = (await sendSignInRequest(form)).accessToken;
