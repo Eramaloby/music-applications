@@ -3,12 +3,16 @@ import { DbStats, ItemPreview, User } from '../../../types';
 import './profile-info.styles.scss';
 
 import { useContext, useEffect, useState } from 'react';
-import { fetchProfileStats, receiveRecommendations } from '../../../requests';
+import {
+  fetchProfileStats,
+  receiveRecommendations,
+  updateProfileImage,
+} from '../../../requests';
 import { UserContext } from '../../../contexts/user.context';
 import ViewPanelContainer from '../../recently-viewed-panel/view-panel-container';
 import AsyncTasksDashboard from '../async-tasks-dashboard/async-tasks-dashboard.component';
 import FileUploader from '../../file-uploader/file-uploader.component';
-import { getBase64FromFile, getDataURLtoFile } from '../../../utils';
+import { getBase64FromFile } from '../../../utils';
 
 const ProfileInfoComponent = ({ user }: { user: User }) => {
   const [stats, setStats] = useState<DbStats>({
@@ -16,15 +20,18 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
     relationships: 0,
   });
 
-  const [base64, setBase64] = useState<null | string>(null);
-
+  // profile picture
+  const [error, setError] = useState<string>('');
   const handleFileUploading = async (file: File) => {
     if (!file.type.includes('image')) {
       // show error message
+      setError('Selected file is not image. Try again.');
+    } else {
+      // action to upload profile picture
+      setError('');
+      const imageHash = (await getBase64FromFile(file)) as string;
+      await updateProfileImage(user.accessToken, imageHash);
     }
-
-    const base64: string = (await getBase64FromFile(file)) as string;
-    setBase64(base64);
   };
 
   const { currentUser, currentTasks } = useContext(UserContext);
@@ -83,11 +90,11 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
         </div>
         <div className="file-uploader-wrapper">
           <FileUploader
-            buttonText="Upload image"
+            buttonText="Change profile picture"
             handleFile={handleFileUploading}
           ></FileUploader>
         </div>
-        <div className="file-validation-message"></div>
+        {error && <div className="file-validation-message">{error}</div>}
       </div>
       <AsyncTasksDashboard tasks={currentTasks}></AsyncTasksDashboard>
       {recommendations.length !== 0 ? (

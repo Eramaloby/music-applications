@@ -15,6 +15,7 @@ import { ApplicationConfig } from '../../../config/config';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { AuthController } from './controllers/auth.controller';
 import { customUserRepository } from './user.repository';
+import { UserController } from './controllers/user.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
@@ -38,7 +39,7 @@ import { customUserRepository } from './user.repository';
     AuthService,
     JwtStrategy,
   ],
-  controllers: [AuthController, ChangePasswordFlowController],
+  controllers: [AuthController, ChangePasswordFlowController, UserController],
   exports: [PassportModule, AuthService],
 })
 export class AuthModule {}

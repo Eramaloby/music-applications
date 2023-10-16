@@ -96,24 +96,6 @@ export const postItemToNeo4j = async (
 };
 
 // TODO BACKEND: move controller to separate module(Profile module) and refactor
-export const fetchProfileStats = async (accessToken: string) => {
-  try {
-    const response = await axios.get(`${baseUrl}/neo4j/stats`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return {
-      nodes: response.data[0],
-      relationships: response.data[1],
-    } as DbStats;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
-
 export const isItemInDatabase = async (id: string): Promise<boolean | null> => {
   try {
     const response = await axios.get(`${baseUrl}/neo4j/${id}`);
@@ -164,6 +146,46 @@ export const sendSignUpRequest = async (form: UserSignUpForm) => {
     console.log(error.response.data.message);
 
     return false;
+  }
+};
+
+/* USER PROFILE REQUESTS */
+export const updateProfileImage = async (
+  accessToken: string,
+  pictureBase64: string
+) => {
+  try {
+    await axios.post(
+      `${baseUrl}/user/picture`,
+      { pictureBase64 },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const fetchProfileStats = async (accessToken: string) => {
+  try {
+    const response = await axios.get(`${baseUrl}/neo4j/stats`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return {
+      nodes: response.data[0],
+      relationships: response.data[1],
+    } as DbStats;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 
