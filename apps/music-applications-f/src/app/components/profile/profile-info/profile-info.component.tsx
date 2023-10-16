@@ -53,8 +53,6 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
       if (user) {
         // request
         const data = await fetchProfileStats(user.accessToken);
-        console.log(user.profileImageBase64);
-        console.log(data);
         await fetchRecommendations();
         if (data) {
           setStats({ ...data });
