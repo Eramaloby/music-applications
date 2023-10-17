@@ -27,6 +27,6 @@ export class DatabaseNoAuthController {
 
   @Get(':id')
   async isThereInstanceWithId(@Param() params) {
-    return await this.dbService.isThereInstanceWithId(params.id);
+    return await this.dbService.instanceWithIdExists(params.id);
   }
 }
