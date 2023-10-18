@@ -6,6 +6,8 @@ import { AuthModule } from '../auth/auth.module';
 import { SpotifyModule } from '../spotify/spotify.module';
 import { DatabaseController } from './db.controller';
 import { DatabaseNoAuthController } from './db-no-auth.controller';
+import { ProfileModule } from '../profile/profile.module';
+import { ProfileService } from '../profile/profile.service';
 
 @Module({
   imports: [
@@ -18,6 +20,7 @@ import { DatabaseNoAuthController } from './db-no-auth.controller';
     }),
     AuthModule,
     SpotifyModule,
+    ProfileModule,
   ],
   controllers: [DatabaseController, DatabaseNoAuthController],
   providers: [DatabaseService],

@@ -13,6 +13,7 @@ import { Neo4jDatabaseModule } from '../neo4j/db.module';
 import { SpotifyModule } from '../spotify/spotify.module';
 import { GeniusModule } from '../genius/genius.module';
 import { UserInteractionModule } from '../user-interaction/user-interaction.module';
+import { ProfileModule } from '../profile/profile.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -30,7 +31,8 @@ import { UserInteractionModule } from '../user-interaction/user-interaction.modu
     Neo4jDatabaseModule,
     SpotifyModule,
     GeniusModule,
-    UserInteractionModule
+    UserInteractionModule,
+    ProfileModule,
   ],
   controllers: [AppController, NetworkController],
   providers: [GeniusService],

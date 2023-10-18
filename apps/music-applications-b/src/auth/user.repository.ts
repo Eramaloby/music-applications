@@ -38,6 +38,8 @@ export const customUserRepository: Pick<UserRepository, any> = {
       password: hashedPassword,
       pictureBase64: ApplicationConfig.defaultProfilePictureBase64,
       likes: [],
+      relationshipsAddedCount: 0,
+      nodesAddedCount: 0,
     });
 
     try {

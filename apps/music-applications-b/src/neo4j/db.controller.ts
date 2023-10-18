@@ -10,25 +10,33 @@ import {
   PostPlaylistDto,
   PostTrackDto,
 } from './dto';
+import { ProfileService } from '../profile/profile.service';
 
 @Controller('neo4j')
 @UseGuards(AuthGuard())
 export class DatabaseController {
-  constructor(private readonly dbService: DatabaseService) {}
+  constructor(
+    private readonly dbService: DatabaseService,
+    private readonly profileService: ProfileService
+  ) {}
 
   @Post(':type/:id')
   async addItem(@Param() params, @GetUser() user: User) {
     // fix error with relationships count
-    return await this.dbService.performAddTransaction(
+    // TODO REFACTOR: pass user as parameter ?
+    const result = await this.dbService.performAddTransaction(
       params.type,
       params.id,
       user.username
     );
-  }
 
-  @Get('stats')
-  async getUserStats(@GetUser() user: User) {
-    return await this.dbService.getUserDbStats(user.username);
+    await this.profileService.updateProfileDatabaseStats(
+      result.data.records.length,
+      result.data.relationshipCount,
+      user.username
+    );
+
+    return result;
   }
 
   @Post('/track')

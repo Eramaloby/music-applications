@@ -161,26 +161,6 @@ export class DatabaseService {
     return [...genres, ...artists, ...albums, ...tracks, ...playlists];
   }
 
-  public async getUserDbStats(username: string) {
-    const nodesCount = (
-      await this.dbService.read(
-        `MATCH (n) WHERE n.added_by = "${username}" RETURN count(n) AS nodeCount`
-      )
-    ).records[0]['_fields']
-      .map((obj: { low: number }) => obj.low)
-      .at(0);
-
-    const relationshipsCount = (
-      await this.dbService.read(
-        `MATCH (n)-[r]->() WHERE n.added_by = "${username}" RETURN count(r) AS relationshipCount`
-      )
-    ).records[0]['_fields']
-      .map((obj: { low: number }) => obj.low)
-      .at(0);
-
-    return [nodesCount, relationshipsCount];
-  }
-
   public async getAllLikedInstances(separatedIds: string) {
     const query = await this.dbService.read(`
       UNWIND [${separatedIds}] AS X

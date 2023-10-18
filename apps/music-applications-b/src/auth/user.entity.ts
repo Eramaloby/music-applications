@@ -24,6 +24,12 @@ export class User {
   @Column()
   pictureBase64: string;
 
+  @Column()
+  relationshipsAddedCount: number;
+
+  @Column()
+  nodesAddedCount: number;
+
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
 }

@@ -164,7 +164,7 @@ export const updateProfileImage = async (
 ) => {
   try {
     await axios.post(
-      `${baseUrl}/user/picture`,
+      `${baseUrl}/profile/picture`,
       { pictureBase64 },
       {
         headers: {
@@ -181,15 +181,17 @@ export const updateProfileImage = async (
 
 export const fetchProfileStats = async (accessToken: string) => {
   try {
-    const response = await axios.get(`${baseUrl}/neo4j/stats`, {
+    const response = await axios.get(`${baseUrl}/profile/stats`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
 
+    console.log(response, 'fetched-stats');
+
     return {
-      nodes: response.data[0],
-      relationships: response.data[1],
+      nodes: response.data.nodesCount,
+      relationships: response.data.relationshipCount,
     } as DbStats;
   } catch (error) {
     console.log(error);

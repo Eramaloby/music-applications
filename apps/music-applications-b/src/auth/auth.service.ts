@@ -66,20 +66,6 @@ export class AuthService {
     }
   }
 
-  async changeProfilePicture(pictureBase64: string, username: string) {
-    const user = await this.userRepository.findOne({ where: { username } });
-
-    if (user) {
-      return await this.userRepository.update(
-        { username: username },
-        { pictureBase64: pictureBase64 }
-      );
-    }
-    else {
-      throw new InternalServerErrorException();
-    }
-  }
-
   async comparePasswords(
     confirmPasswordDto: ConfirmPasswordDto,
     username: string
