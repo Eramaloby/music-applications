@@ -40,8 +40,13 @@ export class DatabaseService {
       `MATCH (obj: ${type} { id: "${id}" })-[rel]-(o_obj) return obj, rel, o_obj`
     );
 
+    console.log(res.records);
     return res.records;
   };
+
+  public async getAlbumWithRelations(id: number) {
+    return null;
+  }
 
   public findNodeBySpotifyId = async (spotifyId: string) => {
     const res = await this.dbService.read(
@@ -807,8 +812,22 @@ export class DatabaseService {
 
     transactionData.records.push({ type: 'album', name: album.name });
 
+    // spotify object album never contains genres of artist that related to album
+    // solution: get all artists from spotify then parse it's genres
+    const genresRelatedToAlbum = (
+      await Promise.all(
+        album.artists.map((simplifiedArtist) =>
+          this.spotifyService.getArtistById(simplifiedArtist.id)
+        )
+      )
+    )
+      .map((artist) => artist.genres)
+      .flat();
+
+    console.log(genresRelatedToAlbum);
+
     await Promise.allSettled(
-      album.genres.map((genreName) =>
+      genresRelatedToAlbum.map((genreName) =>
         this.addGenre(
           {
             name: genreName,
@@ -823,7 +842,7 @@ export class DatabaseService {
     );
 
     const relsAlbumGenre = await Promise.allSettled(
-      album.genres.map((genreName) =>
+      genresRelatedToAlbum.map((genreName) =>
         transaction.run(`
           MATCH
             (album: Album {spotify_id: "${spotifyId}"}),
