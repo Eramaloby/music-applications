@@ -27,7 +27,8 @@ const AsyncTasksDashboard = ({
                       Task completion duration: {task.finishedIn}
                     </div>
                   )}
-                  {task.details.length}
+                  cnt: {task.details.length}
+                  relsCnt: {task.relsCount}
                 </div>
               );
             })}

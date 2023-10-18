@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Neo4jService, Transaction } from 'nest-neo4j/dist';
 import { SpotifyService } from '../spotify/spotify.service';
 import {
+  AddTransactionResult,
   AlbumModel,
   ArtistModel,
   GenreModel,
@@ -312,103 +313,84 @@ export class DatabaseService {
   }
 
   /* ADD functions */
-  // public performAddTransaction = async (
-  //   type: 'track' | 'album' | 'artist' | 'playlist',
-  //   identity: string,
-  //   username: string
-  // ): Promise<AddTransactionResult> => {
-  //   const accumulatedResult: AddTransactionRecordData[] = [];
-  //   const session = this.dbService.getDriver().session();
-  //   const transaction = await session.beginTransaction();
+  public performAddTransaction = async (
+    type: string,
+    spotifyId: string,
+    username: string
+  ): Promise<AddTransactionResult> => {
+    const txData: TransactionData = {
+      records: [],
+      relationshipCount: 0,
+    };
 
-  //   try {
-  //     switch (type) {
-  //       case 'track':
-  //         await this.addTrack(
-  //           identity,
-  //           username,
-  //           accumulatedResult,
-  //           transaction
-  //         );
-  //         break;
-  //       case 'album':
-  //         await this.addAlbum(
-  //           identity,
-  //           username,
-  //           accumulatedResult,
-  //           transaction
-  //         );
-  //         break;
-  //       case 'artist':
-  //         await this.addArtist(
-  //           identity,
-  //           username,
-  //           accumulatedResult,
-  //           transaction
-  //         );
-  //         break;
-  //       case 'playlist':
-  //         await this.addPlaylist(
-  //           identity,
-  //           username,
-  //           accumulatedResult,
-  //           transaction
-  //         );
-  //         break;
-  //     }
+    const session = this.dbService.getDriver().session();
+    const transaction = await session.beginTransaction();
 
-  //     await transaction.commit();
-  //   } catch (error) {
-  //     // maybe useless
-  //     console.log(error, 'error in try');
-  //     transaction.rollback();
-  //     return { isSuccess: false, reason: error.message, records: [] };
-  //   } finally {
-  //     await transaction.close();
-  //     await session.close();
-  //   }
+    try {
+      switch (type) {
+        case 'track':
+          await this.addTrackFromSpotify(
+            spotifyId,
+            username,
+            txData,
+            transaction
+          );
+          break;
+        case 'album':
+          await this.addAlbumFromSpotify(
+            spotifyId,
+            username,
+            txData,
+            transaction
+          );
+          break;
+        case 'artist':
+          await this.addArtistFromSpotify(
+            spotifyId,
+            username,
+            txData,
+            transaction
+          );
+          break;
+        case 'playlist':
+          await this.addPlaylistFromSpotify(
+            spotifyId,
+            username,
+            txData,
+            transaction
+          );
+          break;
+      }
 
-  //   if (accumulatedResult.length > 0) {
-  //     return {
-  //       isSuccess: true,
-  //       records: accumulatedResult,
-  //     };
-  //   } else {
-  //     return {
-  //       isSuccess: false,
-  //       records: accumulatedResult,
-  //       reason: 'Record was already added.',
-  //     };
-  //   }
-  // };
+      await transaction.commit();
+    } catch (error) {
+      // maybe useless
+      console.log(error, 'error in try');
 
-  // add checked function later
-  // public addGenre = async (
-  //   identity: string,
-  //   username: string,
-  //   accumulated: AddTransactionRecordData[],
-  //   transaction: Transaction
-  // ) => {
-  //   const checkQuery = await transaction.run(
-  //     `MATCH (genre: Genre) WHERE genre.name = "${identity}" RETURN genre`
-  //   );
+      transaction.rollback();
+      return {
+        isSuccess: false,
+        reason: error.message,
+        data: { records: [], relationshipCount: 0 },
+      };
+    } finally {
+      await transaction.close();
+      await session.close();
+    }
 
-  //   const nodeId = await this.generateNewNodeId(transaction);
-  //   if (checkQuery.records.length === 0) {
-  //     await transaction.run(
-  //       `CREATE (genre: Genre {
-  //         name: "${identity}",
-  //         added_by: "${username}",
-  //         id: "${nodeId}"
-  //       })`
-  //     );
-
-  //     accumulated.push({ name: identity, type: 'genre' });
-  //     return true;
-  //   }
-
-  //   return false;
-  // };
+    if (txData.records.length > 0) {
+      return {
+        isSuccess: true,
+        data: txData,
+      };
+    } else {
+      return {
+        isSuccess: false,
+        data: txData,
+        reason: 'Record was already added.',
+      };
+    }
+  };
 
   /* ADD TO DB FUNCTIONS */
   /*
@@ -485,7 +467,6 @@ export class DatabaseService {
       })
       `);
 
-    transactionData.nodesCount++;
     transactionData.records.push({ type: 'genre', name: model.name });
     return true;
   }
@@ -508,55 +489,51 @@ export class DatabaseService {
     const artist = await this.spotifyService.getArtistById(spotifyId);
     const genId = await this.generateNewNodeId(transaction);
 
-    const imageUrl: string | null = artist.images?.[0]?.url ?? null;
+    const imageUrl: string = artist.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
       CREATE (artist: Artist {
         name: "${artist.name}",
         description: "Not provided",
         type: "${artist.type}",
-        image: "${imageUrl ?? 'Not provided'}",
+        image: "${imageUrl}",
         added_by: "${username}",
         spotify_id: "${spotifyId}",
         id: "${genId}"
       })
     `);
 
-    transactionData.nodesCount++;
     transactionData.records.push({ type: 'artist', name: artist.name });
 
     // adding related genres if ones doesn't exists
-    const addQueries = artist.genres.map((genreName) =>
-      this.addGenre(
-        {
-          name: genreName,
-          image: 'Not provided',
-          description: 'Not provided',
-        },
-        username,
-        transactionData,
-        transaction
+    await Promise.allSettled(
+      artist.genres.map((genreName) =>
+        this.addGenre(
+          {
+            name: genreName,
+            image: 'Not provided',
+            description: 'Not provided',
+          },
+          username,
+          transactionData,
+          transaction
+        )
       )
     );
 
-    await Promise.allSettled(addQueries);
-    // result could be used to view all settled promises, check for errors
-
-    const result = await Promise.allSettled(
+    const relsArtistToGenre = await Promise.allSettled(
       artist.genres.map((genreName) =>
         transaction.run(`
         MATCH
           (artist: Artist {spotify_id: "${spotifyId}"}),
-          (genre: Genre {name: ${genreName}})
+          (genre: Genre {name: "${genreName}"})
         MERGE (artist)-[r:PerformsInGenre]->(genre)
         RETURN type(r)
     `)
       )
     );
 
-    // TODO: update relationship count depending on array?
-
-    console.log(result, 'all settled for artist');
+    transactionData.relationshipCount += relsArtistToGenre.length;
 
     return true;
   }
@@ -582,22 +559,22 @@ export class DatabaseService {
       })
     `);
 
-    transactionData.nodesCount++;
     transactionData.records.push({ type: 'artist', name: model.name });
 
-    const result = await Promise.allSettled(
+    const relsArtistGenre = await Promise.allSettled(
       model.relatedGenresIds.map((genreNodeId) =>
         transaction.run(`
-      MATCH
-        (artist: Artist {id: "${genId}"})
-        (genre: Genre {id: ${genreNodeId}})
-      MERGE (artist)-[r:PerformsInGenre]->(genre)
-      RETURN type(r)
+          MATCH
+            (artist: Artist {id: "${genId}"}),
+            (genre: Genre {id: "${genreNodeId}"})
+          MERGE (artist)-[r:PerformsInGenre]->(genre)
+          RETURN type(r)
     `)
       )
     );
 
-    console.log(result, 'relationships between artist and genres');
+    transactionData.relationshipCount += relsArtistGenre.length;
+
     return true;
   }
 
@@ -619,7 +596,7 @@ export class DatabaseService {
     const track = await this.spotifyService.getTrackById(spotifyId);
     const genId = await this.generateNewNodeId(transaction);
 
-    const imageUrl: string | null = track.album.images?.[0]?.url ?? null;
+    const imageUrl: string = track.album.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
       CREATE (track: Track {
@@ -627,12 +604,11 @@ export class DatabaseService {
         duration_ms: "${track.duration_ms}",
         explicit: "${track.explicit}",
         type: "${track.type}",
-        image: "${imageUrl ?? 'Not provided'}",
+        image: "${imageUrl}",
         added_by: "${username}",
         id: "${genId}"
       })`);
 
-    transactionData.nodesCount++;
     transactionData.records.push({ type: 'track', name: track.name });
 
     // add related artists
@@ -650,24 +626,26 @@ export class DatabaseService {
     const trackAuthor = track.artists.shift();
     await transaction.run(`
       MATCH
-        (artist: Artist {spotify_id: "${trackAuthor.id}"})
+        (artist: Artist {spotify_id: "${trackAuthor.id}"}),
         (track: Track {spotify_id: "${spotifyId}"})
       MERGE (artist)-[r:Author]->(track)
       RETURN type(r)
       `);
 
-    const relationResult = await Promise.allSettled(
+    transactionData.relationshipCount++;
+
+    const relsTrackArtist = await Promise.allSettled(
       track.artists.map((artist) =>
         transaction.run(`
-      MATCH
-        (artist: Artist {spotify_id: "${artist.id}"})
-        (track: Track {spotify_id: "${spotifyId}"})
-      MERGE (artist)-[r:AppearedAt]->(track)
-      RETURN type(r)`)
+          MATCH
+            (artist: Artist {spotify_id: "${artist.id}"}),
+            (track: Track {spotify_id: "${spotifyId}"})
+          MERGE (artist)-[r:AppearedAt]->(track)
+          RETURN type(r)`)
       )
     );
 
-    console.log(relationResult, 'connected all artists to track');
+    transactionData.relationshipCount += relsTrackArtist.length;
 
     return true;
   }
@@ -687,23 +665,25 @@ export class DatabaseService {
         type: "${model.type}",
         image: "${model.image}",
         added_by: "${username}",
+        spotify_id: "Not provided",
         id: "${genId}"
       })`);
 
-    transactionData.nodesCount++;
     transactionData.records.push({ name: model.name, type: 'track' });
 
     await transaction.run(`
       MATCH
-        (artist: Artist {id: "${model.authorId}"})
+        (artist: Artist {id: "${model.authorId}"}),
         (track: Track {id: "${genId}"})
       MERGE (artist)-[r:Author]->(track)`);
 
-    const resultRelationships = await Promise.allSettled(
+    transactionData.relationshipCount++;
+
+    const relsArtistTrack = await Promise.allSettled(
       model.contributorsIds.map((cId) =>
         transaction.run(`
           MATCH
-            (artist: Artist {id: "${cId}"})
+            (artist: Artist {id: "${cId}"}),
             (track: Track {id: "${genId}"})
           MERGE (artist)-[r:AppearedAt]->(track)
           RETURN type(r)
@@ -711,7 +691,7 @@ export class DatabaseService {
       )
     );
 
-    console.log(resultRelationships, 'between contributors and track');
+    transactionData.relationshipCount += relsArtistTrack.length;
 
     return true;
   }
@@ -732,7 +712,7 @@ export class DatabaseService {
 
     const playlist = await this.spotifyService.getPlaylistById(spotify_id);
     const genId = await this.generateNewNodeId(transaction);
-    const imageUrl: string | null = playlist.images?.[0]?.url ?? null;
+    const imageUrl: string = playlist.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
       CREATE (playlist: Playlist {
@@ -740,13 +720,12 @@ export class DatabaseService {
         description: "${playlist.description}",
         owner_name: "${playlist.owner.display_name}",
         spotify_id: "${spotify_id}",
-        image: "${imageUrl ?? 'Not provided'}",
+        image: "${imageUrl}",
         added_by: "${username}",
         id: "${genId}"
       })
     `);
 
-    transactionData.nodesCount++;
     transactionData.records.push({ type: 'playlist', name: playlist.name });
 
     await Promise.allSettled(
@@ -760,19 +739,18 @@ export class DatabaseService {
       )
     );
 
-    const relationships = await Promise.all(
+    const relsPlaylistTrack = await Promise.all(
       playlist.tracks.items.map((track) =>
         transaction.run(`
         MATCH
-          (playlist: Playlist {spotify_id: "${spotify_id}"})
+          (playlist: Playlist {spotify_id: "${spotify_id}"}),
           (track: Track {spotify_id: "${track.track.id}"})
         MERGE (playlist)-[r:Contains]->(track)
         RETURN type(r)`)
       )
     );
 
-    console.log('relationships from playlist to tracks', relationships);
-
+    transactionData.relationshipCount += relsPlaylistTrack.length;
     return true;
   }
 
@@ -783,6 +761,7 @@ export class DatabaseService {
     transaction: Transaction
   ) {
     const genId = await this.generateNewNodeId(transaction);
+
     await transaction.run(`
       CREATE (playlist: Playlist {
         name: "${model.name}",
@@ -794,14 +773,13 @@ export class DatabaseService {
         id: "${genId}"
       })`);
 
-    transactionData.nodesCount++;
     transactionData.records.push({ name: model.name, type: 'playlist' });
 
-    const relationships = await Promise.allSettled(
+    const relsPlaylistTrack = await Promise.allSettled(
       model.tracksIds.map((trackId) =>
         transaction.run(`
         MATCH
-          (playlist: Playlist {id: "${genId}"})
+          (playlist: Playlist {id: "${genId}"}),
           (track: Track {id: "${trackId}"})
         MERGE (playlist)-[r:Contains]->(track)
         RETURN type(r)
@@ -809,7 +787,8 @@ export class DatabaseService {
       )
     );
 
-    console.log(relationships, 'between playlist and track');
+    transactionData.relationshipCount += relsPlaylistTrack.length;
+
     return true;
   }
 
@@ -829,7 +808,7 @@ export class DatabaseService {
 
     const album = await this.spotifyService.getAlbumById(spotifyId);
     const genId = await this.generateNewNodeId(transaction);
-    const imageUrl: string | null = album.images?.[0]?.url ?? null;
+    const imageUrl: string = album.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
       CREATE (album: Album {
@@ -838,14 +817,13 @@ export class DatabaseService {
         count_of_tracks: "${album.total_tracks}",
         label: "${album.label}",
         release_date: "${album.release_date}",
-        image: "${imageUrl ?? 'Not provided'}",
+        image: "${imageUrl}",
         spotify_id: "${spotifyId}",
         added_by: "${username}",
         id: "${genId}" 
       })
     `);
 
-    transactionData.nodesCount++;
     transactionData.records.push({ type: 'album', name: album.name });
 
     await Promise.allSettled(
@@ -863,18 +841,18 @@ export class DatabaseService {
       )
     );
 
-    const relsGenre = await Promise.allSettled(
+    const relsAlbumGenre = await Promise.allSettled(
       album.genres.map((genreName) =>
         transaction.run(`
-      MATCH
-        (album: Album {spotify_id: "${spotifyId}"})
-        (genre: Genre {name: "${genreName}"})
-      MERGE (album)-[r:RelatedToGenre]->(genre)
-      RETURN type(r)`)
+          MATCH
+            (album: Album {spotify_id: "${spotifyId}"}),
+            (genre: Genre {name: "${genreName}"})
+          MERGE (album)-[r:RelatedToGenre]->(genre)
+          RETURN type(r)`)
       )
     );
 
-    console.log(relsGenre, 'relationshps between album and genres');
+    transactionData.relationshipCount += relsAlbumGenre.length;
 
     await Promise.allSettled(
       album.artists.map((artist) =>
@@ -890,16 +868,18 @@ export class DatabaseService {
     const albumAuthor = album.artists.shift();
     await transaction.run(`
       MATCH
-        (artist: Artist {spotify_id: "${albumAuthor.id}"})
+        (artist: Artist {spotify_id: "${albumAuthor.id}"}),
         (album: Album {spotify_id: "${spotifyId}"})
       MERGE (artist)-[r:Author]->(album)
       RETURN type(r)`);
 
-    const relsArtists = await Promise.allSettled(
+    transactionData.relationshipCount++;
+
+    const relsArtistAlbum = await Promise.allSettled(
       album.artists.map((artist) =>
         transaction.run(`
           MATCH
-            (artist: Artist {spotify_id: "${artist.id}"})
+            (artist: Artist {spotify_id: "${artist.id}"}),
             (album: Album {spotify_id: "${spotifyId}"})
           MERGE (artist)-[r:AppearedAt]->(album)
           RETURN type(r)
@@ -907,7 +887,7 @@ export class DatabaseService {
       )
     );
 
-    console.log(relsArtists, 'relationships between album and artists');
+    transactionData.relationshipCount += relsArtistAlbum.length;
 
     await Promise.allSettled(
       album.tracks.items.map((track) =>
@@ -920,19 +900,20 @@ export class DatabaseService {
       )
     );
 
-    const trackRels = await Promise.allSettled(
+    const relsAlbumTrack = await Promise.allSettled(
       album.tracks.items.map((track) =>
         transaction.run(`
-      MATCH
-        (album: Album {spotify_id: "${spotifyId}"})
-        (track: Track {spotify_id: "${track.id}"})
-      MERGE (album)-[r:Contains]->(track)
-      RETURN type(r)
+          MATCH
+            (album: Album {spotify_id: "${spotifyId}"}),
+            (track: Track {spotify_id: "${track.id}"})
+          MERGE (album)-[r:Contains]->(track)
+          RETURN type(r)
       `)
       )
     );
 
-    console.log(trackRels, 'relationships between track and album');
+    transactionData.relationshipCount += relsAlbumTrack.length;
+
     return true;
   }
 
@@ -943,6 +924,7 @@ export class DatabaseService {
     transaction: Transaction
   ) {
     const genId = await this.generateNewNodeId(transaction);
+
     await transaction.run(`
       CREATE (album: Album {
         name: "${model.name}",
@@ -956,348 +938,55 @@ export class DatabaseService {
         id: "${genId}"
       })`);
 
-    transactionData.nodesCount++;
     transactionData.records.push({ name: model.name, type: 'album' });
 
     await transaction.run(`
       MATCH
-        (album: Album {id: "${genId}"})
+        (album: Album {id: "${genId}"}),
         (artist: Artist {id: "${model.authorId}"})
       MERGE (artist)-[r:Author]->(album)
       RETURN type(r)`);
 
-    const relsArtists = await Promise.allSettled(
+    transactionData.relationshipCount++;
+
+    const relsArtistsAlbum = await Promise.allSettled(
       model.contributorsIds.map((artistId) =>
         transaction.run(`
-        MATCH
-          (artist: Artist {id: "${artistId}"})
-          (album: Album {id: "${genId}"})
-        MERGE (artist)-[r:AppearedAt]->(album)
-        RETURN type(r)`)
+          MATCH
+            (artist: Artist {id: "${artistId}"}),
+            (album: Album {id: "${genId}"})
+          MERGE (artist)-[r:AppearedAt]->(album)
+          RETURN type(r)`)
       )
     );
 
-    console.log(relsArtists, 'relationship between artists and album');
+    transactionData.relationshipCount += relsArtistsAlbum.length;
 
-    const genreRels = await Promise.allSettled(
+    const relsAlbumGenre = await Promise.allSettled(
       model.relatedGenresIds.map((genreId) =>
         transaction.run(`
-      MATCH
-        (album: Album {id: "${genId}"})
-        (genre: Genre {id: "${genreId}"})
-      MERGE (album)-[r:RelatedToGenre]->(genre)
-      RETURN type(r)`)
+          MATCH
+            (album: Album {id: "${genId}"}),
+            (genre: Genre {id: "${genreId}"})
+          MERGE (album)-[r:RelatedToGenre]->(genre)
+          RETURN type(r)`)
       )
     );
 
-    console.log(genreRels, 'relationships between genres and album');
+    transactionData.relationshipCount += relsAlbumGenre.length;
 
-    const tracksRels = await Promise.allSettled(
+    const relsTracksAlbum = await Promise.allSettled(
       model.tracksIds.map((trackId) =>
         transaction.run(`
-        MATCH
-          (album: Album {id: "${genId}"})
-          (track: Track {id: "${trackId}"})
-        MERGE (album)-[r:Contains]->(track)
-        RETURN type(r)`)
+          MATCH
+            (album: Album {id: "${genId}"}),
+            (track: Track {id: "${trackId}"})
+          MERGE (album)-[r:Contains]->(track)
+          RETURN type(r)`)
       )
     );
 
-    console.log(tracksRels, 'relationships between tracks and album');
-
+    transactionData.relationshipCount += relsTracksAlbum.length;
     return true;
   }
-
-  //   public addAlbum = async (
-  //     identity: string,
-  //     username: string,
-  //     accumulated: AddTransactionRecordData[],
-  //     transaction: Transaction
-  //   ) => {
-  //     const alreadyExists = await this.isThereInstanceWithIdTransaction(
-  //       identity,
-  //       transaction
-  //     );
-
-  //     if (!alreadyExists) {
-  //       return await this.addAlbumChecked(
-  //         identity,
-  //         username,
-  //         accumulated,
-  //         transaction
-  //       );
-  //     }
-
-  //     return false;
-  //   };
-
-  //   public addArtist = async (
-  //     identity: string,
-  //     username: string,
-  //     accumulated: AddTransactionRecordData[],
-  //     transaction: Transaction
-  //   ) => {
-  //     const alreadyExists = await this.isThereInstanceWithIdTransaction(
-  //       identity,
-  //       transaction
-  //     );
-
-  //     if (!alreadyExists) {
-  //       return await this.addArtistChecked(
-  //         identity,
-  //         username,
-  //         accumulated,
-  //         transaction
-  //       );
-  //     }
-
-  //     return false;
-  //   };
-
-  //   public addPlaylist = async (
-  //     identity: string,
-  //     username: string,
-  //     accumulated: AddTransactionRecordData[],
-  //     transaction: Transaction
-  //   ) => {
-  //     const alreadyExists = await this.isThereInstanceWithIdTransaction(
-  //       identity,
-  //       transaction
-  //     );
-
-  //     if (!alreadyExists) {
-  //       return await this.addPlaylistChecked(
-  //         identity,
-  //         username,
-  //         accumulated,
-  //         transaction
-  //       );
-  //     }
-
-  //     return false;
-  //   };
-
-  //   public addTrack = async (
-  //     identity: string,
-  //     username: string,
-  //     accumulated: AddTransactionRecordData[],
-  //     transaction: Transaction
-  //   ) => {
-  //     const alreadyExists = await this.isThereInstanceWithIdTransaction(
-  //       identity,
-  //       transaction
-  //     );
-
-  //     if (!alreadyExists) {
-  //       return this.addTrackChecked(identity, username, accumulated, transaction);
-  //     }
-
-  //     return false;
-  //   };
-
-  //   // add dtos to generalize functions for custom adding to db
-  //   // checked functions
-  //   public addAlbumChecked = async (
-  //     identity: string,
-  //     username: string,
-  //     accumulated: AddTransactionRecordData[],
-  //     transaction: Transaction
-  //   ) => {
-  //     const album = await this.spotifyService.getAlbumById(identity);
-  //     const nodeId = await this.generateNewNodeId(transaction);
-  //     const imageUrl: string | undefined = album.images.at(0).url;
-
-  //     await transaction.run(`
-  //         CREATE (album: Album {
-  //           name: "${album.name}",
-  //           spotify_id: "${album.id}",
-  //           type: "${album.album_type}",
-  //           count_of_tracks: "${album.total_tracks}",
-  //           label: "${album.label}",
-  //           release: "${album.release_date}",
-  //           added_by: "${username}",
-  //           image_url: "${imageUrl || 'none'}",
-  //           id: "${nodeId}"
-  //         })`);
-
-  //     accumulated.push({ name: album.name, type: 'album' });
-
-  //     for (const genre of album.genres) {
-  //       // create genre if possible
-  //       await this.addGenre(genre, username, accumulated, transaction);
-
-  //       await transaction.run(`
-  //           MATCH
-  //             (album: Album {spotify_id: "${identity}"}),
-  //             (genre: Genre {name: "${genre}"})
-  //           MERGE (album)-[r:RelatedToGenre]->(genre)
-  //           RETURN type(r)`);
-  //     }
-
-  //     for (const artist of album.artists) {
-  //       await this.addArtist(artist.id, username, accumulated, transaction);
-  //     }
-
-  //     const albumAuthor = album.artists.shift();
-  //     await transaction.run(`
-  //         MATCH
-  //           (artist: Artist {spotify_id: "${albumAuthor.id}"}),
-  //           (album: Album {spotify_id: "${identity}"})
-  //         MERGE (artist)-[r:Author]->(album)
-  //         RETURN type(r)`);
-
-  //     for (const artist of album.artists) {
-  //       await transaction.run(`
-  //           MATCH
-  //             (artist: Artist {spotify_id: "${artist.id}"}),
-  //             (album: Album {spotify_id: "${identity}"})
-  //           MERGE (artist)-[r:AppearedAt]->(album)
-  //           RETURN type(r)`);
-  //     }
-
-  //     for (const track of album.tracks.items) {
-  //       await this.addTrack(track.id, username, accumulated, transaction);
-  //       await transaction.run(`
-  //           MATCH
-  //             (album: Album {spotify_id: "${identity}"}),
-  //             (track: Track {spotify_id: "${track.id}"})
-  //           MERGE (album)-[r:Contains]->(track)
-  //           RETURN type(r)`);
-  //     }
-
-  //     return true;
-  //   };
-
-  //   public addTrackChecked = async (
-  //     identity: string,
-  //     username: string,
-  //     accumulated: AddTransactionRecordData[],
-  //     transaction: Transaction
-  //   ) => {
-  //     const track = await this.spotifyService.getTrackById(identity);
-  //     const nodeId = await this.generateNewNodeId(transaction);
-  //     const imageUrl: string | undefined = track.album.images.at(0).url;
-
-  //     // create track at first
-  //     await transaction.run(`
-  //         CREATE (track: Track {
-  //           name: "${track.name}",
-  //           duration_ms: "${track.duration_ms}",
-  //           explicit: "${track.explicit}",
-  //           spotify_id: "${track.id}",
-  //           added_by: "${username}",
-  //           image_url: "${imageUrl || 'none'}",
-  //           id: "${nodeId}"
-  //         })`);
-
-  //     accumulated.push({ name: track.name, type: 'track' });
-
-  //     // relate artists to track
-  //     // first add artists
-  //     for (const artist of track.artists) {
-  //       await this.addArtist(artist.id, username, accumulated, transaction);
-  //     }
-
-  //     // add author relations
-  //     const trackAuthor = track.artists.shift();
-  //     await transaction.run(`
-  //         MATCH
-  //           (artist: Artist {spotify_id: "${trackAuthor.id}"}),
-  //           (track: Track {spotify_id: "${identity}"})
-  //         MERGE (artist)-[r:Author]->(track)
-  //         RETURN type(r)`);
-
-  //     for (const artist of track.artists) {
-  //       await transaction.run(`
-  //           MATCH
-  //             (artist: Artist {spotify_id: "${artist.id}"}),
-  //             (track: Track {spotify_id: "${identity}"})
-  //           MERGE (artist)-[r:AppearedAt]->(track)
-  //           RETURN type(r)`);
-  //     }
-
-  //     return true;
-  //   };
-
-  //   public addPlaylistChecked = async (
-  //     identity: string,
-  //     username: string,
-  //     accumulated: AddTransactionRecordData[],
-  //     transaction: Transaction
-  //   ) => {
-  //     const playlist = await this.spotifyService.getPlaylistById(identity);
-  //     const nodeId = await this.generateNewNodeId(transaction);
-  //     const imageUrl: string | undefined = playlist.images.at(0).url;
-
-  //     await transaction.run(`
-  //         CREATE (playlist: Playlist {
-  //           name: "${playlist.name}",
-  //           description: "${playlist.description}",
-  //           spotify_id: "${playlist.id}",
-  //           owner_name: "${playlist.owner.display_name}",
-  //           collaborative: "${playlist.collaborative}",
-  //           added_by: "${username}",
-  //           image_url: "${imageUrl || 'none'}",
-  //           id: "${nodeId}"
-  //         })
-  //       `);
-
-  //     accumulated.push({ name: playlist.name, type: 'playlist' });
-
-  //     // add tracks
-  //     for (const track of playlist.tracks.items) {
-  //       await this.addTrack(track.track.id, username, accumulated, transaction);
-  //       await transaction.run(`
-  //           MATCH
-  //             (playlist: Playlist {spotify_id: "${identity}"}),
-  //             (track: Track {spotify_id: "${track.track.id}"})
-  //           MERGE (playlist)-[r:Contains]->(track)
-  //           RETURN type(r)`);
-  //     }
-
-  //     return true;
-  //   };
-
-  //   public addArtistChecked = async (
-  //     identity: string,
-  //     username: string,
-  //     accumulated: AddTransactionRecordData[],
-  //     transaction: Transaction
-  //   ) => {
-  //     // create artist
-  //     const artist = await this.spotifyService.getArtistById(identity);
-  //     const nodeId = await this.generateNewNodeId(transaction);
-  //     // TODO refactor line
-  //     const imageUrl: string | undefined = artist.images.at(0)?.url
-  //       ? artist.images.at(0)?.url
-  //       : undefined;
-
-  //     await transaction.run(`
-  //       CREATE (artist: Artist {
-  //         name: "${artist.name}",
-  //         spotify_id: "${artist.id}",
-  //         type: "${artist.type}",
-  //         added_by: "${username}",
-  //         image_url: "${imageUrl || 'none'}",
-  //         id: "${nodeId}"
-  //       })`);
-
-  //     accumulated.push({ name: artist.name, type: 'artist' });
-
-  //     // sequence
-  //     for (const genre of artist.genres) {
-  //       await this.addGenre(genre, username, accumulated, transaction);
-  //     }
-
-  //     for (const genre of artist.genres) {
-  //       await transaction.run(`
-  //         MATCH
-  //           (artist: Artist {spotify_id: "${artist.id}"}),
-  //           (genre: Genre {name: "${genre}"})
-  //         MERGE (artist)-[r:PerformsInGenre]->(genre)
-  //         RETURN type(r)`);
-  //     }
-
-  //     return true;
-  //   };
 }

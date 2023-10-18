@@ -57,8 +57,6 @@ export interface PlaylistModel {
 
 export interface TransactionData {
   relationshipCount: number;
-  nodesCount: number;
-
   records: { type: string; name: string }[];
 }
 

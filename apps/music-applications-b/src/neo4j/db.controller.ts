@@ -18,12 +18,12 @@ export class DatabaseController {
 
   @Post(':type/:id')
   async addItem(@Param() params, @GetUser() user: User) {
-    // return await this.dbService.performAddTransaction(
-    //   params.type,
-    //   params.id,
-    //   user.username
-    // );
-    return null;
+    // fix error with relationships count
+    return await this.dbService.performAddTransaction(
+      params.type,
+      params.id,
+      user.username
+    );
   }
 
   @Get('stats')

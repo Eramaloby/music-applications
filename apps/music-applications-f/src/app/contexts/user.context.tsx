@@ -32,6 +32,7 @@ export interface AsyncNeo4jTaskMetadata {
   finishedIn?: number; // Date.now()
   failed: boolean;
   details: { name: string; type: string }[];
+  relsCount: number;
 }
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
@@ -64,7 +65,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
       // store token in local storage exposes application to XSS attacks
       const receivedAt = new Date().getTime();
-      console.log('store access token', accessToken);
       localStorage.setItem(
         'tokenData',
         JSON.stringify({

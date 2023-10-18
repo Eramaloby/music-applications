@@ -76,6 +76,7 @@ const SpotifyContentPage = () => {
         finished: false,
         failed: false,
         details: [],
+        relsCount: 0,
       };
 
       addTask(task);
@@ -88,6 +89,7 @@ const SpotifyContentPage = () => {
             toast.success('Instance was added to database.', {
               position: 'top-center',
             });
+            task.relsCount = response.relsCount;
           } else {
             task.failed = true;
             toast.error('Failed in execution', {

@@ -48,6 +48,7 @@ export interface PostItemResponse {
   isSuccess: boolean;
   message?: string;
   records: { name: string; type: string }[];
+  relsCount: number;
 }
 
 export const postItemFromParameters = async (accessToken: string, dto: any) => {
@@ -81,17 +82,24 @@ export const postItemToNeo4j = async (
     if (response.data.isSuccess) {
       return {
         isSuccess: true,
-        records: response.data.records,
+        records: [...response.data.data.records],
+        relsCount: response.data.data.relationshipCount,
       };
     } else {
       return {
         isSuccess: false,
         records: [],
         message: response.data.reason,
+        relsCount: 0,
       };
     }
   } catch (error) {
-    return { isSuccess: false, message: error.message, records: [] };
+    return {
+      isSuccess: false,
+      message: error.message,
+      records: [],
+      relsCount: 0,
+    };
   }
 };
 
