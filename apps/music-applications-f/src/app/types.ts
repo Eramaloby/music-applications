@@ -160,6 +160,8 @@ export interface PlaylistProperties {
   image_url?: string;
 }
 
+// form interfaces
+
 export interface UserSignUpForm {
   email: string;
   confirmEmail: string;

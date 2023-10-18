@@ -60,4 +60,11 @@ export class ProfileService {
       throw new InternalServerErrorException();
     }
   }
+
+  async clearStats() {
+    return await this.userRepository.update(
+      {},
+      { nodesAddedCount: 0, relationshipsAddedCount: 0 }
+    );
+  }
 }

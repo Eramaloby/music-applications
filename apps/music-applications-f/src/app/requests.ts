@@ -23,6 +23,7 @@ export const fetchDatabaseItem = async (
   try {
     const response = await axios.get(`${baseUrl}/neo4j/${type}/${id}`);
 
+    console.log(response.data, 'lol new data');
     return parseNeo4jData(response.data);
   } catch (error) {
     console.log(error);

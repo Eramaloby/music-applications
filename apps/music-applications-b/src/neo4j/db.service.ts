@@ -586,6 +586,7 @@ export class DatabaseService {
         type: "${track.type}",
         image: "${imageUrl}",
         added_by: "${username}",
+        spotify_id: "${spotifyId}",
         id: "${genId}"
       })`);
 
@@ -677,20 +678,20 @@ export class DatabaseService {
   }
 
   public async addPlaylistFromSpotify(
-    spotify_id: string,
+    spotifyId: string,
     username: string,
     transactionData: TransactionData,
     transaction: Transaction
   ) {
     const isExists = await this.instanceWithIdExistsWithTransaction(
-      spotify_id,
+      spotifyId,
       transaction
     );
     if (isExists) {
       return false;
     }
 
-    const playlist = await this.spotifyService.getPlaylistById(spotify_id);
+    const playlist = await this.spotifyService.getPlaylistById(spotifyId);
     const genId = await this.generateNewNodeId(transaction);
     const imageUrl: string = playlist.images?.[0]?.url ?? 'Not provided';
 
@@ -699,7 +700,7 @@ export class DatabaseService {
         name: "${playlist.name}",
         description: "${playlist.description}",
         owner_name: "${playlist.owner.display_name}",
-        spotify_id: "${spotify_id}",
+        spotify_id: "${spotifyId}",
         image: "${imageUrl}",
         added_by: "${username}",
         id: "${genId}"
@@ -723,7 +724,7 @@ export class DatabaseService {
       playlist.tracks.items.map((track) =>
         transaction.run(`
         MATCH
-          (playlist: Playlist {spotify_id: "${spotify_id}"}),
+          (playlist: Playlist {spotify_id: "${spotifyId}"}),
           (track: Track {spotify_id: "${track.track.id}"})
         MERGE (playlist)-[r:Contains]->(track)
         RETURN type(r)`)
