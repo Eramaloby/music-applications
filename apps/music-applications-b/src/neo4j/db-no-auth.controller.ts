@@ -7,10 +7,29 @@ export class DatabaseNoAuthController {
 
   @Get(':type/:id')
   async getDatabaseItem(@Param() params) {
-    return await this.dbService.findNodeAndRelationsWithId(
+    const result = await this.dbService.findNodeAndRelationsWithId(
       params.id,
       params.type
     );
+
+    const nodeWithRelationships = result.map((value) => value['_fields']);
+    const nodeWithOwnProperties = nodeWithRelationships[0][0];
+    const relationshipsWithConnectedNode = nodeWithRelationships.map(
+      (entity) => {
+        return { relType: entity[1].type, obj: entity[2] };
+      }
+    );
+
+    console.log(nodeWithOwnProperties);
+    console.log(relationshipsWithConnectedNode);
+    console.log(
+      relationshipsWithConnectedNode.forEach((entity) => {
+        console.log(entity.relType);
+        console.log(entity.obj.properties);
+      })
+    );
+
+    return result;
   }
 
   @Get('search')
@@ -28,5 +47,10 @@ export class DatabaseNoAuthController {
   @Get(':id')
   async isThereInstanceWithId(@Param() params) {
     return await this.dbService.instanceWithIdExists(params.id);
+  }
+
+  @Get('/test/album/:id')
+  async getAlbumTest(@Param() params) {
+    return await this.dbService.getAlbumWithRelations(params.id);
   }
 }

@@ -109,6 +109,25 @@ export class SpotifyService {
     return result.body;
   }
 
+  public async getAllTracksFromPlaylist(playlist_id: string) {
+    const accumulatedTracks: SpotifyApi.PlaylistTrackObject[] = [];
+    let currentBatch = (await this.spotifyWebApi.getPlaylistTracks(playlist_id))
+      .body;
+
+    accumulatedTracks.push(...currentBatch.items);
+
+    while (currentBatch.next !== null) {
+      currentBatch = (
+        await this.spotifyWebApi.getPlaylistTracks(playlist_id, {
+          offset: accumulatedTracks.length,
+        })
+      ).body;
+      accumulatedTracks.push(...currentBatch.items);
+    }
+
+    return accumulatedTracks;
+  }
+
   public async getAlbumById(spotify_id: string) {
     const result = await this.SpotifyWebApi.getAlbum(spotify_id);
     return result.body;

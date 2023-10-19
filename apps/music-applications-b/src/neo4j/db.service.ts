@@ -40,12 +40,31 @@ export class DatabaseService {
       `MATCH (obj: ${type} { id: "${id}" })-[rel]-(o_obj) return obj, rel, o_obj`
     );
 
-    console.log(res.records);
     return res.records;
   };
 
+  /*
+    // LIST GENRES TO PLAYLIST
+     list of instances: artist, track, album, playlist, genre
+     list of relations:
+        :Author between artist and track/album
+        :AppearedAt between artist and track/album <- fits for sub instances
+        :PerformsInGenre between artist and genre
+        :RelatedToGenre between album and genre
+        :Contains between album/playlist and track
+
+     algorithm for adding instances:
+      1. Check whether instance is already existing in db.
+      2. Check existence of all sub instances.
+      3. Create instance if needed.
+      4. Create sub instances {also get them from spotify by id, if necessary}.
+      5. Provide relations.
+  */
+
   public async getAlbumWithRelations(id: number) {
-    return null;
+    return await this.dbService.read(
+      `MATCH (obj: Album {id: "${id}"})-[rel]-(o_obj) return obj, rel, o_obj`
+    );
   }
 
   public findNodeBySpotifyId = async (spotifyId: string) => {
@@ -378,21 +397,6 @@ export class DatabaseService {
   };
 
   /* ADD TO DB FUNCTIONS */
-  /*
-     list of instances: artist, track, album, playlist, genre
-     list of relations:
-        :author between artist and track(or album)
-        :appeared between secondary artist and track(or album) <- fits for sub instances
-        :performsIn between artist and genre
-        :contains between album or playlist and track
-
-     algorithm for adding instances:
-      1. Check whether instance is already existing in db.
-      2. Check existence of all sub instances.
-      3. Create instance if needed.
-      4. Create sub instances {also get them from spotify by id, if necessary}.
-      5. Provide relations.
-  */
 
   public async instanceWithIdExistsWithTransaction(
     id: string,
@@ -472,7 +476,22 @@ export class DatabaseService {
     }
 
     const artist = await this.spotifyService.getArtistById(spotifyId);
+    return await this.addArtistFromSpotifyFetched(
+      artist,
+      username,
+      transactionData,
+      transaction
+    );
+  }
+
+  public async addArtistFromSpotifyFetched(
+    artist: SpotifyApi.SingleArtistResponse | SpotifyApi.ArtistObjectFull,
+    username: string,
+    transactionData: TransactionData,
+    transaction: Transaction
+  ) {
     const genId = await this.generateNewNodeId(transaction);
+    console.log('adding new artist', artist.name);
 
     const imageUrl: string = artist.images?.[0]?.url ?? 'Not provided';
 
@@ -483,34 +502,27 @@ export class DatabaseService {
         type: "${artist.type}",
         image: "${imageUrl}",
         added_by: "${username}",
-        spotify_id: "${spotifyId}",
+        spotify_id: "${artist.id}",
         id: "${genId}"
       })
     `);
 
     transactionData.records.push({ type: 'artist', name: artist.name });
 
-    // adding related genres if ones doesn't exists
-    await Promise.allSettled(
-      artist.genres.map((genreName) =>
-        this.addGenre(
-          {
-            name: genreName,
-            image: 'Not provided',
-            description: 'Not provided',
-          },
-          username,
-          transactionData,
-          transaction
-        )
-      )
-    );
+    for (const genreName of artist.genres) {
+      await this.addGenre(
+        { name: genreName, image: 'Not provided', description: 'Not provided' },
+        username,
+        transactionData,
+        transaction
+      );
+    }
 
     const relsArtistToGenre = await Promise.allSettled(
       artist.genres.map((genreName) =>
         transaction.run(`
         MATCH
-          (artist: Artist {spotify_id: "${spotifyId}"}),
+          (artist: Artist {spotify_id: "${artist.id}"}),
           (genre: Genre {name: "${genreName}"})
         MERGE (artist)-[r:PerformsInGenre]->(genre)
         RETURN type(r)
@@ -519,6 +531,7 @@ export class DatabaseService {
     );
 
     transactionData.relationshipCount += relsArtistToGenre.length;
+    console.log('finished adding artist', artist.name);
 
     return true;
   }
@@ -530,7 +543,6 @@ export class DatabaseService {
     transaction: Transaction
   ): Promise<boolean> {
     // user is sure that there is no duplicate => no need to check for it
-
     const genId = await this.generateNewNodeId(transaction);
     await transaction.run(`
       CREATE (artist: Artist {
@@ -579,7 +591,22 @@ export class DatabaseService {
     }
 
     const track = await this.spotifyService.getTrackById(spotifyId);
+    return await this.addTrackFromSpotifyFetched(
+      track,
+      username,
+      transactionData,
+      transaction
+    );
+  }
+
+  public async addTrackFromSpotifyFetched(
+    track: SpotifyApi.TrackObjectFull | SpotifyApi.SingleTrackResponse,
+    username: string,
+    transactionData: TransactionData,
+    transaction: Transaction
+  ) {
     const genId = await this.generateNewNodeId(transaction);
+    console.log('adding track', track.name);
 
     const imageUrl: string = track.album.images?.[0]?.url ?? 'Not provided';
 
@@ -591,29 +618,26 @@ export class DatabaseService {
         type: "${track.type}",
         image: "${imageUrl}",
         added_by: "${username}",
-        spotify_id: "${spotifyId}",
+        spotify_id: "${track.id}",
         id: "${genId}"
       })`);
 
     transactionData.records.push({ type: 'track', name: track.name });
 
-    // add related artists
-    await Promise.allSettled(
-      track.artists.map((artist) =>
-        this.addArtistFromSpotify(
-          artist.id,
-          username,
-          transactionData,
-          transaction
-        )
-      )
-    );
+    for (const simplifiedArtist of track.artists) {
+      await this.addArtistFromSpotify(
+        simplifiedArtist.id,
+        username,
+        transactionData,
+        transaction
+      );
+    }
 
     const trackAuthor = track.artists.shift();
     await transaction.run(`
       MATCH
         (artist: Artist {spotify_id: "${trackAuthor.id}"}),
-        (track: Track {spotify_id: "${spotifyId}"})
+        (track: Track {spotify_id: "${track.id}"})
       MERGE (artist)-[r:Author]->(track)
       RETURN type(r)
       `);
@@ -625,7 +649,7 @@ export class DatabaseService {
         transaction.run(`
           MATCH
             (artist: Artist {spotify_id: "${artist.id}"}),
-            (track: Track {spotify_id: "${spotifyId}"})
+            (track: Track {spotify_id: "${track.id}"})
           MERGE (artist)-[r:AppearedAt]->(track)
           RETURN type(r)`)
       )
@@ -633,6 +657,7 @@ export class DatabaseService {
 
     transactionData.relationshipCount += relsTrackArtist.length;
 
+    console.log('finished adding track', track.name);
     return true;
   }
 
@@ -696,7 +721,12 @@ export class DatabaseService {
       return false;
     }
 
+    // TODO: is there a need for adding genres to playlist??????
     const playlist = await this.spotifyService.getPlaylistById(spotifyId);
+    const playlistTracks = await this.spotifyService.getAllTracksFromPlaylist(
+      playlist.id
+    );
+
     const genId = await this.generateNewNodeId(transaction);
     const imageUrl: string = playlist.images?.[0]?.url ?? 'Not provided';
 
@@ -714,19 +744,17 @@ export class DatabaseService {
 
     transactionData.records.push({ type: 'playlist', name: playlist.name });
 
-    await Promise.allSettled(
-      playlist.tracks.items.map((track) =>
-        this.addTrackFromSpotify(
-          track.track.id,
-          username,
-          transactionData,
-          transaction
-        )
-      )
-    );
+    for (const playlistTrack of playlistTracks) {
+      await this.addTrackFromSpotifyFetched(
+        playlistTrack.track,
+        username,
+        transactionData,
+        transaction
+      );
+    }
 
     const relsPlaylistTrack = await Promise.all(
-      playlist.tracks.items.map((track) =>
+      playlistTracks.map((track) =>
         transaction.run(`
         MATCH
           (playlist: Playlist {spotify_id: "${spotifyId}"}),
@@ -735,6 +763,8 @@ export class DatabaseService {
         RETURN type(r)`)
       )
     );
+
+    console.log('add all tracks');
 
     transactionData.relationshipCount += relsPlaylistTrack.length;
     return true;
@@ -813,57 +843,40 @@ export class DatabaseService {
     transactionData.records.push({ type: 'album', name: album.name });
 
     // spotify object album never contains genres of artist that related to album
-    // solution: get all artists from spotify then parse it's genres
-    const genresRelatedToAlbum = (
-      await Promise.all(
-        album.artists.map((simplifiedArtist) =>
-          this.spotifyService.getArtistById(simplifiedArtist.id)
-        )
+    // solution: get all artists from spotify then parse it's genres, fetched artists add by their model, without making duplicate request
+    const artistsFetched = await Promise.all(
+      album.artists.map((simplifiedArtist) =>
+        this.spotifyService.getArtistById(simplifiedArtist.id)
       )
-    )
-      .map((artist) => artist.genres)
+    );
+
+    const allArtistsGenres = artistsFetched
+      .map((artists) => artists.genres)
       .flat();
 
-    console.log(genresRelatedToAlbum);
+    for (const genreName of allArtistsGenres) {
+      await this.addGenre(
+        {
+          name: genreName,
+          description: 'Not provided',
+          image: 'Not provided',
+        },
+        username,
+        transactionData,
+        transaction
+      );
+    }
 
-    await Promise.allSettled(
-      genresRelatedToAlbum.map((genreName) =>
-        this.addGenre(
-          {
-            name: genreName,
-            description: 'Not provided',
-            image: 'Not provided',
-          },
-          username,
-          transactionData,
-          transaction
-        )
-      )
-    );
+    transactionData.relationshipCount += allArtistsGenres.length;
 
-    const relsAlbumGenre = await Promise.allSettled(
-      genresRelatedToAlbum.map((genreName) =>
-        transaction.run(`
-          MATCH
-            (album: Album {spotify_id: "${spotifyId}"}),
-            (genre: Genre {name: "${genreName}"})
-          MERGE (album)-[r:RelatedToGenre]->(genre)
-          RETURN type(r)`)
-      )
-    );
-
-    transactionData.relationshipCount += relsAlbumGenre.length;
-
-    await Promise.allSettled(
-      album.artists.map((artist) =>
-        this.addArtistFromSpotify(
-          artist.id,
-          username,
-          transactionData,
-          transaction
-        )
-      )
-    );
+    for (const artist of artistsFetched) {
+      await this.addArtistFromSpotifyFetched(
+        artist,
+        username,
+        transactionData,
+        transaction
+      );
+    }
 
     const albumAuthor = album.artists.shift();
     await transaction.run(`
@@ -889,16 +902,14 @@ export class DatabaseService {
 
     transactionData.relationshipCount += relsArtistAlbum.length;
 
-    await Promise.allSettled(
-      album.tracks.items.map((track) =>
-        this.addTrackFromSpotify(
-          track.id,
-          username,
-          transactionData,
-          transaction
-        )
-      )
-    );
+    for (const track of album.tracks.items) {
+      await this.addTrackFromSpotify(
+        track.id,
+        username,
+        transactionData,
+        transaction
+      );
+    }
 
     const relsAlbumTrack = await Promise.allSettled(
       album.tracks.items.map((track) =>

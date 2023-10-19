@@ -36,6 +36,7 @@ export class DatabaseController {
       user.username
     );
 
+    console.log('Finish transaction', result);
     return result;
   }
 

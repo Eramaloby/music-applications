@@ -65,3 +65,63 @@ export interface AddTransactionResult {
   data: TransactionData;
   reason?: string;
 }
+
+export interface AlbumProperties {
+  image: string;
+  added_by: string;
+  release_date: string;
+  spotify_id: string;
+  count_of_tracks: number;
+  name: string;
+  id: number;
+  label: string;
+  type: string;
+}
+
+export interface GenreProperties {
+  image: string;
+  added_by: string;
+  name: string;
+  description: string;
+  id: number;
+}
+
+export interface ArtistProperties {
+  image: string;
+  added_by: string;
+  spotify_id: string;
+  name: string;
+  description: string;
+  id: number;
+  type: string;
+}
+
+export interface TrackProperties {
+  duration_ms: number;
+  explicit: boolean;
+  image: string;
+  added_by: string;
+  spotify_id: string;
+  name: string;
+  id: number;
+  type: string;
+}
+
+export interface PlaylistProperties {
+  image: string;
+  owner_name: string;
+  added_by: string;
+  spotify_id: string;
+  name: string;
+  description: string;
+  id: number;
+}
+
+export interface AlbumWithRelationships {
+  properties: AlbumProperties;
+
+  relatedToGenreRelationships: GenreProperties[];
+  author: ArtistProperties;
+  contributors: ArtistProperties[];
+  tracks: TrackProperties[];
+}
