@@ -491,8 +491,6 @@ export class DatabaseService {
     transaction: Transaction
   ) {
     const genId = await this.generateNewNodeId(transaction);
-    console.log('adding new artist', artist.name);
-
     const imageUrl: string = artist.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
@@ -531,8 +529,6 @@ export class DatabaseService {
     );
 
     transactionData.relationshipCount += relsArtistToGenre.length;
-    console.log('finished adding artist', artist.name);
-
     return true;
   }
 
@@ -606,8 +602,6 @@ export class DatabaseService {
     transaction: Transaction
   ) {
     const genId = await this.generateNewNodeId(transaction);
-    console.log('adding track', track.name);
-
     const imageUrl: string = track.album.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
@@ -656,8 +650,6 @@ export class DatabaseService {
     );
 
     transactionData.relationshipCount += relsTrackArtist.length;
-
-    console.log('finished adding track', track.name);
     return true;
   }
 
@@ -763,8 +755,6 @@ export class DatabaseService {
         RETURN type(r)`)
       )
     );
-
-    console.log('add all tracks');
 
     transactionData.relationshipCount += relsPlaylistTrack.length;
     return true;
