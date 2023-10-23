@@ -186,6 +186,7 @@ export interface PlaylistWithRelationships {
   properties: PlaylistProperties;
 
   tracks: TrackProperties[];
+  genres: GenreProperties[];
 }
 
 export type Neo4jNodeWithRelationships =

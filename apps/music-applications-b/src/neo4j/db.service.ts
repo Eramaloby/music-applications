@@ -223,6 +223,9 @@ export class DatabaseService {
       tracks: relationships
         .filter((rel) => rel.relName === 'Contains')
         .map((rel) => rel.targetOrSource.properties as TrackProperties),
+      genres: relationships
+        .filter((rel) => rel.relName === 'RelatedToGenre')
+        .map((rel) => rel.targetOrSource.properties as GenreProperties),
     };
   }
 
@@ -618,7 +621,8 @@ export class DatabaseService {
       artist,
       username,
       transactionData,
-      transaction
+      transaction,
+      false
     );
   }
 
@@ -626,8 +630,20 @@ export class DatabaseService {
     artist: SpotifyApi.SingleArtistResponse | SpotifyApi.ArtistObjectFull,
     username: string,
     transactionData: TransactionData,
-    transaction: Transaction
+    transaction: Transaction,
+    checkForDuplicate: boolean
   ) {
+    if (checkForDuplicate) {
+      const isExists = await this.instanceWithIdExistsWithTransaction(
+        artist.id,
+        transaction
+      );
+
+      if (isExists) {
+        return false;
+      }
+    }
+
     const genId = await this.generateNewNodeId(transaction);
     const imageUrl: string = artist.images?.[0]?.url ?? 'Not provided';
 
@@ -729,7 +745,8 @@ export class DatabaseService {
       track,
       username,
       transactionData,
-      transaction
+      transaction,
+      false
     );
   }
 
@@ -737,8 +754,20 @@ export class DatabaseService {
     track: SpotifyApi.TrackObjectFull | SpotifyApi.SingleTrackResponse,
     username: string,
     transactionData: TransactionData,
-    transaction: Transaction
+    transaction: Transaction,
+    checkForDuplicate: boolean
   ) {
+    if (checkForDuplicate) {
+      const isExists = await this.instanceWithIdExistsWithTransaction(
+        track.id,
+        transaction
+      );
+
+      if (isExists) {
+        return false;
+      }
+    }
+
     const genId = await this.generateNewNodeId(transaction);
     const imageUrl: string = track.album.images?.[0]?.url ?? 'Not provided';
 
@@ -857,6 +886,22 @@ export class DatabaseService {
       playlist.id
     );
 
+    const artistIds = [
+      ...new Set(
+        playlistTracks
+          .map((track) => track.track.artists.map((artist) => artist.id))
+          .flat()
+      ),
+    ];
+
+    const artistsFetched = await Promise.all(
+      artistIds.map((id) => this.spotifyService.getArtistById(id))
+    );
+
+    const genres = [
+      ...new Set(artistsFetched.map((artist) => artist.genres).flat()),
+    ];
+
     const genId = await this.generateNewNodeId(transaction);
     const imageUrl: string = playlist.images?.[0]?.url ?? 'Not provided';
 
@@ -874,12 +919,25 @@ export class DatabaseService {
 
     transactionData.records.push({ type: 'playlist', name: playlist.name });
 
+    // add all artists
+    for (const artist of artistsFetched) {
+      await this.addArtistFromSpotifyFetched(
+        artist,
+        username,
+        transactionData,
+        transaction,
+        true
+      );
+    }
+
+    // add all tracks
     for (const playlistTrack of playlistTracks) {
       await this.addTrackFromSpotifyFetched(
         playlistTrack.track,
         username,
         transactionData,
-        transaction
+        transaction,
+        true
       );
     }
 
@@ -895,6 +953,20 @@ export class DatabaseService {
     );
 
     transactionData.relationshipCount += relsPlaylistTrack.length;
+
+    const relsPlaylistGenre = await Promise.all(
+      genres.map((genreName) =>
+        transaction.run(`
+          MATCH
+            (playlist: Playlist {spotify_id: "${spotifyId}"}),
+            (genre: Genre {name: "${genreName}"})
+          MERGE (playlist)-[r:RelatedToGenre]->(genre)
+          RETURN type(r)
+        `)
+      )
+    );
+
+    transactionData.relationshipCount += relsPlaylistGenre.length;
     return true;
   }
 
@@ -931,7 +1003,20 @@ export class DatabaseService {
       )
     );
 
+    const relsPlaylistGenre = await Promise.allSettled(
+      model.genresIds.map((genreId) =>
+        transaction.run(`
+          MATCH
+            (playlist: Playlist {id: "${genId}"}),
+            (genre: Genre {id: "${genreId}"})
+          MERGE (playlist)-[r:RelatedToGenre]->(genre)
+          RETURN type(r)
+        `)
+      )
+    );
+
     transactionData.relationshipCount += relsPlaylistTrack.length;
+    transactionData.relationshipCount += relsPlaylistGenre.length;
 
     return true;
   }
@@ -983,15 +1068,14 @@ export class DatabaseService {
         artist,
         username,
         transactionData,
-        transaction
+        transaction,
+        true
       );
     }
 
     const allArtistsGenres = [
       ...new Set(artistsFetched.map((artists) => artists.genres).flat()),
     ];
-
-    console.log(allArtistsGenres, 'genres related to artists in album');
 
     await Promise.allSettled(
       allArtistsGenres.map((genreName) =>

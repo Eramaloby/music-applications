@@ -53,6 +53,7 @@ export interface PlaylistModel {
   image: string;
 
   tracksIds: number[];
+  genresIds: number[];
 }
 
 export interface TransactionData {
@@ -157,6 +158,7 @@ export interface PlaylistWithRelationships {
   properties: PlaylistProperties;
 
   tracks: TrackProperties[];
+  genres: GenreProperties[];
 }
 
 export interface SearchResult {
