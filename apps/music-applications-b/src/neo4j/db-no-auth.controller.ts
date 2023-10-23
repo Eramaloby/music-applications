@@ -7,29 +7,21 @@ export class DatabaseNoAuthController {
 
   @Get(':type/:id')
   async getDatabaseItem(@Param() params) {
-    const result = await this.dbService.findNodeAndRelationsWithId(
-      params.id,
-      params.type
-    );
-
-    const nodeWithRelationships = result.map((value) => value['_fields']);
-    const nodeWithOwnProperties = nodeWithRelationships[0][0];
-    const relationshipsWithConnectedNode = nodeWithRelationships.map(
-      (entity) => {
-        return { relType: entity[1].type, obj: entity[2] };
-      }
-    );
-
-    console.log(nodeWithOwnProperties);
-    console.log(relationshipsWithConnectedNode);
-    console.log(
-      relationshipsWithConnectedNode.forEach((entity) => {
-        console.log(entity.relType);
-        console.log(entity.obj.properties);
-      })
-    );
-
-    return result;
+    // lowercase params later
+    switch (params.type) {
+      case 'Genre':
+        return await this.dbService.getGenreFull(params.id);
+      case 'Artist':
+        return await this.dbService.getArtistFull(params.id);
+      case 'Track':
+        return await this.dbService.getTrackFull(params.id);
+      case 'Album':
+        return await this.dbService.getAlbumFull(params.id);
+      case 'Playlist':
+        return await this.dbService.getPlaylistFull(params.id);
+      default:
+        return null;
+    }
   }
 
   @Get('search')
@@ -47,10 +39,5 @@ export class DatabaseNoAuthController {
   @Get(':id')
   async isThereInstanceWithId(@Param() params) {
     return await this.dbService.instanceWithIdExists(params.id);
-  }
-
-  @Get('/test/album/:id')
-  async getAlbumTest(@Param() params) {
-    return await this.dbService.getAlbumWithRelations(params.id);
   }
 }

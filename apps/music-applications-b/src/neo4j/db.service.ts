@@ -4,10 +4,20 @@ import { SpotifyService } from '../spotify/spotify.service';
 import {
   AddTransactionResult,
   AlbumModel,
+  AlbumProperties,
+  AlbumWithRelationships,
   ArtistModel,
+  ArtistProperties,
+  ArtistWithRelationships,
   GenreModel,
+  GenreProperties,
+  GenreWithRelationships,
   PlaylistModel,
+  PlaylistProperties,
+  PlaylistWithRelationships,
   TrackModel,
+  TrackProperties,
+  TrackWithRelationships,
   TransactionData,
 } from './types';
 
@@ -43,6 +53,130 @@ export class DatabaseService {
     return res.records;
   };
 
+  private async getNeo4jData(id: number, type: string) {
+    const nodeWithRelationships = (
+      await this.findNodeAndRelationsWithId(id, type)
+    ).map((value) => value['_fields']);
+
+    const node = nodeWithRelationships[0][0];
+    const relationships = nodeWithRelationships.map((object) => {
+      return { relName: object[1].type, targetOrSource: object[2] };
+    });
+
+    return { node, relationships };
+  }
+
+  // add labels guard to all relationships ??
+  public async getGenreFull(id: number): Promise<GenreWithRelationships> {
+    const { node, relationships } = await this.getNeo4jData(id, 'Genre');
+
+    return {
+      properties: node.properties as GenreProperties,
+      albums: relationships
+        .filter((rel) => rel.relName === 'RelatedToGenre')
+        .map((rel) => rel.targetOrSource.properties as AlbumProperties),
+      artists: relationships
+        .filter((rel) => rel.relName === 'PerformsInGenre')
+        .map((rel) => rel.targetOrSource.properties as ArtistProperties),
+    };
+  }
+
+  public async getArtistFull(id: number): Promise<ArtistWithRelationships> {
+    const { node, relationships } = await this.getNeo4jData(id, 'Artist');
+
+    return {
+      properties: node.properties as ArtistProperties,
+      tracksAuthor: relationships
+        .filter(
+          (rel) =>
+            rel.relName === 'Author' &&
+            rel.targetOrSource.labels.at(0) === 'Track'
+        )
+        .map((rel) => rel.targetOrSource.properties as TrackProperties),
+      tracksContributor: relationships
+        .filter(
+          (rel) =>
+            rel.relName === 'AppearedAt' &&
+            rel.targetOrSource.labels.at(0) === 'Track'
+        )
+        .map((rel) => rel.targetOrSource.properties as TrackProperties),
+      albumAuthor: relationships
+        .filter(
+          (rel) =>
+            rel.relName === 'Author' &&
+            rel.targetOrSource.labels.at(0) === 'Album'
+        )
+        .map((rel) => rel.targetOrSource.properties as AlbumProperties),
+      albumContributor: relationships
+        .filter(
+          (rel) =>
+            rel.relName === 'AppearedAt' &&
+            rel.targetOrSource.labels.at(0) === 'Album'
+        )
+        .map((rel) => rel.targetOrSource.properties as AlbumProperties),
+      genres: relationships
+        .filter((rel) => rel.relName === 'PerformsInGenre')
+        .map((rel) => rel.targetOrSource.properties as GenreProperties),
+    };
+  }
+
+  public async getTrackFull(id: number): Promise<TrackWithRelationships> {
+    const { node, relationships } = await this.getNeo4jData(id, 'Track');
+
+    return {
+      properties: node.properties as TrackProperties,
+      author:
+        relationships
+          .filter((rel) => rel.relName === 'Author')
+          .map((rel) => rel.targetOrSource.properties as ArtistProperties)
+          .at(0) ?? null,
+      contributors: relationships
+        .filter((rel) => rel.relName === 'AppearedAt')
+        .map((rel) => rel.targetOrSource.properties as ArtistProperties),
+      album:
+        relationships
+          .filter(
+            (rel) =>
+              rel.relName === 'Contains' &&
+              rel.targetOrSource.labels.at(0) === 'Album'
+          )
+          .map((rel) => rel.targetOrSource.properties as AlbumProperties)
+          .at(0) ?? null,
+    };
+  }
+
+  public async getAlbumFull(id: number): Promise<AlbumWithRelationships> {
+    const { node, relationships } = await this.getNeo4jData(id, 'Album');
+
+    return {
+      properties: node.properties as AlbumProperties,
+      genres: relationships
+        .filter((rel) => rel.relName === 'RelatedToGenre')
+        .map((rel) => rel.targetOrSource.properties as GenreProperties),
+      author:
+        relationships
+          .filter((rel) => rel.relName === 'Author')
+          .map((rel) => rel.targetOrSource.properties as ArtistProperties)
+          .at(0) ?? null,
+      contributors: relationships
+        .filter((rel) => rel.relName === 'AppearedAt')
+        .map((rel) => rel.targetOrSource.properties as ArtistProperties),
+      tracks: relationships
+        .filter((rel) => rel.relName === 'Contains')
+        .map((rel) => rel.targetOrSource.properties as TrackProperties),
+    };
+  }
+
+  public async getPlaylistFull(id: number): Promise<PlaylistWithRelationships> {
+    const { node, relationships } = await this.getNeo4jData(id, 'Playlist');
+    return {
+      properties: node.properties as PlaylistProperties,
+      tracks: relationships
+        .filter((rel) => rel.relName === 'Contains')
+        .map((rel) => rel.targetOrSource.properties as TrackProperties),
+    };
+  }
+
   /*
     // LIST GENRES TO PLAYLIST
      list of instances: artist, track, album, playlist, genre
@@ -60,12 +194,6 @@ export class DatabaseService {
       4. Create sub instances {also get them from spotify by id, if necessary}.
       5. Provide relations.
   */
-
-  public async getAlbumWithRelations(id: number) {
-    return await this.dbService.read(
-      `MATCH (obj: Album {id: "${id}"})-[rel]-(o_obj) return obj, rel, o_obj`
-    );
-  }
 
   public findNodeBySpotifyId = async (spotifyId: string) => {
     const res = await this.dbService.read(
@@ -452,7 +580,7 @@ export class DatabaseService {
         description: "${model.description}",
         image: "${model.image}",
         added_by: "${username}",
-        id: ${genId}
+        id: "${genId}"
       })
       `);
 
@@ -840,25 +968,6 @@ export class DatabaseService {
       )
     );
 
-    const allArtistsGenres = artistsFetched
-      .map((artists) => artists.genres)
-      .flat();
-
-    for (const genreName of allArtistsGenres) {
-      await this.addGenre(
-        {
-          name: genreName,
-          description: 'Not provided',
-          image: 'Not provided',
-        },
-        username,
-        transactionData,
-        transaction
-      );
-    }
-
-    transactionData.relationshipCount += allArtistsGenres.length;
-
     for (const artist of artistsFetched) {
       await this.addArtistFromSpotifyFetched(
         artist,
@@ -867,6 +976,26 @@ export class DatabaseService {
         transaction
       );
     }
+
+    const allArtistsGenres = [
+      ...new Set(artistsFetched.map((artists) => artists.genres).flat()),
+    ];
+
+    console.log(allArtistsGenres, 'genres related to artists in album');
+
+    await Promise.allSettled(
+      allArtistsGenres.map((genreName) =>
+        transaction.run(`
+          MATCH
+            (album: Album {spotify_id: "${spotifyId}"}),
+            (genre: Genre {name: "${genreName}"})
+          MERGE (album)-[r:RelatedToGenre]->(genre)
+          RETURN type(r)
+    `)
+      )
+    );
+
+    transactionData.relationshipCount += allArtistsGenres.length;
 
     const albumAuthor = album.artists.shift();
     await transaction.run(`

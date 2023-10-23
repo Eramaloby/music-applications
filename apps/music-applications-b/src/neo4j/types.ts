@@ -116,12 +116,45 @@ export interface PlaylistProperties {
   description: string;
   id: number;
 }
+export interface GenreWithRelationships {
+  properties: GenreProperties;
+
+  albums: AlbumProperties[];
+  artists: ArtistProperties[];
+}
+
+export interface ArtistWithRelationships {
+  properties: ArtistProperties;
+
+  tracksAuthor: TrackProperties[];
+  albumAuthor: AlbumProperties[];
+
+  tracksContributor: TrackProperties[];
+  albumContributor: AlbumProperties[];
+
+  genres: GenreProperties[];
+}
+
+export interface TrackWithRelationships {
+  properties: TrackProperties;
+
+  author: ArtistProperties;
+  contributors: ArtistProperties[];
+
+  album: AlbumProperties;
+}
 
 export interface AlbumWithRelationships {
   properties: AlbumProperties;
 
-  relatedToGenreRelationships: GenreProperties[];
+  genres: GenreProperties[];
   author: ArtistProperties;
   contributors: ArtistProperties[];
+  tracks: TrackProperties[];
+}
+
+export interface PlaylistWithRelationships {
+  properties: PlaylistProperties;
+
   tracks: TrackProperties[];
 }
