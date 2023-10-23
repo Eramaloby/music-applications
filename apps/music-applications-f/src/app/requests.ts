@@ -1,17 +1,17 @@
 import axios from 'axios';
 import {
-  Neo4jDbItem,
   DbStats,
   UserSignInForm,
   UserSignUpForm,
   ItemPreview,
   UserSignInRequestResult,
+  GenreWithRelationships,
+  ArtistWithRelationships,
+  TrackWithRelationships,
+  AlbumWithRelationships,
+  PlaylistWithRelationships,
 } from './types';
-import {
-  parseNeo4jData,
-  parseNeo4jLikes,
-  parseNeo4jRecommendation,
-} from './utils';
+import { parseNeo4jLikes, parseNeo4jRecommendation } from './utils';
 
 export const baseUrl = 'http://localhost:4200/api';
 
@@ -19,15 +19,19 @@ export const baseUrl = 'http://localhost:4200/api';
 export const fetchDatabaseItem = async (
   id: number,
   type: string
-): Promise<Neo4jDbItem | null> => {
+): Promise<
+  | GenreWithRelationships
+  | ArtistWithRelationships
+  | TrackWithRelationships
+  | AlbumWithRelationships
+  | PlaylistWithRelationships
+  | null
+> => {
   try {
     const response = await axios.get(`${baseUrl}/neo4j/${type}/${id}`);
 
-    console.log(response.data, 'lol new data');
-    return parseNeo4jData(response.data);
+    return response.data;
   } catch (error) {
-    console.log(error);
-
     return null;
   }
 };
@@ -54,7 +58,7 @@ export interface PostItemResponse {
 
 export const postItemFromParameters = async (accessToken: string, dto: any) => {
   try {
-    const response = await axios.post(`${baseUrl}/neo4j/genre`, dto, {
+    const _ = await axios.post(`${baseUrl}/neo4j/genre`, dto, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

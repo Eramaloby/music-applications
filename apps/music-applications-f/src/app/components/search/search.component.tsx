@@ -12,8 +12,6 @@ type SearchComponentProps = {
   selectorOptions: { value: string; name: string }[];
   instanceClickCallback: (item: DropdownItem) => void;
   endpointUrl: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  parser: (data: any) => any;
   selectorClassName: string;
 };
 const Search = ({
@@ -22,9 +20,8 @@ const Search = ({
   endpointUrl,
   selectorClassName,
   instanceClickCallback,
-  parser,
 }: SearchComponentProps) => {
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<DropdownItem[]>([]);
   const [query, setQuery] = useState('');
   const [searchWord, setSearchWord] = useState('all');
   const { recentlyViewed } = useContext(RecentlyViewedContext);
@@ -38,9 +35,9 @@ const Search = ({
       if (query !== '' && searchWord !== '') {
         axios.get(`${endpointUrl}${searchWord}=${query.toLowerCase()}`).then(
           (response) => {
-            setResults(parser(response.data));
+            setResults([...response.data]);
 
-            if (results.length === 0) {
+            if (response.data.length === 0) {
               setErrorText('Nothing was found');
             }
           },

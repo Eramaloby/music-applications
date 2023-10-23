@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import GraphViewPage from './graph-view';
 import './style.scss';
-import { Neo4jDbItem } from '../../../types';
+
 import RelationViewPage from './relation';
 import { ReactComponent as FilledHeart } from '../../../../assets/filled-heart.svg';
 import { ReactComponent as Heart } from '../../../../assets/heart.svg';
@@ -14,16 +14,28 @@ import {
 } from '../../../requests';
 import { useNavigate, useParams } from 'react-router-dom';
 import { RecentlyViewedContext } from '../../../contexts/recently-viewed.context';
+import {
+  AlbumWithRelationships,
+  ArtistWithRelationships,
+  GenreWithRelationships,
+  Neo4jNodeWithRelationships,
+  PlaylistWithRelationships,
+  TrackWithRelationships,
+} from '../../../types';
 
 const DatabaseItemPage = () => {
   // default view is relation view
   const params = useParams();
   const router = useNavigate();
-  const [item, setItem] = useState<Neo4jDbItem>();
+
+  const [item, setItem] = useState<Neo4jNodeWithRelationships | null>(null);
+
   const [isRelationViewSelected, setIsRelationViewSelected] = useState(true);
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   const { currentUser } = useContext(UserContext);
   const { addItem } = useContext(RecentlyViewedContext);
+
+  const [fetchedError, setFetchedError] = useState('');
 
   // extract to different file later
   const handleLikeChanges = async (newState: boolean) => {
@@ -44,20 +56,21 @@ const DatabaseItemPage = () => {
   useEffect(() => {
     const asyncWrapper = async () => {
       if ((params['id'], params['type'])) {
-        const fetchedItem = await fetchDatabaseItem(
-          params['id'] as unknown as number,
-          params['type']
-        );
-        console.log(fetchedItem);
+        const id = params['id'] as unknown as number;
+        const type = params['type'] as unknown as string;
+        const fetchedItem = await fetchDatabaseItem(id, type);
+
         if (fetchedItem) {
           setItem(fetchedItem);
           // TODO: GENERATE IMAGES FOR GENRE
           addItem({
-            type: fetchedItem.type,
-            label: fetchedItem.name,
-            databaseId: fetchedItem.id,
+            type: type.charAt(0).toUpperCase() + type.slice(1),
+            label: fetchedItem.properties.name,
+            databaseId: fetchedItem.properties.id,
             // image: fetchedItem.properties.image_url
           });
+        } else {
+          setFetchedError('Item not found');
         }
       }
     };
@@ -124,10 +137,13 @@ const DatabaseItemPage = () => {
               routingCallback={routingCallback}
             ></RelationViewPage>
           ) : (
-            // <RelationViewPage item={item}></RelationViewPage>
             <GraphViewPage item={item}></GraphViewPage>
           )}
         </div>
+      )}
+      {/* TODO: add proper error handling */}
+      {fetchedError && (
+        <div className="fetched-error-message">{fetchedError}</div>
       )}
     </div>
   );

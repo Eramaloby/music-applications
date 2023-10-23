@@ -13,6 +13,7 @@ import {
   extractSpotifyPlaylistProperties,
   extractSpotifyTrackProperties,
 } from './spotify-types.parser';
+import { SearchResult } from '../neo4j/types';
 
 @Injectable()
 export class SpotifyService {
@@ -72,16 +73,32 @@ export class SpotifyService {
     }
   }
 
-  private unwrapQuery(query) {
-    return Object.keys(query).map((key) => {
-      return [key.toString(), query[key].toString()];
+  public async getWebData(query: {
+    [searchType: string]: string;
+  }): Promise<SearchResult[]> {
+    const [instance, searchWord] = Object.entries(query).at(0);
+    const searchResponse = await this.searchFromWeb(instance, searchWord);
+    const result: SearchResult[] = [];
+    const validArrayNames = ['albums', 'artists', 'tracks', 'playlists'];
+    Object.entries(searchResponse.body).forEach(([key, value]) => {
+      if (
+        validArrayNames.includes(key) &&
+        Array.isArray(value.items) &&
+        value.items.length > 0
+      ) {
+        result.push(
+          ...value.items.map((item) => {
+            return {
+              type: key.charAt(0).toUpperCase() + key.slice(1, -1),
+              label: item.name,
+              spotify_id: item.id,
+            } as SearchResult;
+          })
+        );
+      }
     });
-  }
 
-  public async getWebData(query) {
-    const [params] = this.unwrapQuery(query);
-    const result = await this.searchFromWeb(params[0], params[1]);
-    return result.body;
+    return result.sort((a, b) => a.label.localeCompare(b.label));
   }
 
   public async getParsedArtistById(spotify_id: string): Promise<SpotifyArtist> {

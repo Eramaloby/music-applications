@@ -15,12 +15,14 @@ import {
   PlaylistModel,
   PlaylistProperties,
   PlaylistWithRelationships,
+  SearchResult,
   TrackModel,
   TrackProperties,
   TrackWithRelationships,
   TransactionData,
 } from './types';
 
+// TODO: Refactor access modifier & methods
 @Injectable()
 export class DatabaseService {
   constructor(
@@ -45,7 +47,54 @@ export class DatabaseService {
   private searchPlaylistQuery = (playlistName: string) =>
     `MATCH (obj: Playlist) WHERE ToLower(obj.name) CONTAINS "${playlistName}" return obj`;
 
-  public findNodeAndRelationsWithId = async (id: number, type: string) => {
+  private searchFunctions = [
+    this.searchArtistQuery,
+    this.searchAlbumQuery,
+    this.searchGenreQuery,
+    this.searchTrackQuery,
+    this.searchPlaylistQuery,
+  ];
+
+  private collectQuery(instance: string, query: string): string {
+    switch (instance) {
+      case 'all':
+        return this.searchFunctions.map((func) => func(query)).join(' UNION ');
+      case 'artist':
+        return this.searchArtistQuery(query);
+      case 'track':
+        return this.searchTrackQuery(query);
+      case 'album':
+        return this.searchAlbumQuery(query);
+      case 'genre':
+        return this.searchGenreQuery(query);
+      case 'playlist':
+        return this.searchPlaylistQuery(query);
+    }
+  }
+
+  public async getData(query: {
+    [searchType: string]: string;
+  }): Promise<SearchResult[]> {
+    const [instance, searchWord] = Object.entries(query).at(0);
+
+    const result = await this.dbService.read(
+      this.collectQuery(instance, searchWord)
+    );
+
+    return result.records
+      .map((record) => record['_fields'].at(0))
+      .map((recordFields) => {
+        return {
+          type: recordFields.labels.at(0),
+          label: recordFields.properties.name,
+          database_id: recordFields.properties.id,
+          spotify_id: recordFields.properties.spotify_id ?? 'Not provided',
+        } as SearchResult;
+      })
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  private findNodeAndRelationsWithId = async (id: number, type: string) => {
     const res = await this.dbService.read(
       `MATCH (obj: ${type} { id: "${id}" })-[rel]-(o_obj) return obj, rel, o_obj`
     );
@@ -201,45 +250,6 @@ export class DatabaseService {
     );
     return res.records;
   };
-
-  private searchFunctions = [
-    this.searchArtistQuery,
-    this.searchAlbumQuery,
-    this.searchGenreQuery,
-    this.searchTrackQuery,
-    this.searchPlaylistQuery,
-  ];
-
-  private collectQuery(instance: string, query: string): string {
-    switch (instance) {
-      case 'all':
-        return this.searchFunctions.map((func) => func(query)).join(' UNION ');
-      case 'artist':
-        return this.searchArtistQuery(query);
-      case 'track':
-        return this.searchTrackQuery(query);
-      case 'album':
-        return this.searchAlbumQuery(query);
-      case 'genre':
-        return this.searchGenreQuery(query);
-      case 'playlist':
-        return this.searchPlaylistQuery(query);
-    }
-  }
-
-  private unwrapQuery(query) {
-    return Object.keys(query).map((key) => {
-      return [key.toString(), query[key].toString()];
-    });
-  }
-
-  public async getData(query) {
-    const [params] = this.unwrapQuery(query);
-    const result = await this.dbService.read(
-      this.collectQuery(params[0], params[1])
-    );
-    return result;
-  }
 
   public async getDbStats() {
     // unwrap queries

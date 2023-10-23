@@ -1,5 +1,4 @@
 import './search.styles.scss';
-import { parseNeo4jRecords } from '../../utils';
 import Search from '../../components/search/search.component';
 import { DropdownItem } from '../../types';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +18,7 @@ const SearchPageDb = () => {
   const callbackOnInstanceClick = async (instance: DropdownItem) => {
     // route to db page
     if (instance.database_id) {
-      router(`/db/${instance.type}/${instance.database_id}`);
+      router(`/db/${instance.type.toLowerCase()}/${instance.database_id}`);
     }
   };
 
@@ -33,7 +32,6 @@ const SearchPageDb = () => {
         selectorOptions={selectorParamsArray}
         instanceClickCallback={callbackOnInstanceClick}
         endpointUrl={endpointUrl}
-        parser={parseNeo4jRecords}
         selectorClassName="livesearch-selector"
       ></Search>
     </div>

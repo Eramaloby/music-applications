@@ -95,73 +95,106 @@ export interface SpotifyPlaylist {
 }
 
 /* Db related interfaces */
-export interface Neo4jDbItem {
-  type: string;
-  name: string;
-  id: number;
-  properties:
-    | TrackProperties
-    | ArtistProperties
-    | GenreProperties
-    | AlbumProperties
-    | PlaylistProperties;
-  relations: {
-    type: string;
-    target: Neo4jDbItem;
-  }[];
-}
-
-export interface TrackProperties {
-  id: number;
-  name: string;
-  duration_ms: string;
-  explicit: boolean;
-  spotify_id: string;
+export interface GenreProperties {
+  image: string;
   added_by: string;
-  image_url?: string;
+  name: string;
+  description: string;
+  id: number;
 }
 
 export interface ArtistProperties {
-  id: number;
-  name: string;
-  spotify_id: string;
-  type: string;
+  image: string;
   added_by: string;
-  image_url?: string;
+  spotify_id: string;
+  name: string;
+  description: string;
+  id: number;
+  type: string;
 }
 
-// genre properties is rather useless
-export interface GenreProperties {
-  id: number;
+export interface TrackProperties {
+  duration_ms: number;
+  explicit: boolean;
+  image: string;
   added_by: string;
+  spotify_id: string;
   name: string;
+  id: number;
+  type: string;
 }
 
 export interface AlbumProperties {
-  id: number;
-  name: string;
-  count_of_tracks: number;
-  label: string;
-  release: string;
-  spotify_id: string;
-  type: string;
+  image: string;
   added_by: string;
-  image_url?: string;
+  release_date: string;
+  spotify_id: string;
+  count_of_tracks: number;
+  name: string;
+  id: number;
+  label: string;
+  type: string;
 }
 
 export interface PlaylistProperties {
-  id: number;
-  collaborative: boolean;
-  description: string;
-  name: string;
+  image: string;
   owner_name: string;
-  spotify_id: string;
   added_by: string;
-  image_url?: string;
+  spotify_id: string;
+  name: string;
+  description: string;
+  id: number;
+}
+export interface GenreWithRelationships {
+  properties: GenreProperties;
+
+  albums: AlbumProperties[];
+  artists: ArtistProperties[];
 }
 
-// form interfaces
+export interface ArtistWithRelationships {
+  properties: ArtistProperties;
 
+  tracksAuthor: TrackProperties[];
+  albumAuthor: AlbumProperties[];
+
+  tracksContributor: TrackProperties[];
+  albumContributor: AlbumProperties[];
+
+  genres: GenreProperties[];
+}
+
+export interface TrackWithRelationships {
+  properties: TrackProperties;
+
+  author: ArtistProperties;
+  contributors: ArtistProperties[];
+
+  album: AlbumProperties;
+}
+
+export interface AlbumWithRelationships {
+  properties: AlbumProperties;
+
+  genres: GenreProperties[];
+  author: ArtistProperties;
+  contributors: ArtistProperties[];
+  tracks: TrackProperties[];
+}
+
+export interface PlaylistWithRelationships {
+  properties: PlaylistProperties;
+
+  tracks: TrackProperties[];
+}
+
+export type Neo4jNodeWithRelationships =
+  | PlaylistWithRelationships
+  | AlbumWithRelationships
+  | TrackWithRelationships
+  | ArtistWithRelationships
+  | GenreWithRelationships;
+// form interfaces
 export interface UserSignUpForm {
   email: string;
   confirmEmail: string;

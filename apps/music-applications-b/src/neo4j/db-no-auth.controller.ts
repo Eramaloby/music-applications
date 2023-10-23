@@ -9,15 +9,15 @@ export class DatabaseNoAuthController {
   async getDatabaseItem(@Param() params) {
     // lowercase params later
     switch (params.type) {
-      case 'Genre':
+      case 'genre':
         return await this.dbService.getGenreFull(params.id);
-      case 'Artist':
+      case 'artist':
         return await this.dbService.getArtistFull(params.id);
-      case 'Track':
+      case 'track':
         return await this.dbService.getTrackFull(params.id);
-      case 'Album':
+      case 'album':
         return await this.dbService.getAlbumFull(params.id);
-      case 'Playlist':
+      case 'playlist':
         return await this.dbService.getPlaylistFull(params.id);
       default:
         return null;
@@ -25,9 +25,8 @@ export class DatabaseNoAuthController {
   }
 
   @Get('search')
-  async getData(@Query() query) {
-    const res = await this.dbService.getData(query);
-    return res;
+  async getData(@Query() query: { [searchType: string]: string }) {
+    return await this.dbService.getData(query);
   }
 
   @Get('db-stats')

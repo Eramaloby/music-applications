@@ -50,6 +50,15 @@
   border-left: 3px solid #1fdf64;
 }
 
+.fetched-error-message {
+  color:red;
+  font-size: xx-large;
+  font-weight: 800;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 //Relation Form
 .database-item-page-text {
   height: 100%;

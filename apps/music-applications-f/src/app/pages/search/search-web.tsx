@@ -1,7 +1,6 @@
 import Search from '../../components/search/search.component';
 
 import './search.styles.scss';
-import { parseSpotifyData } from '../../utils';
 import { DropdownItem } from '../../types';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,7 +14,7 @@ const SearchWebPage = () => {
   };
 
   const callbackDetailsView = (instance: DropdownItem) => {
-    router(`/web/${instance.type}/${instance.spotify_id}`);
+    router(`/web/${instance.type.toLowerCase()}/${instance.spotify_id}`);
   };
 
   const selectorParamsArray = [
@@ -42,7 +41,6 @@ const SearchWebPage = () => {
         endpointUrl="http://localhost:4200/api/spotify/search?"
         instanceClickCallback={callbackDetailsView}
         selectorClassName="livesearch-selector"
-        parser={parseSpotifyData}
       ></Search>
     </div>
   );

@@ -7,7 +7,6 @@ import { SpotifyModule } from '../spotify/spotify.module';
 import { DatabaseController } from './db.controller';
 import { DatabaseNoAuthController } from './db-no-auth.controller';
 import { ProfileModule } from '../profile/profile.module';
-import { ProfileService } from '../profile/profile.service';
 
 @Module({
   imports: [

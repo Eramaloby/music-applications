@@ -8,12 +8,12 @@ type InteractiveDropdownProps = {
 };
 
 const InteractiveDropdown = ({
-  results: list,
+  results,
   onItemClickCallback,
 }: InteractiveDropdownProps) => {
   return (
     <div className="dropdown-container">
-      {list.map((item, index) => (
+      {results.map((item, index) => (
         <InteractiveItemList
           item={item}
           onItemClickCallback={onItemClickCallback}

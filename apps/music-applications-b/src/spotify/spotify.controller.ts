@@ -22,6 +22,7 @@ export class SpotifyController {
   @Get('search')
   async getWebData(@Query() query) {
     const res = await this.spotifyService.getWebData(query);
+    console.log(res);
     return res;
   }
 

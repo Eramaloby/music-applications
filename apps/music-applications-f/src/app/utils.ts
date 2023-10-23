@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Neo4jDbItem, UserSignUpForm, ItemPreview } from './types';
+import { UserSignUpForm, ItemPreview } from './types';
 import { sendChangePasswordRequest, sendSignUpRequest } from './requests';
 
 export const getBase64FromFile = (file: File) =>
@@ -65,52 +65,7 @@ export const translateLyricsToVerses = (lyrics: string): string[] => {
   return parsedChunks;
 };
 
-export const parseNeo4jData = (data: any[]) => {
-  console.log(data);
-
-  // check bug when length is 0
-  const type = data[0]._fields[0].labels[0];
-  const name = data[0]._fields[0].properties.name;
-  const id = data[0]._fields[0].properties.id;
-  const properties = data[0]._fields[0].properties;
-
-  const relations = [];
-
-  for (const item of data) {
-    const relation = item._fields[1];
-    const targetNode = item._fields[2];
-    // refactor this to multiple.
-    relations.push({
-      type: relation.type,
-      name: targetNode.properties.name,
-      target: {
-        type: targetNode.labels[0],
-        properties: targetNode.properties,
-      },
-    });
-  }
-
-  return {
-    type,
-    name,
-    id,
-    properties,
-    relations,
-  } as unknown as Neo4jDbItem;
-};
-
-export const parseNeo4jRecords = (data: any) => {
-  return data.records.map((value: any) => {
-    const record = value._fields[0];
-    return {
-      type: record.labels.at(0),
-      label: record.properties.name,
-      spotify_id: record.properties.spotify_id,
-      database_id: record.properties.id,
-    };
-  });
-};
-
+// TODO: REFACTOR LATER
 export const parseNeo4jRecommendation = (
   data: any,
   type: string
@@ -122,6 +77,7 @@ export const parseNeo4jRecommendation = (
   };
 };
 
+// TODO: REFACTOR LATER
 export const parseNeo4jLikes = (data: any): ItemPreview => {
   return {
     databaseId: data.properties.id,
@@ -130,73 +86,6 @@ export const parseNeo4jLikes = (data: any): ItemPreview => {
   };
 };
 
-export const parseSpotifyData = (data: any) => {
-  if (Object.keys(data).length > 1) {
-    const parsedTracks = data.tracks.items.map((track: any) =>
-      extractSpotifyObjProperties(track)
-    );
-
-    const parsedAlbums = data.albums.items.map((album: any) =>
-      extractSpotifyObjProperties(album)
-    );
-
-    const parsedArtists = data.artists.items.map((artists: any) =>
-      extractSpotifyObjProperties(artists)
-    );
-
-    const parsedPlaylists = data.playlists.items.map((playlist: any) =>
-      extractSpotifyObjProperties(playlist)
-    );
-
-    const size = Math.min(
-      parsedTracks.length,
-      parsedAlbums.length,
-      parsedArtists.length,
-      parsedPlaylists.length
-    );
-
-    const results = [];
-    for (let i = 0; i < size; i++) {
-      results.push(
-        parsedTracks[i],
-        parsedAlbums[i],
-        parsedPlaylists[i],
-        parsedArtists[i]
-      );
-    }
-
-    return results;
-  }
-
-  const [type] = Object.keys(data);
-  switch (type) {
-    case 'tracks':
-      return data.tracks.items.map((track: any) =>
-        extractSpotifyObjProperties(track)
-      );
-    case 'albums':
-      return data.albums.items.map((album: any) =>
-        extractSpotifyObjProperties(album)
-      );
-    case 'artists':
-      return data.artists.items.map((artist: any) =>
-        extractSpotifyObjProperties(artist)
-      );
-    case 'playlists':
-      return data.playlists.items.map((playlist: any) =>
-        extractSpotifyObjProperties(playlist)
-      );
-  }
-};
-
-const extractSpotifyObjProperties = (obj: any) => {
-  // replace label within name?
-  return {
-    type: obj.type,
-    spotify_id: obj.id,
-    label: obj.name,
-  };
-};
 
 export const emailExpression = new RegExp(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
 export const usernameExpression = new RegExp(/^[a-zA-Z]+$/);
@@ -291,16 +180,6 @@ export const validateFieldRequiredNotEmpty = (
 
   return '';
 };
-
-// export const tryToSignIn = async (form: UserSignInForm) => {
-//   try {
-//     const token: string = (await sendSignInRequest(form)).accessToken;
-//     return token;
-//   } catch (error) {
-//     console.log(error);
-//     return undefined;
-//   }
-// };
 
 export const tryToChangePassword = async (
   currentPassword: string,

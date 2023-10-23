@@ -66,18 +66,6 @@ export interface AddTransactionResult {
   reason?: string;
 }
 
-export interface AlbumProperties {
-  image: string;
-  added_by: string;
-  release_date: string;
-  spotify_id: string;
-  count_of_tracks: number;
-  name: string;
-  id: number;
-  label: string;
-  type: string;
-}
-
 export interface GenreProperties {
   image: string;
   added_by: string;
@@ -104,6 +92,18 @@ export interface TrackProperties {
   spotify_id: string;
   name: string;
   id: number;
+  type: string;
+}
+
+export interface AlbumProperties {
+  image: string;
+  added_by: string;
+  release_date: string;
+  spotify_id: string;
+  count_of_tracks: number;
+  name: string;
+  id: number;
+  label: string;
   type: string;
 }
 
@@ -157,4 +157,11 @@ export interface PlaylistWithRelationships {
   properties: PlaylistProperties;
 
   tracks: TrackProperties[];
+}
+
+export interface SearchResult {
+  type: string;
+  label: string;
+  spotify_id?: string;
+  database_id?: string;
 }
