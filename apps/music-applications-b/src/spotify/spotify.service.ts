@@ -98,7 +98,7 @@ export class SpotifyService {
       }
     });
 
-    return result.sort((a, b) => a.label.localeCompare(b.label));
+    return result;
   }
 
   public async getParsedArtistById(spotify_id: string): Promise<SpotifyArtist> {

@@ -90,8 +90,7 @@ export class DatabaseService {
           database_id: recordFields.properties.id,
           spotify_id: recordFields.properties.spotify_id ?? 'Not provided',
         } as SearchResult;
-      })
-      .sort((a, b) => a.label.localeCompare(b.label));
+      });
   }
 
   private findNodeAndRelationsWithId = async (id: number, type: string) => {

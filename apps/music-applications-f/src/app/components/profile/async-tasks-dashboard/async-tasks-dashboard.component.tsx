@@ -8,7 +8,7 @@ const AsyncTasksDashboard = ({
 }: {
   tasks: AsyncNeo4jTaskMetadata[];
 }) => {
-  const [tasksState] = useState<AsyncNeo4jTaskMetadata[]>([...tasks]);
+  const [tasksState] = useState<AsyncNeo4jTaskMetadata[]>(tasks);
 
   return (
     <div className="dashboard-wrapper">
@@ -18,18 +18,7 @@ const AsyncTasksDashboard = ({
           <div className="dashboard-map-container">
             {tasksState.map((task, index) => {
               return (
-                <div className="task-wrapper" key={index}>
-                  <div className="current-state">
-                    {task.finished ? 'Task in completed' : 'Task in process...'}
-                  </div>
-                  {task.finished && (
-                    <div className="duration-time">
-                      Task completion duration: {task.finishedIn}
-                    </div>
-                  )}
-                  cnt: {task.details.length}
-                  relsCnt: {task.relsCount}
-                </div>
+                <SingleTaskState key={index} task={task}></SingleTaskState>
               );
             })}
           </div>
