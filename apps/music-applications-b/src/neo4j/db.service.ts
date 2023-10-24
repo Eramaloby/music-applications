@@ -773,7 +773,7 @@ export class DatabaseService {
 
     await transaction.run(`
       CREATE (track: Track {
-        name: "${track.name}",
+        name: "${track.name.replace(`"`, '')}",
         duration_ms: "${track.duration_ms}",
         explicit: "${track.explicit}",
         type: "${track.type}",
