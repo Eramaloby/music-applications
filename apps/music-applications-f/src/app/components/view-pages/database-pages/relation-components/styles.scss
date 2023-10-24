@@ -1,0 +1,50 @@
+.item-properties-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
+  width: 30%;
+  min-height: 500px;
+  gap: 1rem;
+
+  .item-image-container {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid black;
+    .item-image {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .no-image-provided-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+    }
+  }
+
+  .item-properties {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    .item-property-wrapper {
+      display: flex;
+      justify-content: space-between;
+
+      .item-property-label {
+        font-weight: 500;
+        font-size: large;
+      }
+
+      .item-property-value {
+        font-weight: 600;
+        font-size: large;
+      }
+    }
+  }
+}

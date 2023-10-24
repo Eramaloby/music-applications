@@ -5,11 +5,7 @@ import {
   UserSignUpForm,
   ItemPreview,
   UserSignInRequestResult,
-  GenreWithRelationships,
-  ArtistWithRelationships,
-  TrackWithRelationships,
-  AlbumWithRelationships,
-  PlaylistWithRelationships,
+  FetchItemFromNeo4jResult,
 } from './types';
 import { parseNeo4jLikes, parseNeo4jRecommendation } from './utils';
 
@@ -19,18 +15,11 @@ export const baseUrl = 'http://localhost:4200/api';
 export const fetchDatabaseItem = async (
   id: number,
   type: string
-): Promise<
-  | GenreWithRelationships
-  | ArtistWithRelationships
-  | TrackWithRelationships
-  | AlbumWithRelationships
-  | PlaylistWithRelationships
-  | null
-> => {
+): Promise<FetchItemFromNeo4jResult | null> => {
   try {
     const response = await axios.get(`${baseUrl}/neo4j/${type}/${id}`);
 
-    return response.data;
+    return { item: response.data, type: type };
   } catch (error) {
     return null;
   }

@@ -14,21 +14,16 @@ import {
 } from '../../../requests';
 import { useNavigate, useParams } from 'react-router-dom';
 import { RecentlyViewedContext } from '../../../contexts/recently-viewed.context';
-import {
-  AlbumWithRelationships,
-  ArtistWithRelationships,
-  GenreWithRelationships,
-  Neo4jNodeWithRelationships,
-  PlaylistWithRelationships,
-  TrackWithRelationships,
-} from '../../../types';
+import { FetchItemFromNeo4jResult } from '../../../types';
 
 const DatabaseItemPage = () => {
   // default view is relation view
   const params = useParams();
   const router = useNavigate();
 
-  const [item, setItem] = useState<Neo4jNodeWithRelationships | null>(null);
+  const [neo4jItem, setNeo4jItem] = useState<FetchItemFromNeo4jResult | null>(
+    null
+  );
 
   const [isRelationViewSelected, setIsRelationViewSelected] = useState(true);
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
@@ -39,11 +34,11 @@ const DatabaseItemPage = () => {
 
   // extract to different file later
   const handleLikeChanges = async (newState: boolean) => {
-    if (currentUser && item) {
+    if (currentUser && neo4jItem) {
       if (newState) {
-        await pressLike(item.properties.id, currentUser.accessToken);
+        await pressLike(neo4jItem.item.properties.id, currentUser.accessToken);
       } else {
-        await dropLike(item.properties.id, currentUser.accessToken);
+        await dropLike(neo4jItem.item.properties.id, currentUser.accessToken);
       }
       // after awaiting
       setIsLiked(newState);
@@ -58,15 +53,15 @@ const DatabaseItemPage = () => {
       if ((params['id'], params['type'])) {
         const id = params['id'] as unknown as number;
         const type = params['type'] as unknown as string;
-        const fetchedItem = await fetchDatabaseItem(id, type);
+        const fetchResult = await fetchDatabaseItem(id, type);
 
-        if (fetchedItem) {
-          setItem(fetchedItem);
+        if (fetchResult) {
+          setNeo4jItem({ ...fetchResult });
           // TODO: GENERATE IMAGES FOR GENRE
           addItem({
-            type: type.charAt(0).toUpperCase() + type.slice(1),
-            label: fetchedItem.properties.name,
-            databaseId: fetchedItem.properties.id,
+            type: type,
+            label: fetchResult.item.properties.name,
+            databaseId: fetchResult.item.properties.id,
             // image: fetchedItem.properties.image_url
           });
         } else {
@@ -81,10 +76,10 @@ const DatabaseItemPage = () => {
 
   useEffect(() => {
     const asyncWrapper = async () => {
-      if (currentUser && item) {
+      if (currentUser && neo4jItem) {
         if (currentUser) {
           const result = await checkIfLiked(
-            item.properties.id,
+            neo4jItem.item.properties.id,
             currentUser.accessToken
           );
 
@@ -96,7 +91,7 @@ const DatabaseItemPage = () => {
     };
 
     asyncWrapper();
-  }, [currentUser, item]);
+  }, [currentUser, neo4jItem]);
 
   return (
     <div className="database-item-page-wrapper">
@@ -129,15 +124,15 @@ const DatabaseItemPage = () => {
           </div>
         )}
       </div>
-      {item && (
+      {neo4jItem && (
         <div className="database-item-page-content">
           {isRelationViewSelected ? (
             <RelationViewPage
-              item={item}
+              item={neo4jItem}
               routingCallback={routingCallback}
             ></RelationViewPage>
           ) : (
-            <GraphViewPage item={item}></GraphViewPage>
+            <GraphViewPage item={neo4jItem}></GraphViewPage>
           )}
         </div>
       )}

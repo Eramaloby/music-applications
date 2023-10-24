@@ -195,6 +195,12 @@ export type Neo4jNodeWithRelationships =
   | TrackWithRelationships
   | ArtistWithRelationships
   | GenreWithRelationships;
+
+export interface FetchItemFromNeo4jResult {
+  item: Neo4jNodeWithRelationships;
+  type: string;
+}
+
 // form interfaces
 export interface UserSignUpForm {
   email: string;
