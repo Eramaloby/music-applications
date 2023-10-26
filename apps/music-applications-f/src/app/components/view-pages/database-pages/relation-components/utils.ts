@@ -67,6 +67,6 @@ export const convertAlbumProperties = (
 export interface RelationshipViewInterpretation {
   label: string;
   textForTooltip: string;
-  id: number;
+  id: string;
   typeOfSourceOrTarget: string;
 }

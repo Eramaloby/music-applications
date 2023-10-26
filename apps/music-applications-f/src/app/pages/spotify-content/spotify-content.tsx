@@ -93,6 +93,7 @@ const SpotifyContentPage = () => {
             task.relsCount = response.relsCount;
           } else {
             task.failed = true;
+            task.finishedAt = Date.now();
             toast.error('Failed in execution', {
               position: 'top-center',
             });

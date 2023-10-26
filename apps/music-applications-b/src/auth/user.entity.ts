@@ -22,9 +22,6 @@ export class User {
   gender: string;
 
   @Column()
-  pictureBase64: string;
-
-  @Column()
   relationshipsAddedCount: number;
 
   @Column()
@@ -32,4 +29,7 @@ export class User {
 
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
+
+  @Column()
+  pictureBase64: string;
 }

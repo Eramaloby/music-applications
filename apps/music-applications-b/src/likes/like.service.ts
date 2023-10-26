@@ -10,11 +10,11 @@ export class LikeService {
     @InjectRepository(Like) private readonly likeRepository: LikeRepository
   ) {}
 
-  async createLike(user: User, nodeId: number) {
+  async createLike(user: User, nodeId: string) {
     return await this.likeRepository.createLike(user, nodeId);
   }
 
-  async deleteLike(user: User, nodeId: number) {
+  async deleteLike(user: User, nodeId: string) {
     const result = await this.likeRepository.delete({ user, nodeId });
 
     if (result.affected === 0) {
@@ -22,7 +22,7 @@ export class LikeService {
     }
   }
 
-  async isLikeExists(user: User, nodeId: number) {
+  async isLikeExists(user: User, nodeId: string) {
     try {
       const result = await this.likeRepository.findOneOrFail({
         where: { user, nodeId },

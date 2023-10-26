@@ -22,6 +22,8 @@ import {
   TransactionData,
 } from './types';
 
+import { v4 as generateId } from 'uuid';
+
 // TODO: Refactor access modifier & methods
 @Injectable()
 export class DatabaseService {
@@ -93,7 +95,7 @@ export class DatabaseService {
       });
   }
 
-  private findNodeAndRelationsWithId = async (id: number, type: string) => {
+  private findNodeAndRelationsWithId = async (id: string, type: string) => {
     const res = await this.dbService.read(
       `MATCH (obj: ${type} { id: "${id}" })-[rel]-(o_obj) return obj, rel, o_obj`
     );
@@ -101,7 +103,7 @@ export class DatabaseService {
     return res.records;
   };
 
-  private async getNeo4jData(id: number, type: string) {
+  private async getNeo4jData(id: string, type: string) {
     const nodeWithRelationships = (
       await this.findNodeAndRelationsWithId(id, type)
     ).map((value) => value['_fields']);
@@ -115,7 +117,7 @@ export class DatabaseService {
   }
 
   // add labels guard to all relationships ??
-  public async getGenreFull(id: number): Promise<GenreWithRelationships> {
+  public async getGenreFull(id: string): Promise<GenreWithRelationships> {
     const { node, relationships } = await this.getNeo4jData(id, 'Genre');
 
     return {
@@ -140,7 +142,7 @@ export class DatabaseService {
     };
   }
 
-  public async getArtistFull(id: number): Promise<ArtistWithRelationships> {
+  public async getArtistFull(id: string): Promise<ArtistWithRelationships> {
     const { node, relationships } = await this.getNeo4jData(id, 'Artist');
 
     return {
@@ -179,7 +181,7 @@ export class DatabaseService {
     };
   }
 
-  public async getTrackFull(id: number): Promise<TrackWithRelationships> {
+  public async getTrackFull(id: string): Promise<TrackWithRelationships> {
     const { node, relationships } = await this.getNeo4jData(id, 'Track');
 
     return {
@@ -204,7 +206,7 @@ export class DatabaseService {
     };
   }
 
-  public async getAlbumFull(id: number): Promise<AlbumWithRelationships> {
+  public async getAlbumFull(id: string): Promise<AlbumWithRelationships> {
     const { node, relationships } = await this.getNeo4jData(id, 'Album');
 
     return {
@@ -226,7 +228,7 @@ export class DatabaseService {
     };
   }
 
-  public async getPlaylistFull(id: number): Promise<PlaylistWithRelationships> {
+  public async getPlaylistFull(id: string): Promise<PlaylistWithRelationships> {
     const { node, relationships } = await this.getNeo4jData(id, 'Playlist');
     return {
       properties: node.properties as PlaylistProperties,
@@ -285,7 +287,7 @@ export class DatabaseService {
 
   public async getUserAddedNodes(
     username: string
-  ): Promise<{ type: string; name: string; nodeId: number }[]> {
+  ): Promise<{ type: string; name: string; nodeId: string }[]> {
     const utility = async (type: string) =>
       (
         await this.dbService.read(
@@ -296,7 +298,7 @@ export class DatabaseService {
     const genres = (await utility('Genre')).map((recordShape) => {
       return {
         name: String(recordShape.get('name')),
-        nodeId: Number(recordShape.get('id')),
+        nodeId: String(recordShape.get('id')),
         type: 'genre',
       };
     });
@@ -304,7 +306,7 @@ export class DatabaseService {
     const artists = (await utility('Artist')).map((recordShape) => {
       return {
         name: String(recordShape.get('name')),
-        nodeId: Number(recordShape.get('id')),
+        nodeId: String(recordShape.get('id')),
         type: 'artist',
       };
     });
@@ -312,7 +314,7 @@ export class DatabaseService {
     const albums = (await utility('Album')).map((recordShape) => {
       return {
         name: String(recordShape.get('name')),
-        nodeId: Number(recordShape.get('id')),
+        nodeId: String(recordShape.get('id')),
         type: 'album',
       };
     });
@@ -320,7 +322,7 @@ export class DatabaseService {
     const tracks = (await utility('Track')).map((recordShape) => {
       return {
         name: String(recordShape.get('name')),
-        nodeId: Number(recordShape.get('id')),
+        nodeId: String(recordShape.get('id')),
         type: 'track',
       };
     });
@@ -329,7 +331,7 @@ export class DatabaseService {
       return {
         type: 'playlist',
         name: String(recordShape.get('name')),
-        nodeId: Number(recordShape.get('id')),
+        nodeId: String(recordShape.get('id')),
       };
     });
 
@@ -455,16 +457,6 @@ export class DatabaseService {
     `);
 
     return query.records;
-  }
-
-  public async generateNewNodeId(transaction: Transaction): Promise<number> {
-    const query = await transaction.run(`MERGE (id:GlobalUniqueId)
-      ON CREATE SET id.count = 1
-      ON MATCH SET id.count = id.count + 1
-      RETURN id.count AS generated_id`);
-
-    const [recordId] = query.records;
-    return recordId.get('generated_id')['low'];
   }
 
   /* ADD functions */
@@ -596,7 +588,7 @@ export class DatabaseService {
       return false;
     }
 
-    const genId = await this.generateNewNodeId(transaction);
+    const genId = String(generateId());
     await transaction.run(`
       CREATE (genre: Genre {
         name: "${model.name}",
@@ -621,6 +613,8 @@ export class DatabaseService {
       spotifyId,
       transaction
     );
+    const generated = String(generateId());
+    console.log(generated);
 
     if (isExists) {
       return false;
@@ -654,7 +648,7 @@ export class DatabaseService {
       }
     }
 
-    const genId = await this.generateNewNodeId(transaction);
+    const genId = String(generateId());
     const imageUrl: string = artist.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
@@ -703,7 +697,7 @@ export class DatabaseService {
     transaction: Transaction
   ): Promise<boolean> {
     // user is sure that there is no duplicate => no need to check for it
-    const genId = await this.generateNewNodeId(transaction);
+    const genId = String(generateId());
     await transaction.run(`
       CREATE (artist: Artist {
         name: "${model.name}",
@@ -778,7 +772,7 @@ export class DatabaseService {
       }
     }
 
-    const genId = await this.generateNewNodeId(transaction);
+    const genId = String(generateId());
     const imageUrl: string = track.album.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
@@ -836,7 +830,7 @@ export class DatabaseService {
     transactionData: TransactionData,
     transaction: Transaction
   ) {
-    const genId = await this.generateNewNodeId(transaction);
+    const genId = String(generateId());
     await transaction.run(`
       CREATE (track: Track {
         name: "${model.name}",
@@ -912,7 +906,7 @@ export class DatabaseService {
       ...new Set(artistsFetched.map((artist) => artist.genres).flat()),
     ];
 
-    const genId = await this.generateNewNodeId(transaction);
+    const genId = String(generateId());
     const imageUrl: string = playlist.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
@@ -986,7 +980,7 @@ export class DatabaseService {
     transactionData: TransactionData,
     transaction: Transaction
   ) {
-    const genId = await this.generateNewNodeId(transaction);
+    const genId = String(generateId());
 
     await transaction.run(`
       CREATE (playlist: Playlist {
@@ -1046,7 +1040,7 @@ export class DatabaseService {
     }
 
     const album = await this.spotifyService.getAlbumById(spotifyId);
-    const genId = await this.generateNewNodeId(transaction);
+    const genId = String(generateId());
     const imageUrl: string = album.images?.[0]?.url ?? 'Not provided';
 
     await transaction.run(`
@@ -1157,7 +1151,7 @@ export class DatabaseService {
     transactionData: TransactionData,
     transaction: Transaction
   ) {
-    const genId = await this.generateNewNodeId(transaction);
+    const genId = String(generateId());
 
     await transaction.run(`
       CREATE (album: Album {

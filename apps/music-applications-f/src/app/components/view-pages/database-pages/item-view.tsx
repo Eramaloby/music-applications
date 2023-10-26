@@ -45,13 +45,13 @@ const DatabaseItemPage = () => {
     }
   };
 
-  const routingCallback = (type: string, id: number) =>
+  const routingCallback = (type: string, id: string) =>
     router(`/db/${type}/${id}`);
 
   useEffect(() => {
     const asyncWrapper = async () => {
       if ((params['id'], params['type'])) {
-        const id = params['id'] as unknown as number;
+        const id = params['id'] as unknown as string;
         const type = params['type'] as unknown as string;
         const fetchResult = await fetchDatabaseItem(id, type);
 

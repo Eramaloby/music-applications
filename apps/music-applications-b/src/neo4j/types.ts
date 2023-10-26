@@ -13,7 +13,7 @@ export interface ArtistModel {
 
   image: string;
 
-  relatedGenresIds: number[];
+  relatedGenresIds: string[];
 }
 
 export interface TrackModel {
@@ -24,8 +24,8 @@ export interface TrackModel {
 
   image: string;
 
-  authorId: number;
-  contributorsIds: number[];
+  authorId: string;
+  contributorsIds: string[];
 }
 
 export interface AlbumModel {
@@ -37,10 +37,10 @@ export interface AlbumModel {
 
   image: string;
 
-  relatedGenresIds: number[];
-  authorId: number;
-  contributorsIds: number[];
-  tracksIds: number[];
+  relatedGenresIds: string[];
+  authorId: string;
+  contributorsIds: string[];
+  tracksIds: string[];
 }
 
 export interface PlaylistModel {
@@ -52,8 +52,8 @@ export interface PlaylistModel {
 
   image: string;
 
-  tracksIds: number[];
-  genresIds: number[];
+  tracksIds: string[];
+  genresIds: string[];
 }
 
 export interface TransactionData {
@@ -72,7 +72,7 @@ export interface GenreProperties {
   added_by: string;
   name: string;
   description: string;
-  id: number;
+  id: string;
 }
 
 export interface ArtistProperties {
@@ -81,7 +81,7 @@ export interface ArtistProperties {
   spotify_id: string;
   name: string;
   description: string;
-  id: number;
+  id: string;
   type: string;
 }
 
@@ -92,7 +92,7 @@ export interface TrackProperties {
   added_by: string;
   spotify_id: string;
   name: string;
-  id: number;
+  id: string;
   type: string;
 }
 
@@ -103,7 +103,7 @@ export interface AlbumProperties {
   spotify_id: string;
   count_of_tracks: number;
   name: string;
-  id: number;
+  id: string;
   label: string;
   type: string;
 }
@@ -115,7 +115,7 @@ export interface PlaylistProperties {
   spotify_id: string;
   name: string;
   description: string;
-  id: number;
+  id: string;
 }
 export interface GenreWithRelationships {
   properties: GenreProperties;

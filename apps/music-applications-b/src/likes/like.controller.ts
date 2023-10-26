@@ -26,7 +26,7 @@ export class LikeController {
   @Get()
   async isLikeExists(@Query() params, @GetUser() user: User) {
     const [item] = await this.dbManager.findNodeBySpotifyId(params.spotifyId);
-    const nodeId: number = item.get('instance')['properties']['id'];
+    const nodeId: string = item.get('instance')['properties']['id'];
     return this.likeService.isLikeExists(user, nodeId);
   }
 
@@ -44,7 +44,7 @@ export class LikeController {
       createLikeDto.spotify_id
     );
 
-    const nodeId: number = item.get('instance')['properties']['id'];
+    const nodeId: string = item.get('instance')['properties']['id'];
     return this.likeService.createLike(user, nodeId);
   }
 
@@ -65,7 +65,7 @@ export class LikeController {
       createLikeDto.spotify_id
     );
 
-    const nodeId: number = item.get('instance')['properties']['id'];
+    const nodeId: string = item.get('instance')['properties']['id'];
     return this.likeService.deleteLike(user, nodeId);
   }
 

@@ -1,3 +1,3 @@
 export class CreateDeleteLikeDto {
-  nodeId: number;
+  nodeId: string;
 }

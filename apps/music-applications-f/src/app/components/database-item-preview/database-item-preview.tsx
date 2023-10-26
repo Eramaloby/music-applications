@@ -6,7 +6,7 @@ const DatabaseItemPreview = ({
   onClickCallback,
 }: {
   item: ItemPreview;
-  onClickCallback: (id: number, type: string) => void;
+  onClickCallback: (id: string, type: string) => void;
 }) => {
   const S_COLOR =
     'rgb(' +
@@ -32,7 +32,7 @@ const DatabaseItemPreview = ({
           style={{
             backgroundImage: `url(${item.image.url})`,
           }}
-          onClick={() => onClickCallback(item.databaseId as number, item.type)}
+          onClick={() => onClickCallback(item.databaseId as string, item.type)}
         ></div>
       ) : (
         <div
@@ -40,7 +40,7 @@ const DatabaseItemPreview = ({
           style={{
             background: `linear-gradient(90deg, ${S_COLOR} 0%, ${M_COLOR} 51%, ${S_COLOR} 100%)`,
           }}
-          onClick={() => onClickCallback(item.databaseId as number, item.type)}
+          onClick={() => onClickCallback(item.databaseId as string, item.type)}
         ></div>
       )}
 

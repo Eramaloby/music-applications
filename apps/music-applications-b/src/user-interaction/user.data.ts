@@ -5,9 +5,8 @@ export interface UserInformation {
   imageBase64?: string;
   imageUrl?: string;
   likes: Like[];
-  added: { type: string; name: string; nodeId: number }[];
+  added: { type: string; name: string; nodeId: string }[];
   relationshipsCount: number;
   nodesCount: number;
-
   exists: boolean;
 }

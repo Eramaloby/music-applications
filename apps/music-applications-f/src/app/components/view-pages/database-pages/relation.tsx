@@ -17,7 +17,7 @@ const RelationViewPage = ({
   routingCallback,
 }: {
   item: FetchItemFromNeo4jResult;
-  routingCallback: (type: string, id: number) => void;
+  routingCallback: (type: string, id: string) => void;
 }) => {
   return (
     <div className="relation-view-content-wrapper">

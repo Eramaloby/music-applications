@@ -8,7 +8,7 @@ export const RelationshipInterpretation = ({
 }: {
   relationshipTitle: string;
   relationships: RelationshipViewInterpretation[];
-  onClickCallback: (type: string, id: number) => void;
+  onClickCallback: (type: string, id: string) => void;
 }) => {
   return relationships.length !== 0 ? (
     <div className="relationship-container">

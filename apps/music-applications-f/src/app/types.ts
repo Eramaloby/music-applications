@@ -100,7 +100,7 @@ export interface GenreProperties {
   added_by: string;
   name: string;
   description: string;
-  id: number;
+  id: string;
 }
 
 export interface ArtistProperties {
@@ -109,7 +109,7 @@ export interface ArtistProperties {
   spotify_id: string;
   name: string;
   description: string;
-  id: number;
+  id: string;
   type: string;
 }
 
@@ -120,7 +120,7 @@ export interface TrackProperties {
   added_by: string;
   spotify_id: string;
   name: string;
-  id: number;
+  id: string;
   type: string;
 }
 
@@ -131,7 +131,7 @@ export interface AlbumProperties {
   spotify_id: string;
   count_of_tracks: number;
   name: string;
-  id: number;
+  id: string;
   label: string;
   type: string;
 }
@@ -143,7 +143,7 @@ export interface PlaylistProperties {
   spotify_id: string;
   name: string;
   description: string;
-  id: number;
+  id: string;
 }
 export interface GenreWithRelationships {
   properties: GenreProperties;
@@ -280,7 +280,7 @@ export enum ProfilePageStates {
 }
 
 export interface ItemPreview {
-  databaseId?: number;
+  databaseId?: string;
   spotify_id?: string;
   image?: { height?: number; url: string; width?: number };
   label: string;

@@ -11,7 +11,7 @@ const TrackItemRelationView = ({
   navigateTo,
 }: {
   item: TrackWithRelationships;
-  navigateTo: (type: string, id: number) => void;
+  navigateTo: (type: string, id: string) => void;
 }) => {
   const displayedProperties = Object.entries({
     Name: item.properties.name,

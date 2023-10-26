@@ -13,7 +13,7 @@ export const baseUrl = 'http://localhost:4200/api';
 
 /* NEO4J DB REQUESTS */
 export const fetchDatabaseItem = async (
-  id: number,
+  id: string,
   type: string
 ): Promise<FetchItemFromNeo4jResult | null> => {
   try {
@@ -241,7 +241,7 @@ export const pressLikeSpotifyId = async (
   }
 };
 
-export const pressLike = async (nodeId: number, accessToken: string) => {
+export const pressLike = async (nodeId: string, accessToken: string) => {
   try {
     await axios.post(
       `${baseUrl}/like/db`,
@@ -257,7 +257,7 @@ export const pressLike = async (nodeId: number, accessToken: string) => {
   }
 };
 
-export const dropLike = async (nodeId: number, accessToken: string) => {
+export const dropLike = async (nodeId: string, accessToken: string) => {
   try {
     await axios.delete(`${baseUrl}/like/db`, {
       headers: {
@@ -287,7 +287,7 @@ export const dropLikeSpotifyId = async (
 };
 
 export const checkIfLiked = async (
-  nodeId: number,
+  nodeId: string,
   accessToken: string
 ): Promise<boolean> => {
   try {
@@ -409,7 +409,7 @@ export interface GetUserInformationResponse {
   imageBase64?: string;
   imageUrl?: string;
   // add likes module
-  added: { type: string; name: string; nodeId: number }[];
+  added: { type: string; name: string; nodeId: string }[];
   relationshipsCount: number;
   nodesCount: number;
 
