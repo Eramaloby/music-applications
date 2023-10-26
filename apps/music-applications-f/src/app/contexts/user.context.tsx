@@ -29,7 +29,7 @@ interface AccessTokenMetadata {
 export interface AsyncNeo4jTaskMetadata {
   startedAt: number; // Date.now()
   finished: boolean;
-  finishedIn?: number; // Date.now()
+  finishedAt?: number; // Date.now()
   failed: boolean;
   details: { name: string; type: string }[];
   relsCount: number;

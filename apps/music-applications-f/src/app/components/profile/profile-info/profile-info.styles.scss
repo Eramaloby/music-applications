@@ -8,6 +8,33 @@
   flex-direction: column;
   width: 80%;
 
+  .dashboard-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 2rem;
+  
+    .no-tasks-message, .tasks-header {
+      text-align: left;
+      font-size: larger;
+      margin-bottom: 1rem;
+      width: 100%;
+    }
+  
+    .dashboard-map-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+  
+      gap: 0.5rem;
+      padding: 1rem;
+  
+      border: 1px solid white;
+    }
+  }
+
   .profile-page-picture-section {
     display: flex;
     justify-content: center;

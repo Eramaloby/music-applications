@@ -86,6 +86,7 @@ const SpotifyContentPage = () => {
           if (response.isSuccess) {
             task.finished = true;
             task.details = [...response.records];
+            task.finishedAt = Date.now();
             toast.success('Instance was added to database.', {
               position: 'top-center',
             });
@@ -96,8 +97,6 @@ const SpotifyContentPage = () => {
               position: 'top-center',
             });
           }
-
-          task.finishedIn = (Date.now() - task.startedAt) / 1000;
         }
       );
     }

@@ -8,17 +8,18 @@ import {
   receiveRecommendations,
   updateProfileImage,
 } from '../../../requests';
-import { UserContext } from '../../../contexts/user.context';
+import { AsyncNeo4jTaskMetadata, UserContext } from '../../../contexts/user.context';
 import ViewPanelContainer from '../../recently-viewed-panel/view-panel-container';
-import AsyncTasksDashboard from '../async-tasks-dashboard/async-tasks-dashboard.component';
 import FileUploader from '../../file-uploader/file-uploader.component';
 import { getBase64FromFile } from '../../../utils';
+import SingleTaskState from '../single-task-state/single-task-state.component';
 
 const ProfileInfoComponent = ({ user }: { user: User }) => {
   const [stats, setStats] = useState<DbStats>({
     nodes: 0,
     relationships: 0,
   });
+
 
   // profile picture
   const [error, setError] = useState<string>('');
@@ -35,6 +36,8 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
   };
 
   const { currentUser, currentTasks } = useContext(UserContext);
+
+  const [tasks] = useState<AsyncNeo4jTaskMetadata[]>(currentTasks);
 
   const [recommendations, setRecommendations] = useState<ItemPreview[]>([]);
 
@@ -95,8 +98,22 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
         </div>
         {error && <div className="file-validation-message">{error}</div>}
       </div>
-      <AsyncTasksDashboard tasks={currentTasks}></AsyncTasksDashboard>
-      {recommendations.length !== 0 ? (
+      <div className="dashboard-wrapper">
+      {tasks.length !== 0 ? (
+        <>
+          <div className="tasks-header">This sessions tasks:</div>
+          <div className="dashboard-map-container">
+            {tasks.map((task, index) => {
+              return (
+                <SingleTaskState key={index} task={task}></SingleTaskState>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <div className="no-tasks-message">No tasks history</div>
+      )}
+    </div>      {recommendations.length !== 0 ? (
         <div className="recommendation-panel">
           <ViewPanelContainer
             title="According to your taste, you would like:"
