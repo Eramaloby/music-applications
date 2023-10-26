@@ -121,11 +121,22 @@ export class DatabaseService {
     return {
       properties: node.properties as GenreProperties,
       albums: relationships
-        .filter((rel) => rel.relName === 'RelatedToGenre')
+        .filter(
+          (rel) =>
+            rel.relName === 'RelatedToGenre' &&
+            rel.targetOrSource.labels.at(0) === 'Album'
+        )
         .map((rel) => rel.targetOrSource.properties as AlbumProperties),
       artists: relationships
         .filter((rel) => rel.relName === 'PerformsInGenre')
         .map((rel) => rel.targetOrSource.properties as ArtistProperties),
+      playlists: relationships
+        .filter(
+          (rel) =>
+            rel.relName === 'RelatedToGenre' &&
+            rel.targetOrSource.labels.at(0) === 'Playlist'
+        )
+        .map((rel) => rel.targetOrSource.properties as PlaylistProperties),
     };
   }
 

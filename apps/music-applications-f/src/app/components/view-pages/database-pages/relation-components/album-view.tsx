@@ -1,7 +1,14 @@
 import { AlbumWithRelationships } from '../../../../types';
-import React from 'react';
-import './styles.scss';
 import { PropertyDisplay } from './property';
+import { Tooltip } from '@mui/material';
+import {
+  RelationshipViewInterpretation,
+  convertArtistProperties,
+  convertGenreProperties,
+  convertTrackProperties,
+} from './utils';
+import './styles.scss';
+import { RelationshipInterpretation } from './relationship';
 
 const AlbumItemRelationView = ({
   item,
@@ -17,6 +24,11 @@ const AlbumItemRelationView = ({
     'Album label': String(item.properties.label),
     Type: String(item.properties.type),
   });
+
+  // display in other way?
+  const authorInterpretation: RelationshipViewInterpretation[] = [
+    convertArtistProperties(item.author),
+  ];
 
   return (
     <>
@@ -40,7 +52,34 @@ const AlbumItemRelationView = ({
           ))}
         </div>
       </div>
-      <div className="item-relationships-container"></div>
+      <div className="item-relationships-container">
+        <RelationshipInterpretation
+          relationshipTitle="Tracks on album"
+          onClickCallback={navigateTo}
+          relationships={item.tracks.map((properties) =>
+            convertTrackProperties(properties)
+          )}
+        ></RelationshipInterpretation>
+        <RelationshipInterpretation
+          relationshipTitle="Album genres"
+          onClickCallback={navigateTo}
+          relationships={item.genres.map((properties) =>
+            convertGenreProperties(properties)
+          )}
+        ></RelationshipInterpretation>
+        <RelationshipInterpretation
+          relationshipTitle="Author"
+          onClickCallback={navigateTo}
+          relationships={authorInterpretation}
+        ></RelationshipInterpretation>
+        <RelationshipInterpretation
+          relationshipTitle="Contributors"
+          onClickCallback={navigateTo}
+          relationships={item.contributors.map((properties) =>
+            convertArtistProperties(properties)
+          )}
+        ></RelationshipInterpretation>
+      </div>
     </>
   );
 };

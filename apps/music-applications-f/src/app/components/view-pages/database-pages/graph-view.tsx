@@ -3,8 +3,9 @@ import { useRef } from 'react';
 import { GraphCanvasRef } from 'reagraph';
 import { GraphCanvas, darkTheme } from 'reagraph';
 import { useNavigate} from 'react-router-dom';
+import { Neo4jNodeWithRelationships } from '../../../types';
 
-const GraphViewPage = ({ item }: { item: any }) => {
+const GraphViewPage = ({ item }: { item: Neo4jNodeWithRelationships }) => {
   // const router = useNavigate();
 
   // const routingCallback = (type: string, id: number) =>

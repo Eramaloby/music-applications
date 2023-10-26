@@ -122,6 +122,7 @@ export interface GenreWithRelationships {
 
   albums: AlbumProperties[];
   artists: ArtistProperties[];
+  playlists: PlaylistProperties[];
 }
 
 export interface ArtistWithRelationships {

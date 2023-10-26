@@ -1,6 +1,5 @@
 .item-properties-container {
   display: flex;
-  justify-content: center;
   flex-direction: column;
   padding: 1rem;
   width: 30%;
@@ -23,7 +22,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-
     }
   }
 
@@ -44,6 +42,44 @@
       .item-property-value {
         font-weight: 600;
         font-size: large;
+      }
+    }
+  }
+}
+
+.item-relationships-container {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-around;
+
+  .relationship-container {
+    width: 25%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+
+    .relationship-title {
+      height: 5%;
+      width: 100%;
+      font-weight: 700;
+      font-size: large;
+      color: rgb(126, 191, 28);
+    }
+
+    .relationships {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      overflow-y: scroll;
+      max-height: 55%;
+      gap: 0.3rem;
+
+      .relationship-link {
+        cursor: pointer;
+        font-weight: 600;
+        &:hover {
+          color: red;
+        }
       }
     }
   }

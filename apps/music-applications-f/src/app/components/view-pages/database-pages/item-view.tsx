@@ -132,7 +132,7 @@ const DatabaseItemPage = () => {
               routingCallback={routingCallback}
             ></RelationViewPage>
           ) : (
-            <GraphViewPage item={neo4jItem}></GraphViewPage>
+            <GraphViewPage item={neo4jItem.item}></GraphViewPage>
           )}
         </div>
       )}
