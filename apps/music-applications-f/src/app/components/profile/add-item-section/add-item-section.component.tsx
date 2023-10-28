@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import './add-item-section.styles.scss';
 import { postItemFromParameters } from '../../../requests';
 import { UserContext } from '../../../contexts/user.context';

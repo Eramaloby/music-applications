@@ -11,17 +11,19 @@ import {
   PostTrackDto,
 } from './dto';
 import { ProfileService } from '../profile/profile.service';
+import { TaskService } from '../task/task.service';
 
 @Controller('neo4j')
 @UseGuards(AuthGuard())
 export class DatabaseController {
   constructor(
     private readonly dbService: DatabaseService,
-    private readonly profileService: ProfileService
+    private readonly profileService: ProfileService,
+    private readonly taskService: TaskService
   ) {}
 
   @Post(':type/:id')
-  async addItem(@Param() params, @GetUser() user: User) {
+  async addItemFromSpotify(@Param() params, @GetUser() user: User) {
     // fix error with relationships count
     // TODO REFACTOR: pass user as parameter ?
     const result = await this.dbService.performAddTransaction(
@@ -30,13 +32,28 @@ export class DatabaseController {
       user.username
     );
 
-    await this.profileService.updateProfileDatabaseStats(
-      result.data.records.length,
-      result.data.relationshipCount,
-      user.username
-    );
+    if (result.isSuccess) {
+      await this.profileService.updateProfileDatabaseStats(
+        result.data.records.length,
+        result.data.relationshipCount,
+        user.username
+      );
 
-    console.log('Finish transaction', result);
+      await this.taskService.createTask(user, {
+        successful: true,
+        reason: 'Success',
+        details: JSON.stringify(result.data.records),
+        relationshipCount: result.data.relationshipCount,
+      });
+    } else {
+      await this.taskService.createTask(user, {
+        successful: false,
+        reason: result.reason,
+        details: 'Transaction was rolled back',
+        relationshipCount: 0,
+      });
+    }
+
     return result;
   }
 

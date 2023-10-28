@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Like } from '../likes/like.entity';
+import { Task } from '../task/task.entity';
 
 @Entity()
 export class User {
@@ -29,6 +30,9 @@ export class User {
 
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
+ 
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 
   @Column()
   pictureBase64: string;

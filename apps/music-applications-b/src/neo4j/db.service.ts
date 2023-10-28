@@ -613,8 +613,6 @@ export class DatabaseService {
       spotifyId,
       transaction
     );
-    const generated = String(generateId());
-    console.log(generated);
 
     if (isExists) {
       return false;

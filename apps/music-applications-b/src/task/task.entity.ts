@@ -2,13 +2,22 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../auth/user.entity';
 
 @Entity()
-export class Like {
+export class Task {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.likes)
+  @ManyToOne(() => User, (user) => user.tasks)
   user: User;
 
   @Column()
-  nodeId: string;
+  successful: boolean;
+
+  @Column()
+  reason: string;
+
+  @Column()
+  details: string;
+
+  @Column()
+  relationshipCount: number;
 }

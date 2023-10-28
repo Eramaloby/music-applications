@@ -14,6 +14,7 @@ import { SpotifyModule } from '../spotify/spotify.module';
 import { GeniusModule } from '../genius/genius.module';
 import { UserInteractionModule } from '../user-interaction/user-interaction.module';
 import { ProfileModule } from '../profile/profile.module';
+import { TaskModule } from '../task/task.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -33,6 +34,7 @@ import { ProfileModule } from '../profile/profile.module';
     GeniusModule,
     UserInteractionModule,
     ProfileModule,
+    TaskModule,
   ],
   controllers: [AppController, NetworkController],
   providers: [GeniusService],
