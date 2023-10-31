@@ -144,6 +144,7 @@ export interface TrackWithRelationships {
   contributors: ArtistProperties[];
 
   album: AlbumProperties;
+  playlists: PlaylistProperties[];
 }
 
 export interface AlbumWithRelationships {

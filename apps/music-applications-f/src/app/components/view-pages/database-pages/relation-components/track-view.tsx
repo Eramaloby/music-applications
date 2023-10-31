@@ -4,7 +4,11 @@ import React from 'react';
 import './styles.scss';
 import { PropertyDisplay } from './property';
 import { RelationshipInterpretation } from './relationship';
-import { convertAlbumProperties, convertArtistProperties } from './utils';
+import {
+  convertAlbumProperties,
+  convertArtistProperties,
+  convertPlaylistProperties,
+} from './utils';
 
 const TrackItemRelationView = ({
   item,
@@ -61,6 +65,15 @@ const TrackItemRelationView = ({
           <RelationshipInterpretation
             relationshipTitle="Album"
             relationships={[convertAlbumProperties(item.album)]}
+            onClickCallback={navigateTo}
+          ></RelationshipInterpretation>
+        )}
+        {item.playlists && item.playlists.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Playlists"
+            relationships={item.playlists.map((p) =>
+              convertPlaylistProperties(p)
+            )}
             onClickCallback={navigateTo}
           ></RelationshipInterpretation>
         )}

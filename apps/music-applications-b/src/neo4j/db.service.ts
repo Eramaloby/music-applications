@@ -203,6 +203,13 @@ export class DatabaseService {
           )
           .map((rel) => rel.targetOrSource.properties as AlbumProperties)
           .at(0) ?? null,
+      playlists: relationships
+        .filter(
+          (rel) =>
+            rel.relName === 'Contains' &&
+            rel.targetOrSource.labels.at(0) === 'Playlist'
+        )
+        .map((rel) => rel.targetOrSource.properties as PlaylistProperties),
     };
   }
 
