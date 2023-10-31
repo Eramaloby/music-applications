@@ -18,13 +18,15 @@ const SingleTaskState = ({ task }: { task: AsyncNeo4jTaskMetadata }) => {
     return () => clearInterval(interval);
   }, [elapsedSeconds, task.status]);
 
+  // TODO: add more metadata about instance that is going to be added to db, and display it in panel current state
+  // add button to view task details after it either finished or failed
   return (
     <div className="task-wrapper">
       <div className="current-state">
-        {task.status === 'successful' ||
-        (task.status === 'failed' && task.finishedAt)
-          ? 'Task is completed'
-          : `Task in process for ${elapsedSeconds} seconds`}
+        {task.status === 'successful' && 'Task was completed successfully'}
+        {task.status === 'pending' && 'Task is queued.'}
+        {task.status === 'failed' && 'Task exited execution with error'}
+        {task.status === 'process' && `Task in progress for ${elapsedSeconds}`}
       </div>
       {task.finishedAt && task.startedAt && (
         <div className="task-finished-info">
