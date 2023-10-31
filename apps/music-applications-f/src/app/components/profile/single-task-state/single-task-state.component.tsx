@@ -1,37 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { AsyncNeo4jTaskMetadata } from '../../../contexts/user.context';
 import './single-task-state.styles.scss';
+import { AsyncNeo4jTaskMetadata } from '../../../contexts/task.context';
 
-// refactor or remove component
 const SingleTaskState = ({ task }: { task: AsyncNeo4jTaskMetadata }) => {
-  const [elapsedTime, setElapsedTime] = useState<number>(
-    Math.floor((Date.now() - task.startedAt) / 1000)
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(
+    task.status === 'process'
+      ? Math.floor((Date.now() - task.startedAt!) / 1000)
+      : 0
   );
 
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
-    if (!task.finished) {
-      interval = setInterval(() => setElapsedTime(elapsedTime + 1), 1000);
+    if (task.status === 'process') {
+      interval = setInterval(() => setElapsedSeconds(elapsedSeconds + 1), 1000);
     }
 
     return () => clearInterval(interval);
-  }, [elapsedTime, task.finished]);
+  }, [elapsedSeconds, task.status]);
 
   return (
     <div className="task-wrapper">
       <div className="current-state">
-        {task.finished && task.finishedAt
+        {task.status === 'successful' ||
+        (task.status === 'failed' && task.finishedAt)
           ? 'Task is completed'
-          : `Task in process for ${elapsedTime} seconds`}
+          : `Task in process for ${elapsedSeconds} seconds`}
       </div>
-      {task.finished && (
+      {task.finishedAt && task.startedAt && (
         <div className="task-finished-info">
           <div className="duration-time">
             Task completion duration:{' '}
-            {Math.floor((task.finishedAt! - task.startedAt) / 1000)} seconds
+            {Math.floor((task.finishedAt - task.startedAt) / 1000)} seconds
           </div>
           <div className="nodes-cnt">Nodes count: {task.details.length}</div>
-          <div className="rels-cnt">Relationships count: {task.relsCount}</div>
+          <div className="rels-cnt">
+            Relationships count: {task.relationshipsCount}
+          </div>
         </div>
       )}
       {/* view details button when task is complete */}

@@ -7,6 +7,7 @@ import { RecentlyViewedContextProvider } from './contexts/recently-viewed.contex
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { TaskContextProvider } from './contexts/task.context';
 
 export function App() {
   return (
@@ -14,7 +15,9 @@ export function App() {
       <BrowserRouter>
         <RecentlyViewedContextProvider>
           <UserContextProvider>
-            <ApplicationRouter></ApplicationRouter>
+            <TaskContextProvider>
+              <ApplicationRouter></ApplicationRouter>
+            </TaskContextProvider>
           </UserContextProvider>
         </RecentlyViewedContextProvider>
         <ToastContainer></ToastContainer>

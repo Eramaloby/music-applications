@@ -4,7 +4,6 @@ import TrackInfo from '../../components/view-pages/spotify-pages/track-info';
 import AlbumInfo from '../../components/view-pages/spotify-pages/album-info';
 import ArtistInfo from '../../components/view-pages/spotify-pages/artist-info';
 import PlaylistInfo from '../../components/view-pages/spotify-pages/playlist-info';
-import { toast } from 'react-toastify';
 
 import './spotify-content.styles.scss';
 import {
@@ -13,24 +12,22 @@ import {
   SpotifyPlaylist,
   SpotifyTrack,
 } from '../../types';
-import {
-  AsyncNeo4jTaskMetadata,
-  UserContext,
-} from '../../contexts/user.context';
+import { UserContext } from '../../contexts/user.context';
 import {
   checkIfLikedSpotifyId,
   dropLikeSpotifyId,
   getSpotifyItem,
   isItemInDatabase,
-  postItemToNeo4j,
   pressLikeSpotifyId,
 } from '../../requests';
+import { TaskContext } from '../../contexts/task.context';
 
 // todo: refactoring
 const SpotifyContentPage = () => {
   const urlToLogin = 'http://localhost:4200/api/spotify/login';
 
-  const { currentUser, addTask } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
+  const { queueTask } = useContext(TaskContext);
 
   const router = useNavigate();
   const params = useParams();
@@ -62,44 +59,10 @@ const SpotifyContentPage = () => {
   };
 
   // post handler
-  const postItem = async () => {
+  const postItem = () => {
     if (item && currentUser) {
       setIsAddAvailable(false);
-
-      toast.info('In progress... \nCheck profile page to track operation.', {
-        position: 'top-center',
-        icon: '😋',
-      });
-
-      const task: AsyncNeo4jTaskMetadata = {
-        startedAt: Date.now(),
-        finished: false,
-        failed: false,
-        details: [],
-        relsCount: 0,
-      };
-
-      addTask(task);
-
-      postItemToNeo4j(item.type, item.spotify_id, currentUser.accessToken).then(
-        (response) => {
-          if (response.isSuccess) {
-            task.finished = true;
-            task.details = [...response.records];
-            task.finishedAt = Date.now();
-            toast.success('Instance was added to database.', {
-              position: 'top-center',
-            });
-            task.relsCount = response.relsCount;
-          } else {
-            task.failed = true;
-            task.finishedAt = Date.now();
-            toast.error('Failed in execution', {
-              position: 'top-center',
-            });
-          }
-        }
-      );
+      queueTask(item.type, item.spotify_id, currentUser.accessToken);
     }
   };
 
@@ -132,6 +95,7 @@ const SpotifyContentPage = () => {
         setItem(data.item);
         const isExists = await isItemInDatabase(id);
         if (isExists !== null) {
+          // TODO: duplication ??
           setIsSavedToDb(isExists);
           setIsAddAvailable(true);
         }

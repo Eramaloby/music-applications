@@ -8,18 +8,21 @@ import {
   receiveRecommendations,
   updateProfileImage,
 } from '../../../requests';
-import { AsyncNeo4jTaskMetadata, UserContext } from '../../../contexts/user.context';
+import { UserContext } from '../../../contexts/user.context';
 import ViewPanelContainer from '../../recently-viewed-panel/view-panel-container';
 import FileUploader from '../../file-uploader/file-uploader.component';
 import { getBase64FromFile } from '../../../utils';
 import SingleTaskState from '../single-task-state/single-task-state.component';
+import {
+  AsyncNeo4jTaskMetadata,
+  TaskContext,
+} from '../../../contexts/task.context';
 
 const ProfileInfoComponent = ({ user }: { user: User }) => {
   const [stats, setStats] = useState<DbStats>({
     nodes: 0,
     relationships: 0,
   });
-
 
   // profile picture
   const [error, setError] = useState<string>('');
@@ -35,9 +38,10 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
     }
   };
 
-  const { currentUser, currentTasks } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
+  const { tasks } = useContext(TaskContext);
 
-  const [tasks] = useState<AsyncNeo4jTaskMetadata[]>(currentTasks);
+  const [stateTasks] = useState<AsyncNeo4jTaskMetadata[]>(tasks);
 
   const [recommendations, setRecommendations] = useState<ItemPreview[]>([]);
 
@@ -99,21 +103,22 @@ const ProfileInfoComponent = ({ user }: { user: User }) => {
         {error && <div className="file-validation-message">{error}</div>}
       </div>
       <div className="dashboard-wrapper">
-      {tasks.length !== 0 ? (
-        <>
-          <div className="tasks-header">This sessions tasks:</div>
-          <div className="dashboard-map-container">
-            {tasks.map((task, index) => {
-              return (
-                <SingleTaskState key={index} task={task}></SingleTaskState>
-              );
-            })}
-          </div>
-        </>
-      ) : (
-        <div className="no-tasks-message">No tasks history</div>
-      )}
-    </div>      {recommendations.length !== 0 ? (
+        {stateTasks.length !== 0 ? (
+          <>
+            <div className="tasks-header">This sessions tasks:</div>
+            <div className="dashboard-map-container">
+              {stateTasks.map((task, index) => {
+                return (
+                  <SingleTaskState key={index} task={task}></SingleTaskState>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <div className="no-tasks-message">No tasks history</div>
+        )}
+      </div>{' '}
+      {recommendations.length !== 0 ? (
         <div className="recommendation-panel">
           <ViewPanelContainer
             title="According to your taste, you would like:"
