@@ -150,6 +150,7 @@ export interface PlaylistProperties {
   likes: { low: number };
   id: string;
 }
+
 export interface GenreWithRelationships {
   properties: GenreProperties;
 
@@ -195,6 +196,13 @@ export interface PlaylistWithRelationships {
   tracks: TrackProperties[];
   genres: GenreProperties[];
 }
+
+export type Neo4jItemProperties =
+  | GenreProperties
+  | AlbumProperties
+  | TrackProperties
+  | PlaylistProperties
+  | ArtistProperties;
 
 export type Neo4jNodeWithRelationships =
   | PlaylistWithRelationships

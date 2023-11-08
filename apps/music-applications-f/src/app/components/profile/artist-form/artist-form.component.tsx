@@ -1,6 +1,7 @@
 import { TextField, Tooltip } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { validateFieldRequiredNotEmpty } from '../../../utils';
+import { fetchDatabaseItemsByType } from '../../../requests';
 
 export interface ArtistFormFields {
   artistName: string;
@@ -47,6 +48,15 @@ const ArtistForm = () => {
       ),
     });
   };
+
+  useEffect(() => {
+    const wrapper = async () => {
+      const result = await fetchDatabaseItemsByType('track');
+      console.log(result);
+    };
+
+    wrapper();
+  }, [])
 
   return (
     <div className="form-wrapper">

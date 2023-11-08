@@ -6,6 +6,7 @@ import {
   ItemPreview,
   UserSignInRequestResult,
   FetchItemFromNeo4jResult,
+  Neo4jItemProperties,
 } from './types';
 import { parseNeo4jLikes, parseNeo4jRecommendation } from './utils';
 
@@ -35,6 +36,19 @@ export const fetchDatabaseStats = async () => {
   } catch (err) {
     console.log(err);
     return null;
+  }
+};
+
+export const fetchDatabaseItemsByType = async (
+  type: 'genre' | 'artist' | 'playlist' | 'track' | 'album'
+): Promise<Neo4jItemProperties[]> => {
+  try {
+    const response = await axios.get(`${baseUrl}/neo4j/${type}`);
+
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return [];
   }
 };
 

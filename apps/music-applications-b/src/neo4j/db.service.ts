@@ -103,6 +103,11 @@ export class DatabaseService {
     return res.records;
   };
 
+  public getNodesWithType = async (type: string) => {
+    const res = (await this.dbService.read(`MATCH (obj: ${type}) return obj`)).records.map((value) => value['_fields']).flat();
+    return res.map((node) => node.properties);
+  }
+
   private async getNeo4jData(id: string, type: string) {
     const nodeWithRelationships = (
       await this.findNodeAndRelationsWithId(id, type)

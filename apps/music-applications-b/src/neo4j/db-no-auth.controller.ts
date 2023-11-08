@@ -24,6 +24,12 @@ export class DatabaseNoAuthController {
     }
   }
 
+  @Get(':type')
+  async getDatabaseItemByType(@Param() params) {
+    const type = params.type.at(0).toLocaleUpperCase() + params.type.slice(1);
+    return await this.dbService.getNodesWithType(type);
+  }
+
   @Get('search')
   async getData(@Query() query: { [searchType: string]: string }) {
     return await this.dbService.getData(query);
