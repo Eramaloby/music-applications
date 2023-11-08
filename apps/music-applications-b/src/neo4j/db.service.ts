@@ -357,6 +357,16 @@ export class DatabaseService {
     return results;
   }
 
+  public async increaseItemLikeCounter(nodeId: string) {
+    const query = await this.dbService.write(`
+      MATCH (item { id: "${nodeId}"})
+      SET item.likes = item.likes + 1
+      RETURN item
+    `);
+
+    return query;
+  }
+
   public async getGenresRecommendations(separatedIds: string) {
     const query = await this.dbService.read(`
       UNWIND [${separatedIds}] AS X
@@ -602,6 +612,7 @@ export class DatabaseService {
         description: "${model.description}",
         image: "${model.image}",
         added_by: "${username}",
+        likes: 0,
         id: "${genId}"
       })
       `);
@@ -664,6 +675,7 @@ export class DatabaseService {
         image: "${imageUrl}",
         added_by: "${username}",
         spotify_id: "${artist.id}",
+        likes: 0,
         id: "${genId}"
       })
     `);
@@ -711,6 +723,7 @@ export class DatabaseService {
         image: "${model.image}",
         spotify_id: "Not provided",
         added_by: "${username}",
+        likes: 0,
         id: "${genId}"
       })
     `);
@@ -789,6 +802,7 @@ export class DatabaseService {
         image: "${imageUrl}",
         added_by: "${username}",
         spotify_id: "${track.id}",
+        likes: 0,
         id: "${genId}"
       })`);
 
@@ -845,6 +859,7 @@ export class DatabaseService {
         image: "${model.image}",
         added_by: "${username}",
         spotify_id: "Not provided",
+        likes: 0,
         id: "${genId}"
       })`);
 
@@ -922,6 +937,7 @@ export class DatabaseService {
         spotify_id: "${spotifyId}",
         image: "${imageUrl}",
         added_by: "${username}",
+        likes: 0,
         id: "${genId}"
       })
     `);
@@ -995,6 +1011,7 @@ export class DatabaseService {
         spotify_id: "Not provided",
         image: "${model.image}",
         added_by: "${username}",
+        likes: 0,
         id: "${genId}"
       })`);
 
@@ -1058,6 +1075,7 @@ export class DatabaseService {
         image: "${imageUrl}",
         spotify_id: "${spotifyId}",
         added_by: "${username}",
+        likes: 0,
         id: "${genId}" 
       })
     `);
@@ -1168,6 +1186,7 @@ export class DatabaseService {
         image: "${model.image}",
         spotify_id: "Not provided",
         added_by: "${username}",
+        likes: 0,
         id: "${genId}"
       })`);
 

@@ -100,6 +100,7 @@ export interface GenreProperties {
   added_by: string;
   name: string;
   description: string;
+  likes: { low: number };
   id: string;
 }
 
@@ -110,6 +111,7 @@ export interface ArtistProperties {
   name: string;
   description: string;
   id: string;
+  likes: { low: number };
   type: string;
 }
 
@@ -121,6 +123,7 @@ export interface TrackProperties {
   spotify_id: string;
   name: string;
   id: string;
+  likes: { low: number };
   type: string;
 }
 
@@ -133,6 +136,7 @@ export interface AlbumProperties {
   name: string;
   id: string;
   label: string;
+  likes: { low: number };
   type: string;
 }
 
@@ -143,6 +147,7 @@ export interface PlaylistProperties {
   spotify_id: string;
   name: string;
   description: string;
+  likes: { low: number };
   id: string;
 }
 export interface GenreWithRelationships {

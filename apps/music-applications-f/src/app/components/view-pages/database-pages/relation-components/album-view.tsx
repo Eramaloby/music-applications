@@ -1,6 +1,5 @@
 import { AlbumWithRelationships } from '../../../../types';
 import { PropertyDisplay } from './property';
-import { Tooltip } from '@mui/material';
 import {
   RelationshipViewInterpretation,
   convertArtistProperties,
@@ -23,7 +22,9 @@ const AlbumItemRelationView = ({
     'Released at': String(item.properties.release_date),
     'Album label': String(item.properties.label),
     Type: String(item.properties.type),
+    'Count of likes': String(item.properties.likes.low),
   });
+
 
   // display in other way?
   const authorInterpretation: RelationshipViewInterpretation[] = [

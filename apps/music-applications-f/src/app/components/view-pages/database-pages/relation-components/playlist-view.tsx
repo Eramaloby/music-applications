@@ -3,10 +3,7 @@ import React from 'react';
 import './styles.scss';
 import { PropertyDisplay } from './property';
 import { RelationshipInterpretation } from './relationship';
-import {
-  convertGenreProperties,
-  convertTrackProperties,
-} from './utils';
+import { convertGenreProperties, convertTrackProperties } from './utils';
 
 const PlaylistItemRelationView = ({
   item,
@@ -18,7 +15,9 @@ const PlaylistItemRelationView = ({
   const displayedProperties = Object.entries({
     Name: item.properties.name,
     'About playlist': item.properties.description,
+    'Count of likes': String(item.properties.likes.low)
   });
+
 
   return (
     <>

@@ -19,6 +19,7 @@ const GenreItemRelationView = ({
   const displayedProperties = Object.entries({
     Name: item.properties.name,
     'About genre': item.properties.description,
+    'Count of likes': String(item.properties.likes.low)
   });
 
   return (

@@ -20,6 +20,7 @@ const ArtistItemRelationView = ({
     Name: String(item.properties.name),
     'About artist': item.properties.description,
     'Artist type': item.properties.type,
+    'Count of likes': String(item.properties.likes.low)
   });
 
   return (

@@ -3,14 +3,17 @@ import { LikeRepository } from './like.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like } from './like.entity';
 import { User } from '../auth/user.entity';
+import { DatabaseService } from '../neo4j/db.service';
 
 @Injectable()
 export class LikeService {
   constructor(
-    @InjectRepository(Like) private readonly likeRepository: LikeRepository
+    @InjectRepository(Like) private readonly likeRepository: LikeRepository,
+    private readonly dbService: DatabaseService
   ) {}
 
   async createLike(user: User, nodeId: string) {
+    await this.dbService.increaseItemLikeCounter(nodeId);
     return await this.likeRepository.createLike(user, nodeId);
   }
 

@@ -22,6 +22,7 @@ const TrackItemRelationView = ({
     'Duration of track': convertDuration(item.properties.duration_ms),
     'Contains explicit lyrics': item.properties.explicit ? 'Yes' : 'No',
     'Track type': item.properties.type,
+    'Count of likes': String(item.properties.likes.low),
   });
 
   return (
