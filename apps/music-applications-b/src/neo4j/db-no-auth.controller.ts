@@ -24,7 +24,7 @@ export class DatabaseNoAuthController {
     }
   }
 
-  @Get(':type')
+  @Get('items/all/:type')
   async getDatabaseItemByType(@Param() params) {
     const type = params.type.at(0).toLocaleUpperCase() + params.type.slice(1);
     return await this.dbService.getNodesWithType(type);
@@ -35,7 +35,7 @@ export class DatabaseNoAuthController {
     return await this.dbService.getData(query);
   }
 
-  @Get('db-stats')
+  @Get('/stats')
   async getDatabaseStats() {
     const res = await this.dbService.getDbStats();
     return res;

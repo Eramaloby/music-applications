@@ -28,7 +28,7 @@ export const fetchDatabaseItem = async (
 
 export const fetchDatabaseStats = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/neo4j/db-stats`);
+    const response = await axios.get(`${baseUrl}/neo4j/stats`);
     return {
       nodes: response.data[0],
       relationships: response.data[1],
@@ -43,7 +43,7 @@ export const fetchDatabaseItemsByType = async (
   type: 'genre' | 'artist' | 'playlist' | 'track' | 'album'
 ): Promise<Neo4jItemProperties[]> => {
   try {
-    const response = await axios.get(`${baseUrl}/neo4j/${type}`);
+    const response = await axios.get(`${baseUrl}/neo4j/items/all/${type}`);
 
     return response.data;
   } catch (err) {
