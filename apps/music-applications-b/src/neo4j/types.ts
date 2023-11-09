@@ -27,7 +27,6 @@ export interface TrackModel {
   authorId: string;
   contributorsIds: string[];
 }
-
 export interface AlbumModel {
   name: string;
   type: string;
