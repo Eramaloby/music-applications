@@ -20,37 +20,42 @@ const ApplicationRouter = () => {
   const { currentUser } = useContext(UserContext);
 
   return (
-    <div className="router-wrapper">
-      <div className="navbar-wrapper">
-        <div className="navbar-links">
-          <Link className="router-link" to="/">
-            Home
+    <>
+      <div className="navbar-links">
+        <Link className="router-link" to="/">
+          Home
+        </Link>
+        <Link className="router-link" to="/ranking">
+          Ranking Neural Network
+        </Link>
+        <Link className="router-link" to="/lyrics-generator">
+          Lyrics generator network
+        </Link>
+        <Link className="router-link" to="/search">
+          Explore graph base
+        </Link>
+        <Link className="router-link" to="/search-web">
+          Explore web
+        </Link>
+        <Link className="router-link" to="/about">
+          About
+        </Link>
+        {currentUser ? (
+          <Link to="/profile">
+            <div className="profile-page-icon">
+              <img
+                src={currentUser.profileImageBase64}
+                alt="profile-page-icon"
+              ></img>
+            </div>
           </Link>
-          <Link className="router-link" to="/ranking">
-            Ranking Neural Network
+        ) : (
+          <Link to="/signin" className="router-link">
+            Sign in
           </Link>
-          <Link className="router-link" to="/lyrics-generator">
-            Lyrics generator network
-          </Link>
-          <Link className="router-link" to="/search">
-            Explore graph base
-          </Link>
-          <Link className="router-link" to="/search-web">
-            Explore web
-          </Link>
-          <Link className="router-link" to="/about">
-            About
-          </Link>
-          {currentUser ? (
-            <Link to="/profile" className="router-link">
-              Profile
-            </Link>
-          ) : (
-            <Link to="/signin" className="router-link">
-              Sign in
-            </Link>
-          )}
-        </div>
+        )}
+      </div>
+      <div className="main-content">
         <Routes>
           <Route
             path="/lyrics-generator"
@@ -69,7 +74,7 @@ const ApplicationRouter = () => {
           <Route path="/signin" element={<SignInPage />}></Route>
         </Routes>
       </div>
-    </div>
+    </>
   );
 };
 
