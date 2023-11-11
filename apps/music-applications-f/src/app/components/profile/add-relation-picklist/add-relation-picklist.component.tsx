@@ -34,6 +34,8 @@ export const AddRelationPicklist = ({
     { item: Neo4jItemProperties; selected: boolean }[]
   >([]);
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   useEffect(() => {
     const wrapper = async () => {
       const response = await fetchDatabaseItemsByType(type);
@@ -50,16 +52,26 @@ export const AddRelationPicklist = ({
     wrapper();
   }, []);
 
+  const handleSearch = (value: string) => {};
+
   return (
-    <div className="add-relation-picklist-wrapper">
-      {items.map((row, index) => {
-        return (
-          <div className="add-relation-picklist-item-wrapper" key={index}>
-            <AddRelationPicklistItem row={row} />
-          </div>
-        );
-      })}
-    </div>
+    <>
+      <input
+        type="search"
+        value={searchQuery}
+        onChange={(event) => handleSearch(event.target.value)}
+        placeholder={'entity'}
+      ></input>
+      <div className="add-relation-picklist-wrapper">
+        {items.map((row, index) => {
+          return (
+            <div className="add-relation-picklist-item-wrapper" key={index}>
+              <AddRelationPicklistItem row={row} />
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 };
 
