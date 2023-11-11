@@ -81,44 +81,34 @@ const AddRelationPicklistItem = ({
   selected,
   onSelectedCallback,
 }: RelationPicklistItemProps) => {
-  let itemContainer = <div></div>;
-
-  if (item as GenreProperties) {
-    item = item as GenreProperties;
-    itemContainer = (
-      <div className="picklist-item">
-        <h1>{item.name}</h1>
-        <h1>{'genre'}</h1>
-      </div>
-    );
-  } else if (item as ArtistProperties) {
-    item = item as ArtistProperties;
-    itemContainer = (
-      <div className="picklist-item">
-        <h1>{item.name}</h1>
-        <h1>{'artist'}</h1>
-      </div>
-    );
-  } else if (item as TrackProperties) {
-    item = item as TrackProperties;
-    itemContainer = (
-      <div className="picklist-item">
-        <h1>{item.name}</h1>
-        <h1>{item.type}</h1>
-      </div>
-    );
-  } else if (item as AlbumProperties) {
-    item = item as AlbumProperties;
-    itemContainer = (
-      <div className="picklist-item">
-        <h1>{item.name}</h1>
-        <h1>{item.type}</h1>
-      </div>
-    );
-  }
   return (
     <>
-      {itemContainer}
+      <>
+        {(item as GenreProperties) && (
+          <div className="picklist-item">
+            <h1>{item.name}</h1>
+            <h1>{'genre'}</h1>
+          </div>
+        )}
+        {(item as ArtistProperties) && (
+          <div className="picklist-item">
+            <h1>{item.name}</h1>
+            <h1>{'artist'}</h1>
+          </div>
+        )}
+        {(item as TrackProperties) && (
+          <div className="picklist-item">
+            <h1>{item.name}</h1>
+            <h1>{'track'}</h1>
+          </div>
+        )}
+        {(item as AlbumProperties) && (
+          <div className="picklist-item">
+            <h1>{item.name}</h1>
+            <h1>{'album'}</h1>
+          </div>
+        )}
+      </>
       <button
         className={
           'picklist-item-button-' + (selected ? 'checked' : 'unchecked')
