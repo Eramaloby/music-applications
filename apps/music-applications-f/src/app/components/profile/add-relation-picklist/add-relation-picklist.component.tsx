@@ -17,9 +17,12 @@ type RelationPicklistProps = {
 };
 
 type RelationPicklistItemProps = {
+  row: Row;
+};
+
+type Row = {
   item: Neo4jItemProperties;
   selected: boolean;
-  onSelectedCallback: (selectedItemId: string) => void;
 };
 
 export const AddRelationPicklist = ({
@@ -47,28 +50,12 @@ export const AddRelationPicklist = ({
     wrapper();
   }, []);
 
-  const handleClick = (id: string) => {
-    setItems([
-      ...items.map((value) => {
-        if (value.item.id === id) {
-          return { item: value.item, selected: !value.selected };
-        } else {
-          return value;
-        }
-      }),
-    ]);
-  };
-
   return (
     <div className="add-relation-picklist-wrapper">
       {items.map((row, index) => {
         return (
           <div className="add-relation-picklist-item-wrapper" key={index}>
-            <AddRelationPicklistItem
-              item={row.item}
-              selected={row.selected}
-              onSelectedCallback={handleClick}
-            />
+            <AddRelationPicklistItem row={row} />
           </div>
         );
       })}
@@ -76,46 +63,48 @@ export const AddRelationPicklist = ({
   );
 };
 
-const AddRelationPicklistItem = ({
-  item,
-  selected,
-  onSelectedCallback,
-}: RelationPicklistItemProps) => {
+const AddRelationPicklistItem = ({ row }: RelationPicklistItemProps) => {
+  const [itemSelected, setItemSelected] = useState(row.selected);
+
+  const handleClick = () => {
+    setItemSelected(!itemSelected);
+  };
+
   return (
     <>
       <>
-        {(item as GenreProperties) && (
+        {(row.item as GenreProperties) && (
           <div className="picklist-item">
-            <h1>{item.name}</h1>
+            <h1>{row.item.name}</h1>
             <h1>{'genre'}</h1>
           </div>
         )}
-        {(item as ArtistProperties) && (
+        {(row.item as ArtistProperties) && (
           <div className="picklist-item">
-            <h1>{item.name}</h1>
+            <h1>{row.item.name}</h1>
             <h1>{'artist'}</h1>
           </div>
         )}
-        {(item as TrackProperties) && (
+        {(row.item as TrackProperties) && (
           <div className="picklist-item">
-            <h1>{item.name}</h1>
+            <h1>{row.item.name}</h1>
             <h1>{'track'}</h1>
           </div>
         )}
-        {(item as AlbumProperties) && (
+        {(row.item as AlbumProperties) && (
           <div className="picklist-item">
-            <h1>{item.name}</h1>
+            <h1>{row.item.name}</h1>
             <h1>{'album'}</h1>
           </div>
         )}
       </>
       <button
         className={
-          'picklist-item-button-' + (selected ? 'checked' : 'unchecked')
+          'picklist-item-button-' + (itemSelected ? 'checked' : 'unchecked')
         }
-        onClick={() => onSelectedCallback(item.id)}
+        onClick={() => handleClick()}
       >
-        {selected ? 'selected' : 'select'}
+        {itemSelected ? 'selected' : 'select'}
       </button>
     </>
   );
