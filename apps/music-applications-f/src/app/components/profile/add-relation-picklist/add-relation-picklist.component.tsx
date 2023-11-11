@@ -64,10 +64,11 @@ export const AddRelationPicklist = ({
 };
 
 const AddRelationPicklistItem = ({ row }: RelationPicklistItemProps) => {
-  const [itemSelected, setItemSelected] = useState(row.selected);
+  const [rowSelected, setRowSelected] = useState(row.selected);
 
   const handleClick = () => {
-    setItemSelected(!itemSelected);
+    row.selected = !row.selected;
+    setRowSelected(!rowSelected);
   };
 
   return (
@@ -100,11 +101,11 @@ const AddRelationPicklistItem = ({ row }: RelationPicklistItemProps) => {
       </>
       <button
         className={
-          'picklist-item-button-' + (itemSelected ? 'checked' : 'unchecked')
+          'picklist-item-button-' + (rowSelected ? 'checked' : 'unchecked')
         }
         onClick={() => handleClick()}
       >
-        {itemSelected ? 'selected' : 'select'}
+        {rowSelected ? 'selected' : 'select'}
       </button>
     </>
   );
