@@ -1,5 +1,6 @@
 import cl from './modal.module.css';
 import React from 'react';
+import { useEscapeKey } from '../../hooks/use-escape-key.hook';
 
 type AppModalProps = {
   children: React.ReactNode;
@@ -19,6 +20,8 @@ const AppModal = ({
   if (visible) {
     rootClasses.push(cl['active']);
   }
+
+  useEscapeKey(() => setVisible(false));
 
   return (
     <div

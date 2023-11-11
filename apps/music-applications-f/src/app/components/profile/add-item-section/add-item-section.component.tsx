@@ -3,7 +3,7 @@ import './add-item-section.styles.scss';
 import { postItemFromParameters } from '../../../requests';
 import { UserContext } from '../../../contexts/user.context';
 import AppModal from '../../ui-elements/modal';
-import GenreForm, { GenreFormFields } from '../genre-form/genre-form.component';
+import GenreForm from '../genre-form/genre-form.component';
 import AlbumForm from '../album-form/album-form.component';
 import PlaylistForm from '../playlist-form/playlist-form.component';
 import ArtistForm from '../artist-form/artist-form.component';
@@ -50,6 +50,14 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
     navigateBack();
   };
 
+  const handleModal = (value: boolean) => {
+    if (!value) {
+      navigateBackWrapper();
+    } else {
+      setModal(true);
+    }
+  }
+
   useEffect(() => {
     // TODO: trigger animation to change opacity of modal
     setModal(true);
@@ -70,7 +78,7 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
       </div>
 
       {/*Add animation to change opacity with time */}
-      <AppModal visible={modal} setVisible={setModal} isHiddenOnClick={true}>
+      <AppModal visible={modal} setVisible={handleModal} isHiddenOnClick={true}>
         <div className="modal-wrapper">
           <div className="modal-header">Choose instance to create</div>
           <div className="selector-wrapper">

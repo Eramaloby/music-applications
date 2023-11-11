@@ -52,6 +52,7 @@ const HomePage = () => {
 
   const fetchResults = async () => {
     const result = await fetchDatabaseStats();
+    console.log(result);
     if (result) {
       setStats({ ...result });
     }
