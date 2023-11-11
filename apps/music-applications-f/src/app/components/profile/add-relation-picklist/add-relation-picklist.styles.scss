@@ -1,0 +1,24 @@
+.add-relation-picklist-wrapper {
+  height: 300px;
+  overflow-y: scroll;
+  font-size: 10px;
+
+  .add-relation-picklist-item-wrapper {
+    border: 1px solid #1db954;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  button {
+    font-size: 16px;
+  }
+
+  .picklist-item-button-checked {
+    color: white;
+    background-color: #1db954;
+  }
+
+  .picklist-item-button-unchecked {
+    color: black;
+  }
+}
