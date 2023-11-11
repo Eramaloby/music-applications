@@ -1,16 +1,17 @@
 import axios from 'axios';
-import { UserContext } from '../../../contexts/user.context';
-import { ChangePasswordForm, ChangePasswordFormErrors } from '../../../types';
+import { UserContext } from '../../contexts/user.context';
+import { ChangePasswordForm, ChangePasswordFormErrors } from '../../types';
 import {
   validatePassword,
   validatePasswordConfirm,
   tryToChangePassword,
-} from '../../../utils';
+} from '../../utils';
 import './change-password.styles.scss';
 
 import React, { useContext, useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 
-const ChangePasswordComponent = () => {
+const ChangePasswordPage = () => {
   const { currentUser } = useContext(UserContext);
 
   const [changePasswordForm, setChangePasswordForm] =
@@ -50,6 +51,10 @@ const ChangePasswordComponent = () => {
     return () => clearTimeout(comparePasswordDelayTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changePasswordForm.currentPassword]);
+
+  if (!currentUser) {
+    return <Navigate to="/signin" replace></Navigate>;
+  }
 
   // handlers
   const handleCurrentPasswordChange = (value: string) => {
@@ -172,4 +177,4 @@ const ChangePasswordComponent = () => {
   );
 };
 
-export default ChangePasswordComponent;
+export default ChangePasswordPage;

@@ -1,20 +1,34 @@
 import { useContext, useEffect, useState } from 'react';
 import './add-item-section.styles.scss';
-import { postItemFromParameters } from '../../../requests';
-import { UserContext } from '../../../contexts/user.context';
-import AppModal from '../../ui-elements/modal';
-import GenreForm from '../genre-form/genre-form.component';
-import AlbumForm from '../album-form/album-form.component';
-import PlaylistForm from '../playlist-form/playlist-form.component';
-import ArtistForm from '../artist-form/artist-form.component';
-import TrackForm from '../track-form/track-form.component';
+import { fetchDatabaseStats, postItemFromParameters } from '../../requests';
+import { UserContext } from '../../contexts/user.context';
+import AppModal from '../../components/ui-elements/modal';
+import GenreForm from '../../components/profile/genre-form/genre-form.component';
+import AlbumForm from '../../components/profile/album-form/album-form.component';
+import PlaylistForm from '../../components/profile/playlist-form/playlist-form.component';
+import ArtistForm from '../../components/profile/artist-form/artist-form.component';
+import TrackForm from '../../components/profile/track-form/track-form.component';
+import { Navigate } from 'react-router-dom';
+import { DbStats } from '../../types';
 
 type AddSection = 'artist' | 'album' | 'genre' | 'playlist' | 'track';
 
-const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
+const AddItemPage = () => {
   const { currentUser } = useContext(UserContext);
   const [modal, setModal] = useState<boolean>(false);
   const [currentSection, setCurrentSection] = useState<AddSection | null>(null);
+  const [stats, setStats] = useState<DbStats | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const response = await fetchDatabaseStats();
+      if (response) {
+        setStats({ ...response });
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   // could add third parameter as reference to related component
   const availableOptions = [
@@ -47,7 +61,6 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
 
   const navigateBackWrapper = () => {
     setModal(false);
-    navigateBack();
   };
 
   const handleModal = (value: boolean) => {
@@ -56,12 +69,16 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
     } else {
       setModal(true);
     }
-  }
+  };
 
-  useEffect(() => {
-    // TODO: trigger animation to change opacity of modal
-    setModal(true);
-  }, []);
+  // useEffect(() => {
+  //   // TODO: trigger animation to change opacity of modal
+  //   setModal(true);
+  // }, []);
+
+  if (!currentUser) {
+    return <Navigate to="/signin" replace></Navigate>;
+  }
 
   return (
     <>
@@ -74,6 +91,24 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
             {currentSection === 'genre' && <GenreForm></GenreForm>}
             {currentSection === 'track' && <TrackForm></TrackForm>}
           </>
+        )}
+        {/* add spinner to wait for request loading */}
+        {!currentSection && (
+          <div className="add-item-text-btn">
+            <div className="text">
+              For logged in users we allow to add items directly to neo4j
+              database. We expecting you to be careful when adding new instances
+              and relationships.
+              <br></br>
+              Be careful to not add any duplicates or other harmful data.
+              <br></br>
+              As for the moment, there are {stats?.nodes} nodes and{' '}
+              {stats?.relationships} relationships in database.
+            </div>
+            <button className="btn" onClick={() => setModal(true)}>
+              Add new instance
+            </button>
+          </div>
         )}
       </div>
 
@@ -104,4 +139,4 @@ const AddItemSection = ({ navigateBack }: { navigateBack: () => void }) => {
   );
 };
 
-export default AddItemSection;
+export default AddItemPage;

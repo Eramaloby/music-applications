@@ -1,4 +1,4 @@
-import { Link, Routes, Route } from 'react-router-dom';
+import { Link, Routes, Route, useNavigate } from 'react-router-dom';
 import HomePage from '../../pages/home/home';
 import AboutPage from '../../pages/about/about';
 import RankingNeuralNetworkPage from '../../pages/networks/ranking-network';
@@ -8,16 +8,21 @@ import SearchWebPage from '../../pages/search/search-web';
 import SpotifyContentPage from '../../pages/spotify-content/spotify-content';
 
 import './navbar-styles.scss';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { UserContext } from '../../contexts/user.context';
 import Profile from '../../pages/profile/profile.component';
 import SignUpPage from '../../pages/sign-up/sign-up';
 import { SignInPage } from '../../pages/sign-in/sign-in';
 import DatabaseItemPage from '../view-pages/database-pages/item-view';
 import ForeignProfile from '../../pages/foreign-profile/foreign-profile.component';
+import ChangePasswordPage from '../../pages/change-password-page/change-password.component';
+import AddItemPage from '../../pages/add-item-page/add-item-section.component';
 
 const ApplicationRouter = () => {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, signOut } = useContext(UserContext);
+
+  const [profileMenuVisible, setProfileMenuVisible] = useState(false);
+  const router = useNavigate();
 
   return (
     <>
@@ -41,14 +46,13 @@ const ApplicationRouter = () => {
           About
         </Link>
         {currentUser ? (
-          <Link to="/profile">
-            <div className="profile-page-icon">
-              <img
-                src={currentUser.profileImageBase64}
-                alt="profile-page-icon"
-              ></img>
-            </div>
-          </Link>
+          <div className="router-link profile-page-icon">
+            <img
+              src={currentUser.profileImageBase64}
+              alt="profile-page-icon"
+              onClick={() => setProfileMenuVisible(!profileMenuVisible)}
+            ></img>
+          </div>
         ) : (
           <Link to="/signin" className="router-link">
             Sign in
@@ -69,11 +73,35 @@ const ApplicationRouter = () => {
           <Route path="web/:type/:id" element={<SpotifyContentPage />}></Route>
           <Route path="db/:type/:id" element={<DatabaseItemPage />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
-          <Route path="profile/:username" element={<ForeignProfile />}></Route>
+          <Route path="/profile/:username" element={<ForeignProfile />}></Route>
           <Route path="/signup" element={<SignUpPage />}></Route>
           <Route path="/signin" element={<SignInPage />}></Route>
+          <Route
+            path="/change-password"
+            element={<ChangePasswordPage />}
+          ></Route>
+          <Route path="/new-item" element={<AddItemPage />}></Route>
+          {/* Add 404 page */}
+          <Route path="*" element={<div>No page found</div>}></Route>
         </Routes>
       </div>
+
+      {/* TODO: refactor to mouseenter/mouseleave events?  */}
+      {profileMenuVisible && (
+        <div className="profile-menu">
+          <div className="profile-menu__link">Profile</div>
+          <div
+            className="profile-menu__link"
+            onClick={() => router('/change-password')}
+          >
+            Change password
+          </div>
+          <div className="profile-menu__link" onClick={() => router('/new-item')}>Add new instance</div>
+          <div className="profile-menu__link" onClick={signOut}>
+            Sign out
+          </div>
+        </div>
+      )}
     </>
   );
 };
