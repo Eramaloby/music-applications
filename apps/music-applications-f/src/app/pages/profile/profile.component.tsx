@@ -9,6 +9,10 @@ import ViewLikedItemsComponent from '../../components/profile/view-liked-items/v
 import ChangePasswordPage from '../change-password-page/change-password.component';
 import SearchSavedItemsComponent from '../../components/profile/search-saved-items/search-saved-items.component';
 import AddItemPage from '../add-item-page/add-item-section.component';
+import FileUploader from '../../components/file-uploader/file-uploader.component';
+import { getBase64FromFile } from '../../utils';
+import { updateProfileImage } from '../../requests';
+import { toast } from 'react-toastify';
 
 const Profile = () => {
   // const [pageState, setPageState] = useState<ProfilePageStates>(
@@ -19,18 +23,49 @@ const Profile = () => {
   //   setPageState(ProfilePageStates.DEFAULT);
   // };
 
-  const { currentUser, signOut } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
+
+  const [currentImageUrl, setCurrentImageUrl] = useState<string>(
+    currentUser?.profileImageBase64 ?? ''
+  );
 
   if (!currentUser) {
     return <Navigate to="/signin" replace></Navigate>;
   }
 
-  const signOutHandler = () => {
-    signOut();
+  const handleFileUploading = async (file: File) => {
+    if (!file.type.includes('image')) {
+      // show error message
+      toast.error('Selected file is not an image', { position: 'top-center' });
+    } else {
+      // action to upload profile picture
+      const imageHash = (await getBase64FromFile(file)) as string;
+      setCurrentImageUrl(imageHash);
+      await updateProfileImage(currentUser.accessToken, imageHash);
+    }
   };
 
   return (
     <div className="profile-page-wrapper">
+      <div className="profile-info">
+        <div className="profile-page-picture">
+          <div className="picture-container">
+            <img src={currentImageUrl} alt=""></img>
+          </div>
+          <div className="change-profile-picture">
+            <FileUploader
+              showFileName={false}
+              buttonText="Change profile picture"
+              handleFile={handleFileUploading}
+            ></FileUploader>
+          </div>
+        </div>
+        <div className="profile-page-stats">
+          Nodes saved by you: {currentUser.nodesCount} <br></br>Relationships
+          saved by you: {currentUser.relationshipsCount}
+        </div>
+      </div>
+
       {/* <div className="profile-page-action-panel">
         <div
           className="export-saved-records-btn btn"

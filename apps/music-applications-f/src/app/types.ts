@@ -281,8 +281,8 @@ export interface User {
   gender: string;
   id: string;
   profileImageBase64: string;
-
-  // add image and other later
+  nodesCount: number;
+  relationshipsCount: number;
 }
 
 // export enum ProfilePageStates {
