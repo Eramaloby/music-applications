@@ -12,7 +12,7 @@ export interface ArtistFormFields {
   artistDescription: string;
   artistImageBase64: string;
 
-  artistRelatedGenreIds: number[];
+  artistRelatedGenres: Neo4jItemProperties[];
 }
 
 export interface ArtistFormFieldsErrors {
@@ -20,7 +20,7 @@ export interface ArtistFormFieldsErrors {
   artistType: string;
   artistDescription: string;
   artistImageBase64: string;
-  artistRelatedGenreIds: string;
+  artistRelatedGenres: string;
 }
 
 const ArtistForm = () => {
@@ -29,7 +29,7 @@ const ArtistForm = () => {
     artistType: '',
     artistDescription: '',
     artistImageBase64: '',
-    artistRelatedGenreIds: [],
+    artistRelatedGenres: [],
   });
 
   const [errors, setErrors] = useState<ArtistFormFieldsErrors>({
@@ -37,14 +37,16 @@ const ArtistForm = () => {
     artistType: '',
     artistDescription: '',
     artistImageBase64: '',
-    artistRelatedGenreIds: '',
+    artistRelatedGenres: '',
   });
 
   const [modal, setModal] = useState(false);
 
   const onSelectedItemsSubmit = (selectedItems: Neo4jItemProperties[]) => {
-    console.log(selectedItems);
+    setForm({ ...form, artistRelatedGenres: [...selectedItems] });
+    setModal(false);
   };
+
   const onFormControlsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [event.target.name]: event.target.value });
 
@@ -146,18 +148,30 @@ const ArtistForm = () => {
           </Tooltip>
         </div>
         <div className="control-wrapper">
-          <button onClick={() => setModal(true)}>open modal</button>
+          {/* Ivan: сделать стильки к этой кнопке и остальным похожим в форме */}
+          <button onClick={() => setModal(true)}>Add artist genres</button>
           <AppModal
             visible={modal}
             setVisible={setModal}
             isHiddenOnClick={false}
           >
             <AddRelationPicklist
+              allowEmpty={true}
               type="genre"
+              relationshipTypeLabel=""
               onSubmitCallback={onSelectedItemsSubmit}
               multipleSelection={true}
+              alreadySelectedItemsIds={form.artistRelatedGenres.map(
+                (genre) => genre.id
+              )}
             ></AddRelationPicklist>
           </AppModal>
+
+          {form.artistRelatedGenres.length > 0 && (
+            <div className="chosen-items-count">
+              Selected {form.artistRelatedGenres.length} genres
+            </div>
+          )}
         </div>
       </div>
     </div>
