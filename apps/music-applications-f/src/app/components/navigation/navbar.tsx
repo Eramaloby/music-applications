@@ -50,7 +50,7 @@ const ApplicationRouter = () => {
             <img
               src={currentUser.profileImageBase64}
               alt="profile-page-icon"
-              onClick={() => setProfileMenuVisible(!profileMenuVisible)}
+              onMouseEnter={() => setProfileMenuVisible(true)}
             ></img>
           </div>
         ) : (
@@ -88,15 +88,25 @@ const ApplicationRouter = () => {
 
       {/* TODO: refactor to mouseenter/mouseleave events?  */}
       {profileMenuVisible && (
-        <div className="profile-menu">
-          <div className="profile-menu__link">Profile</div>
+        <div className="profile-menu" onMouseLeave={() => setProfileMenuVisible(false)}>
+          <div
+            className="profile-menu__link"
+            onClick={() => router('/profile')}
+          >
+            Profile
+          </div>
           <div
             className="profile-menu__link"
             onClick={() => router('/change-password')}
           >
             Change password
           </div>
-          <div className="profile-menu__link" onClick={() => router('/new-item')}>Add new instance</div>
+          <div
+            className="profile-menu__link"
+            onClick={() => router('/new-item')}
+          >
+            Add new instance
+          </div>
           <div className="profile-menu__link" onClick={signOut}>
             Sign out
           </div>
