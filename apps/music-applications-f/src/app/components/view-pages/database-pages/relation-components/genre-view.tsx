@@ -19,7 +19,7 @@ const GenreItemRelationView = ({
   const displayedProperties = Object.entries({
     Name: item.properties.name,
     'About genre': item.properties.description,
-    'Count of likes': String(item.properties.likes.low)
+    'Count of likes': String(item.properties.likes.low),
   });
 
   return (
@@ -45,23 +45,32 @@ const GenreItemRelationView = ({
         </div>
       </div>
       <div className="item-relationships-container">
-        <RelationshipInterpretation
-          relationshipTitle="Albums"
-          relationships={item.albums.map((p) => convertAlbumProperties(p))}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Artists"
-          relationships={item.artists.map((p) => convertArtistProperties(p))}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Playlists"
-          relationships={item.playlists.map((p) =>
-            convertPlaylistProperties(p)
-          )}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
+        {item.albums && item.albums.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Albums"
+            relationships={item.albums.map((p) => convertAlbumProperties(p))}
+            onClickCallback={navigateTo}
+            key={1}
+          ></RelationshipInterpretation>
+        )}
+        {item.artists && item.artists.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Artists"
+            relationships={item.artists.map((p) => convertArtistProperties(p))}
+            onClickCallback={navigateTo}
+            key={2}
+          ></RelationshipInterpretation>
+        )}
+        {item.playlists && item.playlists.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Playlists"
+            relationships={item.playlists.map((p) =>
+              convertPlaylistProperties(p)
+            )}
+            onClickCallback={navigateTo}
+            key={3}
+          ></RelationshipInterpretation>
+        )}
       </div>
     </>
   );

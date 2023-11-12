@@ -20,7 +20,7 @@ const ArtistItemRelationView = ({
     Name: String(item.properties.name),
     'About artist': item.properties.description,
     'Artist type': item.properties.type,
-    'Count of likes': String(item.properties.likes.low)
+    'Count of likes': String(item.properties.likes.low),
   });
 
   return (
@@ -46,37 +46,54 @@ const ArtistItemRelationView = ({
         </div>
       </div>
       <div className="item-relationships-container">
-        <RelationshipInterpretation
-          relationshipTitle="Artist genres"
-          relationships={item.genres.map((p) => convertGenreProperties(p))}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Albums author"
-          relationships={item.albumAuthor.map((p) => convertAlbumProperties(p))}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Albums contributed"
-          relationships={item.albumContributor.map((p) =>
-            convertAlbumProperties(p)
-          )}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Tracks author"
-          relationships={item.tracksAuthor.map((p) =>
-            convertTrackProperties(p)
-          )}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Tracks contributed"
-          relationships={item.tracksContributor.map((p) =>
-            convertTrackProperties(p)
-          )}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
+        {item.genres && item.genres.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Artist genres"
+            relationships={item.genres.map((p) => convertGenreProperties(p))}
+            onClickCallback={navigateTo}
+            key={1}
+          ></RelationshipInterpretation>
+        )}
+        {item.albumAuthor && item.albumAuthor.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Albums author"
+            relationships={item.albumAuthor.map((p) =>
+              convertAlbumProperties(p)
+            )}
+            onClickCallback={navigateTo}
+            key={2}
+          ></RelationshipInterpretation>
+        )}
+        {item.albumContributor && item.albumContributor.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Albums contributed"
+            relationships={item.albumContributor.map((p) =>
+              convertAlbumProperties(p)
+            )}
+            onClickCallback={navigateTo}
+            key={3}
+          ></RelationshipInterpretation>
+        )}
+        {item.tracksAuthor && item.tracksAuthor.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Tracks author"
+            relationships={item.tracksAuthor.map((p) =>
+              convertTrackProperties(p)
+            )}
+            onClickCallback={navigateTo}
+            key={4}
+          ></RelationshipInterpretation>
+        )}
+        {item.tracksContributor && item.tracksContributor.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Tracks contributed"
+            relationships={item.tracksContributor.map((p) =>
+              convertTrackProperties(p)
+            )}
+            onClickCallback={navigateTo}
+            key={5}
+          ></RelationshipInterpretation>
+        )}
       </div>
     </>
   );

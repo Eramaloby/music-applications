@@ -15,9 +15,8 @@ const PlaylistItemRelationView = ({
   const displayedProperties = Object.entries({
     Name: item.properties.name,
     'About playlist': item.properties.description,
-    'Count of likes': String(item.properties.likes.low)
+    'Count of likes': String(item.properties.likes.low),
   });
-
 
   return (
     <>
@@ -42,16 +41,23 @@ const PlaylistItemRelationView = ({
         </div>
       </div>
       <div className="item-relationships-container">
-        <RelationshipInterpretation
-          relationshipTitle="Genres"
-          relationships={item.genres.map((p) => convertGenreProperties(p))}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Tracks"
-          relationships={item.tracks.map((p) => convertTrackProperties(p))}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
+        {item.genres && item.genres.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Genres"
+            relationships={item.genres.map((p) => convertGenreProperties(p))}
+            onClickCallback={navigateTo}
+            key={1}
+          ></RelationshipInterpretation>
+        )}
+
+        {item.tracks && item.tracks.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Tracks"
+            relationships={item.tracks.map((p) => convertTrackProperties(p))}
+            onClickCallback={navigateTo}
+            key={2}
+          ></RelationshipInterpretation>
+        )}
       </div>
     </>
   );

@@ -53,20 +53,25 @@ const TrackItemRelationView = ({
             relationshipTitle="Author"
             relationships={[convertArtistProperties(item.author)]}
             onClickCallback={navigateTo}
+            key={1}
           ></RelationshipInterpretation>
         )}
-        <RelationshipInterpretation
-          relationshipTitle="Contributors"
-          relationships={item.contributors.map((p) =>
-            convertArtistProperties(p)
-          )}
-          onClickCallback={navigateTo}
-        ></RelationshipInterpretation>
+        {item.contributors && item.contributors.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Contributors"
+            relationships={item.contributors.map((p) =>
+              convertArtistProperties(p)
+            )}
+            onClickCallback={navigateTo}
+            key={2}
+          ></RelationshipInterpretation>
+        )}
         {item.album && (
           <RelationshipInterpretation
             relationshipTitle="Album"
             relationships={[convertAlbumProperties(item.album)]}
             onClickCallback={navigateTo}
+            key={3}
           ></RelationshipInterpretation>
         )}
         {item.playlists && item.playlists.length > 0 && (
@@ -76,6 +81,7 @@ const TrackItemRelationView = ({
               convertPlaylistProperties(p)
             )}
             onClickCallback={navigateTo}
+            key={3}
           ></RelationshipInterpretation>
         )}
       </div>

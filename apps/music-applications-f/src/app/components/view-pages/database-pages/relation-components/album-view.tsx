@@ -25,7 +25,6 @@ const AlbumItemRelationView = ({
     'Count of likes': String(item.properties.likes.low),
   });
 
-
   // display in other way?
   const authorInterpretation: RelationshipViewInterpretation[] = [
     convertArtistProperties(item.author),
@@ -54,32 +53,47 @@ const AlbumItemRelationView = ({
         </div>
       </div>
       <div className="item-relationships-container">
-        <RelationshipInterpretation
-          relationshipTitle="Tracks on album"
-          onClickCallback={navigateTo}
-          relationships={item.tracks.map((properties) =>
-            convertTrackProperties(properties)
-          )}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Album genres"
-          onClickCallback={navigateTo}
-          relationships={item.genres.map((properties) =>
-            convertGenreProperties(properties)
-          )}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Author"
-          onClickCallback={navigateTo}
-          relationships={authorInterpretation}
-        ></RelationshipInterpretation>
-        <RelationshipInterpretation
-          relationshipTitle="Contributors"
-          onClickCallback={navigateTo}
-          relationships={item.contributors.map((properties) =>
-            convertArtistProperties(properties)
-          )}
-        ></RelationshipInterpretation>
+        {item.tracks && item.tracks.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Tracks on album"
+            onClickCallback={navigateTo}
+            relationships={item.tracks.map((properties) =>
+              convertTrackProperties(properties)
+            )}
+            key={1}
+          ></RelationshipInterpretation>
+        )}
+
+        {item.genres && item.genres.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Album genres"
+            onClickCallback={navigateTo}
+            relationships={item.genres.map((properties) =>
+              convertGenreProperties(properties)
+            )}
+            key={2}
+          ></RelationshipInterpretation>
+        )}
+
+        {authorInterpretation && authorInterpretation.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Author"
+            onClickCallback={navigateTo}
+            relationships={authorInterpretation}
+            key={3}
+          ></RelationshipInterpretation>
+        )}
+
+        {item.contributors && item.contributors.length > 0 && (
+          <RelationshipInterpretation
+            relationshipTitle="Contributors"
+            onClickCallback={navigateTo}
+            relationships={item.contributors.map((properties) =>
+              convertArtistProperties(properties)
+            )}
+            key={4}
+          ></RelationshipInterpretation>
+        )}
       </div>
     </>
   );
