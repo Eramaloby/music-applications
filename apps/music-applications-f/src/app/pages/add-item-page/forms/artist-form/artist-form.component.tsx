@@ -148,8 +148,12 @@ const ArtistForm = () => {
           </Tooltip>
         </div>
         <div className="control-wrapper">
-          {/* Ivan: сделать стильки к этой кнопке и остальным похожим в форме */}
-          <button onClick={() => setModal(true)}>Add artist genres</button>
+          <button
+            onClick={() => setModal(true)}
+            className="submit-relationships-button"
+          >
+            Add artist genres
+          </button>
           <AppModal
             visible={modal}
             setVisible={setModal}
