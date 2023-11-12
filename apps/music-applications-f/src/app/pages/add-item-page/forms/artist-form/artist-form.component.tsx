@@ -1,10 +1,10 @@
 import { TextField, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { validateFieldRequiredNotEmpty } from '../../../utils';
-import { fetchDatabaseItemsByType } from '../../../requests';
-import AppModal from '../../ui-elements/modal';
-import { AddRelationPicklist } from '../add-relation-picklist/add-relation-picklist.component';
-import { Neo4jItemProperties } from '../../../types';
+import { validateFieldRequiredNotEmpty } from '../../../../utils';
+import { fetchDatabaseItemsByType } from '../../../../requests';
+import AppModal from '../../../../components/ui-elements/modal';
+import { AddRelationPicklist } from '../../add-relation-picklist/add-relation-picklist.component';
+import { Neo4jItemProperties } from '../../../../types';
 
 export interface ArtistFormFields {
   artistName: string;
@@ -43,8 +43,8 @@ const ArtistForm = () => {
   const [modal, setModal] = useState(false);
 
   const onSelectedItemsSubmit = (selectedItems: Neo4jItemProperties[]) => {
-    console.log(selectedItems)
-  }
+    console.log(selectedItems);
+  };
   const onFormControlsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [event.target.name]: event.target.value });
 
@@ -57,14 +57,14 @@ const ArtistForm = () => {
     });
   };
 
-  useEffect(() => {
-    const wrapper = async () => {
-      const result = await fetchDatabaseItemsByType('track');
-      console.log(result);
-    };
+  // useEffect(() => {
+  //   // const wrapper = async () => {
+  //   //   const result = await fetchDatabaseItemsByType('track');
+  //   //   console.log(result);
+  //   // };
 
-    wrapper();
-  }, [])
+  //   // wrapper();
+  // }, [])
 
   return (
     <div className="form-wrapper">
@@ -147,9 +147,16 @@ const ArtistForm = () => {
         </div>
         <div className="control-wrapper">
           <button onClick={() => setModal(true)}>open modal</button>
-          {/* Selector for existing genres inside db */}
-          <AppModal visible={modal} setVisible={setModal} isHiddenOnClick={false}>
-            <AddRelationPicklist type="genre" onSubmitCallback={onSelectedItemsSubmit} multipleSelection={true}></AddRelationPicklist>
+          <AppModal
+            visible={modal}
+            setVisible={setModal}
+            isHiddenOnClick={false}
+          >
+            <AddRelationPicklist
+              type="genre"
+              onSubmitCallback={onSelectedItemsSubmit}
+              multipleSelection={true}
+            ></AddRelationPicklist>
           </AppModal>
         </div>
       </div>

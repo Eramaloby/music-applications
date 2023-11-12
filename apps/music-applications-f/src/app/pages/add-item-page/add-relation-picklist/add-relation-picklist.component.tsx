@@ -52,7 +52,9 @@ export const AddRelationPicklist = ({
     wrapper();
   }, []);
 
-  const handleSearch = (value: string) => {};
+  const handleSearch = (value: string) => {
+    return;
+  };
 
   return (
     <>

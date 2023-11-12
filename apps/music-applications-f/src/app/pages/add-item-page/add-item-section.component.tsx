@@ -3,13 +3,13 @@ import './add-item-section.styles.scss';
 import { fetchDatabaseStats, postItemFromParameters } from '../../requests';
 import { UserContext } from '../../contexts/user.context';
 import AppModal from '../../components/ui-elements/modal';
-import GenreForm from '../../components/profile/genre-form/genre-form.component';
-import AlbumForm from '../../components/profile/album-form/album-form.component';
-import PlaylistForm from '../../components/profile/playlist-form/playlist-form.component';
-import ArtistForm from '../../components/profile/artist-form/artist-form.component';
-import TrackForm from '../../components/profile/track-form/track-form.component';
+import AlbumForm from './forms/album-form/album-form.component';
+import PlaylistForm from './forms/playlist-form/playlist-form.component';
+import ArtistForm from './forms/artist-form/artist-form.component';
+import TrackForm from './forms/track-form/track-form.component';
 import { Navigate } from 'react-router-dom';
 import { DbStats } from '../../types';
+import GenreForm from './forms/genre-form/genre-form.component';
 
 type AddSection = 'artist' | 'album' | 'genre' | 'playlist' | 'track';
 

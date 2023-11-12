@@ -1,13 +1,11 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 
 import './genre-form.styles.scss';
-import FileUploader from '../../file-uploader/file-uploader.component';
-import {
-  getBase64FromFile,
-  validateFieldRequiredNotEmpty,
-} from '../../../utils';
 import { Tooltip } from '@mui/material';
+import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
+import { getBase64FromFile, validateFieldRequiredNotEmpty } from 'apps/music-applications-f/src/app/utils';
 
 export interface GenreFormFields {
   genreDescription: string;
@@ -110,7 +108,7 @@ const GenreForm = () => {
           </Tooltip>
         </div>
         <div className="control-wrapper">
-          <Tooltip title="Describe music in genre in few words" placement='top'>
+          <Tooltip title="Describe music in genre in few words" placement="top">
             <TextField
               name="genreDescription"
               className="form-value-input"
