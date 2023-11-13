@@ -308,7 +308,7 @@ export class DatabaseService {
     ).records.map((value) => value['_fields']);
 
     return records.map(([record]) => {
-      return { itemType: record.labels.at(0), properties: record.properties };
+      return { itemType: record.labels.at(0).toLowerCase(), properties: record.properties };
     });
   }
 
