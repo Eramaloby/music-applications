@@ -27,7 +27,7 @@
     }
   }
 
-  .add-item-text-btn{
+  .add-item-text-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -45,9 +45,9 @@
     .btn {
       width: 20%;
       background-color: black;
+      color: white;
     }
   }
-
 }
 
 .modal-wrapper {
@@ -80,12 +80,12 @@
       justify-content: left;
       align-items: flex-start;
       text-align: left;
-      color: white; 
+      color: white;
 
       font-size: larger;
       &:hover {
         cursor: pointer;
-        color:beige;
+        color: beige;
       }
     }
   }
@@ -109,4 +109,3 @@
     }
   }
 }
-
