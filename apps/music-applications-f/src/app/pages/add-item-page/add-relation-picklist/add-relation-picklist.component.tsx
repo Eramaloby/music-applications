@@ -41,7 +41,7 @@ export const AddRelationPicklist = ({
   useEffect(() => {
     const wrapper = async () => {
       const response = await fetchDatabaseItemsByType(type);
-      
+
       const alreadySelectedFiltered = response.filter((item) =>
         alreadySelectedItemsIds.includes(item.id)
       );
@@ -114,7 +114,7 @@ export const AddRelationPicklist = ({
 
   return (
     <>
-      {/* Ivan: Добавь сюда какое-нибудь оглавление, типо вот отфильтруйте жанры/артисты по имени, у тебя в пропсах ещё подпись, которая обозначает какое отношение сейчас задается, следует её использовать */}
+      <h1>Search specific {type} by name</h1>
       <input
         type="search"
         value={searchQuery}
@@ -138,9 +138,12 @@ export const AddRelationPicklist = ({
             );
           })}
       </div>
-      {/* Ivan: сюда стильков */}
-      <button type="button" onClick={submitRelationships}>
-        Add node(s) to relationship
+      <button
+        type="button"
+        onClick={submitRelationships}
+        className="submit-relationships-button"
+      >
+        Add node(s)
       </button>
     </>
   );
@@ -154,21 +157,22 @@ const AddRelationPicklistItem = ({
   return (
     <>
       <div className="picklist-item">
-        {/* Ivan: Нужно выводить какую-то особую информацию характерную данному типу, можно шрифтом меньше */}
-        {itemType === 'genre' && <h1>{row.item.name} - genre</h1>}
-        {itemType === 'artist' && <h1>{row.item.name} - artist</h1>}
-        {itemType === 'album' && <h1>{row.item.name} - album</h1>}
-        {itemType === 'track' && <h1>{row.item.name} - track</h1>}
-        {itemType === 'playlist' && <h1>{row.item.name} - playlist</h1>}
+        {itemType === 'genre' && <h2>{row.item.name} - genre</h2>}
+        {itemType === 'artist' && <h2>{row.item.name} - artist</h2>}
+        {itemType === 'album' && <h2>{row.item.name} - album</h2>}
+        {itemType === 'track' && <h2>{row.item.name} - track</h2>}
+        {itemType === 'playlist' && <h2>{row.item.name} - playlist</h2>}
       </div>
-      <button
-        className={
-          'picklist-item-button-' + (row.selected ? 'checked' : 'unchecked')
-        }
-        onClick={() => handleClick(row.item.id, !row.selected)}
-      >
-        {row.selected ? 'remove selection' : 'select'}
-      </button>
+      <div className="picklist-button-container">
+        <button
+          className={
+            'picklist-item-button-' + (row.selected ? 'checked' : 'unchecked')
+          }
+          onClick={() => handleClick(row.item.id, !row.selected)}
+        >
+          {row.selected ? 'remove selection' : 'select'}
+        </button>
+      </div>
     </>
   );
 };
