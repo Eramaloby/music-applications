@@ -18,6 +18,7 @@ export class UserInteractionService {
     const user = await this.authService.getUser(username);
     if (user === null) {
       return {
+        imageBase64: '',
         exists: false,
         username: username,
         likes: [],
@@ -30,9 +31,12 @@ export class UserInteractionService {
     const stats = await this.profileService.getProfileStats(username);
 
     const response: UserInformation = {
+      imageBase64: user.pictureBase64,
       exists: true,
       username: user.username,
-      likes: await this.likeService.findUserLikes(user),
+      likes: await this.databaseService.getNodesShort(
+        (await this.likeService.findUserLikes(user)).map((like) => like.nodeId)
+      ),
       added: await this.databaseService.getUserAddedNodes(username),
       relationshipsCount: stats.relsCount,
       nodesCount: stats.nodesCount,

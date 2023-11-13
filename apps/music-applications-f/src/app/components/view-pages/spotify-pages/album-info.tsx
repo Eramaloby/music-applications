@@ -28,7 +28,7 @@ const AlbumInfo = ({
       spotify_id: album.spotify_id,
       type: album.type,
       label: album.label,
-      image: album.image ? album.image : undefined,
+      image: album.image?.url ? album.image.url : 'Not provided',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

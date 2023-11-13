@@ -19,7 +19,7 @@ const ArtistInfo = ({
       spotify_id: artist.spotify_id,
       type: artist.type,
       label: artist.label,
-      image: artist.image ? artist.image : undefined,
+      image: artist.image?.url ? artist.image.url : 'Not provided',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

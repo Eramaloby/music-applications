@@ -385,6 +385,7 @@ export const receiveRecommendations = async (
       },
     });
 
+    console.log(result);
     const [albums, genres, artists, tracks] = [
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       result.data.albums.map((obj: any) =>
@@ -438,10 +439,9 @@ export const getSpotifyItem = async (
 
 export interface GetUserInformationResponse {
   username: string;
-  imageBase64?: string;
-  imageUrl?: string;
-  // add likes module
-  added: { type: string; name: string; nodeId: string }[];
+  imageBase64: string;
+  added: ItemPreview[];
+  likes: ItemPreview[];
   relationshipsCount: number;
   nodesCount: number;
 
@@ -457,15 +457,16 @@ export const getUserInformation = async (
       `${baseUrl}/interactions/user/${username}`
     );
 
-    console.log(response.data, 'response');
     return response.data;
   } catch (error) {
     return {
       username: username,
       exists: false,
       added: [],
+      likes: [],
       relationshipsCount: 0,
       nodesCount: 0,
+      imageBase64: '',
     };
   }
 };

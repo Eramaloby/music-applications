@@ -1,11 +1,10 @@
-import { Like } from '../likes/like.entity';
+import { DatabaseItemPreview } from "../neo4j/types";
 
 export interface UserInformation {
   username: string;
-  imageBase64?: string;
-  imageUrl?: string;
-  likes: Like[];
-  added: { type: string; name: string; nodeId: string }[];
+  imageBase64: string;
+  likes: DatabaseItemPreview[];
+  added: DatabaseItemPreview[];
   relationshipsCount: number;
   nodesCount: number;
   exists: boolean;

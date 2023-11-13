@@ -32,7 +32,7 @@ const TaskHistoryItem = ({ item }: { item: FulfilledTask }) => {
       ) : (
         <div className="details">
           Insertion of <span>{item.targetRecordType}</span> was successful.
-          Click button below to get moreindex detailed information.
+          Click button below to get more detailed information.
         </div>
       )}
       <button

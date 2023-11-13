@@ -62,7 +62,7 @@ const DatabaseItemPage = () => {
             type: type,
             label: fetchResult.item.properties.name,
             databaseId: fetchResult.item.properties.id,
-            // image: fetchedItem.properties.image_url
+            image: fetchResult.item.properties.image,
           });
         } else {
           setFetchedError('Item not found');

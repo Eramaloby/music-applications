@@ -74,6 +74,7 @@ export const parseNeo4jRecommendation = (
     databaseId: data.id,
     type: type,
     label: data.name,
+    image: data.image,
   };
 };
 
@@ -83,9 +84,9 @@ export const parseNeo4jLikes = (data: any): ItemPreview => {
     databaseId: data.properties.id,
     type: data.labels[0],
     label: data.properties.name,
+    image: data.properties.image,
   };
 };
-
 
 export const emailExpression = new RegExp(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
 export const usernameExpression = new RegExp(/^[a-zA-Z]+$/);

@@ -46,7 +46,7 @@ const TrackInfo = ({
       spotify_id: track.spotify_id,
       type: track.type,
       label: track.label,
-      image: track.album.image ? track.album.image : undefined,
+      image: track.album?.image ? track.album.image.url : 'Not provided',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -1,8 +1,8 @@
 .profile-wrapper {
   display: flex;
-  height: 100%;
+  max-height: 100%;
   flex-direction: row;
-  padding: 100px;
+  padding: 60px 100px 20px 100px;
 
   .profile-summary {
     display: flex;
@@ -17,6 +17,19 @@
       display: flex;
       justify-content: center;
       flex-direction: column;
+
+      .profile-picture-container {
+        width: 300px;
+        height: 300px;
+
+        img {
+          width: 100%;
+          border: 1px solid transparent;
+          border-radius: 50%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
 
       .profile-name {
         font-size: medium;
@@ -44,12 +57,70 @@
   }
 
   .profile-records {
+    flex: 1;
+    gap: 50px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
-    gap: 40px;
-    height: 100%;
-    width: 80%;
+    max-height: 100%;
+    margin-left: 50px;
+
+    .liked-records-container,
+    .added-records-container {
+      display: flex;
+      justify-content: center;
+      .liked-records-container-wrapper,
+      .added-records-container-wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .liked-records-container-title,
+        .added-records-container-title {
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: 600;
+          font-size: x-large;
+        }
+
+        .liked-records-container-items::-webkit-scrollbar {
+          display: none;
+        }
+
+        .added-records-container-items::-webkit-scrollbar {
+          display: none;
+        }
+
+        .added-records-container-items,
+        .liked-records-container-items {
+          margin-top: 20px;
+          height: 400px;
+          overflow-y: scroll;
+          display: grid;
+          gap: 5px;
+          grid-template-columns: repeat(3, minmax(212px, 1fr));
+        }
+      }
+    }
+  }
+}
+
+.profile-no-profile-msg {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 30px;
+
+  font-weight: 700;
+  font-size: x-large;
+
+  .link {
+    color: greenyellow;
+    cursor: pointer;
   }
 }

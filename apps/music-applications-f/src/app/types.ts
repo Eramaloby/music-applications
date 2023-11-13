@@ -296,7 +296,7 @@ export interface User {
 export interface ItemPreview {
   databaseId?: string;
   spotify_id?: string;
-  image?: { height?: number; url: string; width?: number };
+  image: string;
   label: string;
   type: string;
 }

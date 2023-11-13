@@ -173,3 +173,10 @@ export interface SearchResult {
   spotify_id?: string;
   database_id?: string;
 }
+
+export interface DatabaseItemPreview {
+  type: string;
+  label: string;
+  image: string;
+  databaseId: string;
+}

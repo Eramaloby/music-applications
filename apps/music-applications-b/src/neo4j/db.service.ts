@@ -9,6 +9,7 @@ import {
   ArtistModel,
   ArtistProperties,
   ArtistWithRelationships,
+  DatabaseItemPreview,
   GenreModel,
   GenreProperties,
   GenreWithRelationships,
@@ -104,9 +105,13 @@ export class DatabaseService {
   };
 
   public getNodesWithType = async (type: string) => {
-    const res = (await this.dbService.read(`MATCH (obj: ${type}) return obj`)).records.map((value) => value['_fields']).flat();
+    const res = (
+      await this.dbService.read(`MATCH (obj: ${type}) return obj`)
+    ).records
+      .map((value) => value['_fields'])
+      .flat();
     return res.map((node) => node.properties);
-  }
+  };
 
   private async getNeo4jData(id: string, type: string) {
     const nodeWithRelationships = (
@@ -297,53 +302,118 @@ export class DatabaseService {
     return [nodesCount, relationshipsCount];
   }
 
-  public async getUserAddedNodes(
-    username: string
-  ): Promise<{ type: string; name: string; nodeId: string }[]> {
+  public async getNodesShort(
+    nodeIds: string[]
+  ): Promise<DatabaseItemPreview[]> {
     const utility = async (type: string) =>
       (
         await this.dbService.read(
-          `MATCH (n: ${type}) WHERE n.added_by = "${username}" RETURN n.id AS id, n.name AS name`
+          `MATCH (n: ${type}) WHERE n.id IN ${JSON.stringify(
+            nodeIds
+          )} RETURN n.id AS databaseId, n.name AS label, n.image AS image`
         )
       ).records;
 
     const genres = (await utility('Genre')).map((recordShape) => {
       return {
-        name: String(recordShape.get('name')),
-        nodeId: String(recordShape.get('id')),
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
         type: 'genre',
       };
     });
 
     const artists = (await utility('Artist')).map((recordShape) => {
       return {
-        name: String(recordShape.get('name')),
-        nodeId: String(recordShape.get('id')),
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
         type: 'artist',
       };
     });
 
     const albums = (await utility('Album')).map((recordShape) => {
       return {
-        name: String(recordShape.get('name')),
-        nodeId: String(recordShape.get('id')),
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
         type: 'album',
       };
     });
 
     const tracks = (await utility('Track')).map((recordShape) => {
       return {
-        name: String(recordShape.get('name')),
-        nodeId: String(recordShape.get('id')),
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
         type: 'track',
       };
     });
 
     const playlists = (await utility('Playlist')).map((recordShape) => {
       return {
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
+        type: 'playlist'
+      };
+    });
+
+    return [...genres, ...artists, ...albums, ...tracks, ...playlists];
+  }
+
+  public async getUserAddedNodes(
+    username: string
+  ): Promise<DatabaseItemPreview[]> {
+    const utility = async (type: string) =>
+      (
+        await this.dbService.read(
+          `MATCH (n: ${type}) WHERE n.added_by = "${username}" RETURN n.id AS databaseId, n.name AS label, n.image AS image`
+        )
+      ).records;
+
+    const genres = (await utility('Genre')).map((recordShape) => {
+      return {
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
+        type: 'genre',
+      };
+    });
+
+    const artists = (await utility('Artist')).map((recordShape) => {
+      return {
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
+        type: 'artist',
+      };
+    });
+
+    const albums = (await utility('Album')).map((recordShape) => {
+      return {
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
+        type: 'album',
+      };
+    });
+
+    const tracks = (await utility('Track')).map((recordShape) => {
+      return {
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
+        type: 'track',
+      };
+    });
+
+    const playlists = (await utility('Playlist')).map((recordShape) => {
+      return {
+        label: String(recordShape.get('label')),
+        databaseId: String(recordShape.get('databaseId')),
+        image: String(recordShape.get('image')),
         type: 'playlist',
-        name: String(recordShape.get('name')),
-        nodeId: String(recordShape.get('id')),
       };
     });
 

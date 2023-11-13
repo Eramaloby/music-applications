@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../../contexts/user.context';
 import { GetUserInformationResponse, getUserInformation } from '../../requests';
 import './foreign-profile.styles.scss';
+import ViewPanelContainer from '../../components/recently-viewed-panel/view-panel-container';
 
 const ForeignProfile = () => {
   const [isDataSettled, setIsDataSettled] = useState<boolean>(false);
@@ -32,7 +33,7 @@ const ForeignProfile = () => {
         getUserInformation(username).then((value) => {
           if (value.exists) {
             toast.update(toastRef.current as Id, {
-              render: 'Its cool',
+              render: 'ready...',
               position: 'top-center',
               type: 'success',
               isLoading: false,
@@ -54,7 +55,7 @@ const ForeignProfile = () => {
         });
       }
     }
-  }, []);
+  }, [currentUser]);
 
   // not authorized => no actions
   // user is viewing his own page => redirect to profile page(or restrict actions)
@@ -68,8 +69,10 @@ const ForeignProfile = () => {
           <div className="profile-wrapper">
             <div className="profile-summary">
               <div className="profile-user-info">
+                <div className="profile-picture-container">
+                  <img src={userInfo.imageBase64} alt=""></img>
+                </div>
                 <div className="profile-name">{userInfo?.username}</div>
-                <div className="profile-picture-container">IMAGE</div>
                 <div className="profile-stats">
                   Count of nodes added by user:{' '}
                   <span>{userInfo.nodesCount}</span>
@@ -84,14 +87,29 @@ const ForeignProfile = () => {
               </div>
             </div>
             <div className="profile-records">
-              <div className="liked-records-container">Container for likes</div>
+              <div className="liked-records-container">
+                <ViewPanelContainer
+                  title="User likes"
+                  items={userInfo.likes}
+                  containerClassName="liked-records-container"
+                ></ViewPanelContainer>
+              </div>
               <div className="added-records-container">
-                Container for records
+                <ViewPanelContainer
+                  title="User records"
+                  items={userInfo.added}
+                  containerClassName="added-records-container"
+                ></ViewPanelContainer>
               </div>
             </div>
           </div>
         ) : (
-          <div className="profile-no-profile-msg">Non existing profile</div>
+          <div className="profile-no-profile-msg">
+            <div>Whoops...Seems like that profile don't exist anymore..</div>
+            <div className="link" onClick={() => router(-1)}>
+              Click here to go back
+            </div>
+          </div>
         )
       ) : (
         <div className="profile-wait"></div>

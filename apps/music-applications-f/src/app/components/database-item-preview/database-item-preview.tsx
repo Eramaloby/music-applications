@@ -26,11 +26,11 @@ const DatabaseItemPreview = ({
     ')';
   return (
     <div className="database-preview-wrapper">
-      {item.image ? (
+      {item.image && item.image !== 'Not provided' ? (
         <div
           className="database-item-preview-wrapper"
           style={{
-            backgroundImage: `url(${item.image.url})`,
+            backgroundImage: `url(${item.image})`,
           }}
           onClick={() => onClickCallback(item.databaseId as string, item.type)}
         ></div>

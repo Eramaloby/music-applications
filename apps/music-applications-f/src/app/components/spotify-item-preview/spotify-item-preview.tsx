@@ -13,7 +13,7 @@ const SpotifyItemPreview = ({
     <div className='spotify-preview-wrapper'>
       <div
       className="spotify-preview-item-wrapper"
-      style={{ backgroundImage: `url(${item.image?.url})` }}
+      style={{ backgroundImage: `url(${item.image})` }}
       onClick={() => onClickCallback(item.spotify_id as string, item.type)}
       >
       </div>
