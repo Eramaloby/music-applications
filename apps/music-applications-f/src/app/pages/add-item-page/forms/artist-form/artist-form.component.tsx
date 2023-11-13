@@ -5,6 +5,8 @@ import { fetchDatabaseItemsByType } from '../../../../requests';
 import AppModal from '../../../../components/ui-elements/modal';
 import { AddRelationPicklist } from '../../add-relation-picklist/add-relation-picklist.component';
 import { Neo4jItemProperties } from '../../../../types';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
 
 export interface ArtistFormFields {
   artistName: string;
@@ -148,6 +150,21 @@ const ArtistForm = () => {
           </Tooltip>
         </div>
         <div className="control-wrapper">
+          <div style={{ width: '70%' }}>
+            <FileUploader
+              handleFile={() => {
+                return;
+              }}
+              buttonText="Upload genre image"
+              showFileName={true}
+            ></FileUploader>
+          </div>
+
+          {/* {errors.imageBase64 && (
+            <div className="image-validation-message">{errors.imageBase64}</div>
+          )} */}
+        </div>
+        <div className="control-wrapper">
           <button
             onClick={() => setModal(true)}
             className="submit-relationships-button"
@@ -178,6 +195,15 @@ const ArtistForm = () => {
           )}
         </div>
       </div>
+      <button
+        type="button"
+        className="create-btn"
+        onClick={() => {
+          return;
+        }}
+      >
+        Submit genre
+      </button>
     </div>
   );
 };
