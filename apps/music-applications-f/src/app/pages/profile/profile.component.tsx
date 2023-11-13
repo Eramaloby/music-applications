@@ -145,35 +145,38 @@ const Profile = () => {
           Relationships saved by you:{' '}
           <span>{currentUser.relationshipsCount}</span>
         </div>
-        <div className="profile-notifications">
-          <div className="notifications-header">Pending notifications</div>
-          <div className="notifications">
-            {notifications
-              .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-              .map((notification, index) => {
-                return (
-                  <div key={index} className="notification">
-                    <div className="text">
-                      <span
-                        onClick={() =>
-                          router(`/profile/${notification.actorUsername}`)
-                        }
+
+        {notifications.length > 0 && (
+          <div className="profile-notifications">
+            <div className="notifications-header">Pending notifications</div>
+            <div className="notifications">
+              {notifications
+                .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+                .map((notification, index) => {
+                  return (
+                    <div key={index} className="notification">
+                      <div className="text">
+                        <span
+                          onClick={() =>
+                            router(`/profile/${notification.actorUsername}`)
+                          }
+                        >
+                          {notification.actorUsername}
+                        </span>{' '}
+                        {notification.state} to you...
+                      </div>
+                      <div
+                        className="mark"
+                        onClick={() => hideNotification(notification.id)}
                       >
-                        {notification.actorUsername}
-                      </span>{' '}
-                      {notification.state} to you...
+                        hide
+                      </div>
                     </div>
-                    <div
-                      className="mark"
-                      onClick={() => hideNotification(notification.id)}
-                    >
-                      hide
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="profile-page-content">
