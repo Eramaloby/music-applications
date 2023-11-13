@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-import './network.styles.scss';
+import './charts.styles.scss';
 import GoldStar from '../../../assets/gold-star.png';
 import Star from '../../../assets/star.png';
 

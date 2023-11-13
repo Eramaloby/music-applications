@@ -1,8 +1,8 @@
 import { Link, Routes, Route, useNavigate } from 'react-router-dom';
 import HomePage from '../../pages/home/home';
 import AboutPage from '../../pages/about/about';
-import RankingNeuralNetworkPage from '../../pages/networks/ranking-network';
-import LyricsGeneratorNetwork from '../../pages/networks/generator-network';
+import RankingNeuralNetworkPage from '../../pages/charts/ranking-network';
+import ChartsPage from '../../pages/charts/charts-page';
 import SearchPageDb from '../../pages/search/search-db';
 import SearchWebPage from '../../pages/search/search-web';
 import SpotifyContentPage from '../../pages/spotify-content/spotify-content';
@@ -33,8 +33,8 @@ const ApplicationRouter = () => {
         <Link className="router-link" to="/ranking">
           Ranking Neural Network
         </Link>
-        <Link className="router-link" to="/lyrics-generator">
-          Lyrics generator network
+        <Link className="router-link" to="/charts-page">
+          Explore Charts
         </Link>
         <Link className="router-link" to="/search">
           Explore graph base
@@ -61,10 +61,7 @@ const ApplicationRouter = () => {
       </div>
       <div className="main-content">
         <Routes>
-          <Route
-            path="/lyrics-generator"
-            element={<LyricsGeneratorNetwork />}
-          ></Route>
+          <Route path="/charts-page" element={<ChartsPage />}></Route>
           <Route path="/" element={<HomePage />}></Route>
           <Route path="/about" element={<AboutPage />}></Route>
           <Route path="/ranking" element={<RankingNeuralNetworkPage />}></Route>
@@ -88,7 +85,10 @@ const ApplicationRouter = () => {
 
       {/* TODO: refactor to mouseenter/mouseleave events?  */}
       {profileMenuVisible && (
-        <div className="profile-menu" onMouseLeave={() => setProfileMenuVisible(false)}>
+        <div
+          className="profile-menu"
+          onMouseLeave={() => setProfileMenuVisible(false)}
+        >
           <div
             className="profile-menu__link"
             onClick={() => router('/profile')}
