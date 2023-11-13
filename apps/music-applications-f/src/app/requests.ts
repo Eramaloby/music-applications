@@ -10,6 +10,7 @@ import {
   FulfilledTask,
 } from './types';
 import { parseNeo4jLikes, parseNeo4jRecommendation } from './utils';
+import { ProfileNotification } from './pages/profile/profile.component';
 
 export const baseUrl = 'http://localhost:4200/api';
 
@@ -73,7 +74,7 @@ export interface PostItemResponse {
 
 export const postItemFromParameters = async (accessToken: string, dto: any) => {
   try {
-    const _ = await axios.post(`${baseUrl}/neo4j/genre`, dto, {
+    const response = await axios.post(`${baseUrl}/neo4j/genre`, dto, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -457,6 +458,8 @@ export interface GetUserInformationResponse {
   nodesCount: number;
 
   exists: boolean;
+  subscribers: string;
+  subscriptions: string;
 }
 
 /* USER INTERACTIONS REQUESTS */
@@ -478,7 +481,81 @@ export const getUserInformation = async (
       relationshipsCount: 0,
       nodesCount: 0,
       imageBase64: '',
+      subscribers: '',
+      subscriptions: '',
     };
+  }
+};
+
+export const getUserNotifications = async (
+  accessToken: string
+): Promise<ProfileNotification[]> => {
+  try {
+    const response = await axios.get(`${baseUrl}/interactions/`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    return response.data;
+  } catch (error) {
+    return [];
+  }
+};
+
+export const sendMarkNotificationAsViewed = async (
+  notificationId: string,
+  accessToken: string
+) => {
+  try {
+    await axios.patch(
+      `${baseUrl}/interactions/${notificationId}`,
+      {},
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const sendSubscribeToUser = async (
+  targetUsername: string,
+  accessToken: string
+) => {
+  try {
+    await axios.post(
+      `${baseUrl}/interaction/${targetUsername}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+export const sendUnsubscribeToUser = async (
+  targetUsername: string,
+  accessToken: string
+) => {
+  try {
+    await axios.patch(
+      `${baseUrl}/interaction/${targetUsername}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return true;
+  } catch (error) {
+    return false;
   }
 };
 

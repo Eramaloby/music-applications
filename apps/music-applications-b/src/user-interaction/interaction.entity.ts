@@ -1,5 +1,11 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
+@Entity()
 export class Interaction {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -15,4 +21,10 @@ export class Interaction {
 
   @Column()
   viewed: boolean;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  createdAt: Date;
 }

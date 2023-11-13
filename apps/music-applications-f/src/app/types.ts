@@ -283,6 +283,8 @@ export interface User {
   profileImageBase64: string;
   nodesCount: number;
   relationshipsCount: number;
+  subscriptions: string;
+  subscribers: string;
 }
 
 // export enum ProfilePageStates {

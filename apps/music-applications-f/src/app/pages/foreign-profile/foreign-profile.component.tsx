@@ -2,13 +2,19 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Id, toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../../contexts/user.context';
-import { GetUserInformationResponse, getUserInformation } from '../../requests';
+import {
+  GetUserInformationResponse,
+  getUserInformation,
+  sendSubscribeToUser,
+  sendUnsubscribeToUser,
+} from '../../requests';
 import './foreign-profile.styles.scss';
 import ViewPanelContainer from '../../components/recently-viewed-panel/view-panel-container';
 
 const ForeignProfile = () => {
   const [isDataSettled, setIsDataSettled] = useState<boolean>(false);
   const { currentUser } = useContext(UserContext);
+  const [isSubbed, setIsSubbed] = useState(false);
 
   const [userInfo, setUserInfo] = useState<GetUserInformationResponse | null>(
     null
@@ -17,6 +23,31 @@ const ForeignProfile = () => {
 
   const params = useParams();
   const router = useNavigate();
+
+  const subscribeToUser = async () => {
+    if (userInfo && currentUser) {
+      const answer = await sendSubscribeToUser(
+        userInfo.username,
+        currentUser.accessToken
+      );
+      if (answer) {
+        setIsSubbed(true);
+      }
+    }
+  };
+
+  const unsubscribeFromUser = async () => {
+    if (userInfo && currentUser) {
+      const answer = await sendUnsubscribeToUser(
+        userInfo.username,
+        currentUser.accessToken
+      );
+
+      if (answer) {
+        setIsSubbed(false);
+      }
+    }
+  };
 
   useEffect(() => {
     if (!isDataSettled) {
@@ -51,6 +82,9 @@ const ForeignProfile = () => {
             });
           }
 
+          currentUser &&
+            setIsSubbed(value.subscribers.includes(currentUser.username));
+
           setIsDataSettled(true);
         });
       }
@@ -82,9 +116,25 @@ const ForeignProfile = () => {
                   <span>{userInfo.relationshipsCount}</span>
                 </div>
               </div>
-              <div className="profile-actions">
-                <div className="follow-unfollow-button">Follow \ unfollow</div>
-              </div>
+              {currentUser && (
+                <div className="profile-actions">
+                  {isSubbed ? (
+                    <div
+                      className="follow-unfollow-button"
+                      onClick={unsubscribeFromUser}
+                    >
+                      Unsubscribe
+                    </div>
+                  ) : (
+                    <div
+                      className="follow-unfollow-button"
+                      onClick={subscribeToUser}
+                    >
+                      Subscribe
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <div className="profile-records">
               <div className="liked-records-container">

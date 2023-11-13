@@ -8,4 +8,6 @@ export interface UserInformation {
   relationshipsCount: number;
   nodesCount: number;
   exists: boolean;
+  subscribers: string;
+  subscriptions: string;
 }

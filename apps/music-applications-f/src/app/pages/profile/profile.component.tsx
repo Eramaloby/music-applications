@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../contexts/user.context';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 import './profile.styles.scss';
 import { FulfilledTask, ItemPreview, User } from '../../types';
@@ -8,7 +8,9 @@ import FileUploader from '../../components/file-uploader/file-uploader.component
 import { getBase64FromFile } from '../../utils';
 import {
   fetchProfileTaskHistory,
+  getUserNotifications,
   receiveRecommendations,
+  sendMarkNotificationAsViewed,
   updateProfileImage,
 } from '../../requests';
 import { toast } from 'react-toastify';
@@ -20,6 +22,15 @@ import SingleTaskState from './single-task-state/single-task-state.component';
 import TaskHistoryItem from './task-history/task-history.component';
 import ViewPanelContainer from '../../components/recently-viewed-panel/view-panel-container';
 
+export interface ProfileNotification {
+  id: string;
+  actorUsername: string;
+  receiverUsername: string;
+  state: 'subscribed' | 'unsubscribed';
+  viewed: boolean;
+  createdAt: Date;
+}
+
 const Profile = () => {
   // const [pageState, setPageState] = useState<ProfilePageStates>(
   //   ProfilePageStates.DEFAULT
@@ -29,14 +40,17 @@ const Profile = () => {
   //   setPageState(ProfilePageStates.DEFAULT);
   // };
 
+  const router = useNavigate();
+
   const { currentUser } = useContext(UserContext);
   const { tasks } = useContext(TaskContext);
 
   const [currentImageUrl, setCurrentImageUrl] = useState<string>(
     currentUser?.profileImageBase64 ?? ''
   );
-  const [tasksState, setTasksState] = useState<AsyncNeo4jTaskMetadata[]>(tasks);
+  const [tasksState] = useState<AsyncNeo4jTaskMetadata[]>(tasks);
   const [taskHistory, setTaskHistory] = useState<FulfilledTask[]>([]);
+  const [notifications, setNotifications] = useState<ProfileNotification[]>([]);
   const [recommendations, setRecommendations] = useState<ItemPreview[]>([]);
 
   const updateTasks = async () => {
@@ -57,10 +71,37 @@ const Profile = () => {
     }
   };
 
+  const hideNotification = async (id: string) => {
+    if (currentUser) {
+      const answer = await sendMarkNotificationAsViewed(
+        id,
+        currentUser.accessToken
+      );
+      if (answer) {
+        await updateNotifications();
+      }
+    }
+  };
+
+  const updateNotifications = async () => {
+    if (currentUser) {
+      const notifications = await getUserNotifications(currentUser.accessToken);
+
+      if (notifications) {
+        console.log(notifications);
+        setNotifications([...notifications]);
+      }
+    }
+  };
+
   useEffect(() => {
     const wrapper = async () => {
       if (currentUser) {
-        await Promise.allSettled([updateRecommendations(), updateTasks()]);
+        await Promise.allSettled([
+          updateRecommendations(),
+          updateTasks(),
+          updateNotifications(),
+        ]);
       }
     };
 
@@ -103,6 +144,35 @@ const Profile = () => {
           Nodes saved by you: <span>{currentUser.nodesCount}</span> <br></br>
           Relationships saved by you:{' '}
           <span>{currentUser.relationshipsCount}</span>
+        </div>
+        <div className="profile-notifications">
+          <div className="notifications-header">Pending notifications</div>
+          <div className="notifications">
+            {notifications
+              .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+              .map((notification, index) => {
+                return (
+                  <div key={index} className="notification">
+                    <div className="text">
+                      <span
+                        onClick={() =>
+                          router(`/profile/${notification.actorUsername}`)
+                        }
+                      >
+                        {notification.actorUsername}
+                      </span>{' '}
+                      {notification.state} to you...
+                    </div>
+                    <div
+                      className="mark"
+                      onClick={() => hideNotification(notification.id)}
+                    >
+                      hide
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </div>
 
@@ -157,62 +227,11 @@ const Profile = () => {
             <ViewPanelContainer
               title="According to your taste you would like:"
               items={recommendations}
-              containerClassName='profile-recommendations'
+              containerClassName="profile-recommendations"
             ></ViewPanelContainer>
           </div>
         )}
       </div>
-
-      {/* <div className="profile-page-action-panel">
-        <div
-          className="export-saved-records-btn btn"
-        >
-          You
-        </div> */}
-      {/* <div className="export-saved-records-btn btn">Export saved items</div>
-        <div
-          className="search-saved-records-btn btn"
-          onClick={() => setPageState(ProfilePageStates.SEARCH_SAVED_ITEMS)}
-        >
-          Search saved items
-        </div> */}
-      {/* <div
-          className="view-liked-records-btn btn"
-          onClick={() => setPageState(ProfilePageStates.LIKED_ITEMS)}
-        >
-          View liked items
-        </div>
-        <div
-          className="add-new-item-btn btn"
-          onClick={() => setPageState(ProfilePageStates.ADD_NEW_ITEM)}
-        >
-          Add new instance to database
-        </div>
-        <div
-          className="change-password-btn btn"
-          onClick={() => setPageState(ProfilePageStates.RESET_PASSWORD)}
-        >
-          Change Password
-        </div>
-        <div className="sign-out-btn btn" onClick={() => signOutHandler()}>
-          Sign out
-        </div>
-      </div> */}
-      {/* {pageState === ProfilePageStates.DEFAULT && (
-        <ProfileInfoComponent user={currentUser as User}></ProfileInfoComponent>
-      )}
-      {pageState === ProfilePageStates.LIKED_ITEMS && (
-        <ViewLikedItemsComponent></ViewLikedItemsComponent>
-      )}
-      {pageState === ProfilePageStates.RESET_PASSWORD && (
-        <ChangePasswordPage></ChangePasswordPage>
-      )}
-      {pageState === ProfilePageStates.SEARCH_SAVED_ITEMS && (
-        <SearchSavedItemsComponent></SearchSavedItemsComponent>
-      )}
-      {pageState === ProfilePageStates.ADD_NEW_ITEM && (
-        <AddItemPage navigateBack={switchToDefaultView}></AddItemPage>
-      )} */}
     </div>
   );
 };

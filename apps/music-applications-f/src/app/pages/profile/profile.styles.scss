@@ -47,6 +47,43 @@
         color: greenyellow;
       }
     }
+
+    .profile-notifications {
+      width: 100%;
+      margin-top: 30px;
+      font-weight: 600;
+
+      .notifications-header {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .notifications {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+
+        .notification {
+          display: flex;
+          justify-content: space-between;
+          
+          .text {
+            align-self: flex-end;
+            span {
+              color: greenyellow;
+              cursor: pointer;
+            }
+          }
+          
+          .mark {
+            align-self: flex-end;
+            cursor: pointer;
+            color: rgb(255, 0, 0, 0.5);
+          }
+        }
+      }
+    }
   }
 
   .profile-page-content {
@@ -108,7 +145,7 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-  
+
         .profile-recommendations-title {
           text-transform: uppercase;
           letter-spacing: 1px;
@@ -118,11 +155,11 @@
           font-weight: 600;
           font-size: x-large;
         }
-  
+
         .profile-recommendations-items::-webkit-scrollbar {
           display: none;
         }
-  
+
         .profile-recommendations-items {
           margin-top: 20px;
           height: 400px;

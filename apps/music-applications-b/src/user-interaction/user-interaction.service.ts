@@ -13,12 +13,12 @@ import { User } from '../auth/user.entity';
 @Injectable()
 export class UserInteractionService {
   constructor(
+    @InjectRepository(Interaction)
+    private readonly interactionRepository: InteractionRepository,
     private readonly authService: AuthService,
     private readonly likeService: LikeService,
     private readonly profileService: ProfileService,
-    private readonly databaseService: DatabaseService,
-    @InjectRepository(Interaction)
-    private readonly interactionRepository: InteractionRepository
+    private readonly databaseService: DatabaseService
   ) {}
 
   async getUserProfileStats(username: string): Promise<UserInformation> {
@@ -32,6 +32,8 @@ export class UserInteractionService {
         added: [],
         relationshipsCount: 0,
         nodesCount: 0,
+        subscribers: '[]',
+        subscriptions: '[]',
       };
     }
 
@@ -47,6 +49,8 @@ export class UserInteractionService {
       added: await this.databaseService.getUserAddedNodes(username),
       relationshipsCount: stats.relsCount,
       nodesCount: stats.nodesCount,
+      subscribers: user.subscribers,
+      subscriptions: user.subscriptions,
     };
 
     return response;
@@ -56,6 +60,20 @@ export class UserInteractionService {
     return await this.interactionRepository.find({
       where: { receiverUsername: username, viewed: false },
     });
+  }
+
+  async viewNotification(id: string) {
+    const notifications = await this.interactionRepository.find({
+      where: { id: id, viewed: false },
+    });
+
+    const notification = notifications.at(0);
+    return notification
+      ? await this.interactionRepository.update(
+          { id: id },
+          { ...notification, viewed: true }
+        )
+      : null;
   }
 
   async getUserSubscribers(
@@ -82,13 +100,6 @@ export class UserInteractionService {
   }
 
   async subscribeToTargetUser(targetUsername: string, actor: User) {
-    await this.interactionRepository.createInteraction({
-      actorUsername: actor.username,
-      receiverUsername: targetUsername,
-      state: 'subscribed',
-      viewed: false,
-    });
-
     const subscriptionsActor = JSON.parse(actor.subscriptions) as string[];
     const targetUser = await this.authService.getUser(targetUsername);
     const subscribersTarget = JSON.parse(targetUser.subscribers) as string[];
@@ -99,8 +110,49 @@ export class UserInteractionService {
       );
     }
 
+    await this.interactionRepository.createInteraction({
+      actorUsername: actor.username,
+      receiverUsername: targetUsername,
+      state: 'subscribed',
+      viewed: false,
+    });
+
     subscriptionsActor.push(targetUsername);
     subscribersTarget.push(actor.username);
+
+    targetUser.subscribers = JSON.stringify([...subscribersTarget]);
+    actor.subscriptions = JSON.stringify([...subscriptionsActor]);
+
+    await Promise.allSettled([
+      this.authService.updateUser(targetUser.username, targetUser),
+      this.authService.updateUser(actor.username, actor),
+    ]);
+  }
+
+  async unsubscribeFromTargetUser(targetUsername: string, actor: User) {
+    let subscriptionsActor = JSON.parse(actor.subscriptions) as string[];
+    const targetUser = await this.authService.getUser(targetUsername);
+    let subscribersTarget = JSON.parse(targetUser.subscribers) as string[];
+
+    if (!subscriptionsActor.includes(targetUsername)) {
+      throw new ConflictException(
+        `User ${actor.username} is not subscribed to ${targetUsername}`
+      );
+    }
+
+    await this.interactionRepository.createInteraction({
+      actorUsername: actor.username,
+      receiverUsername: targetUsername,
+      state: 'unsubscribed',
+      viewed: false,
+    });
+
+    subscriptionsActor = subscriptionsActor.filter(
+      (username) => username !== targetUsername
+    );
+    subscribersTarget = subscribersTarget.filter(
+      (username) => username !== actor.username
+    );
 
     targetUser.subscribers = JSON.stringify([...subscribersTarget]);
     actor.subscriptions = JSON.stringify([...subscriptionsActor]);

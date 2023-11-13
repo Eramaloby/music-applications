@@ -40,6 +40,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         profileImageBase64: response.pictureBase64,
         nodesCount: response.nodesAddedCount,
         relationshipsCount: response.relationshipsAddedCount,
+        subscribers: response.subscribers,
+        subscriptions: response.subscriptions,
       });
     }
   };
