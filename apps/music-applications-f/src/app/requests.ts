@@ -27,6 +27,17 @@ export const fetchDatabaseItem = async (
   }
 };
 
+export const fetchMostLikedRecords = async (): Promise<
+  GetLikedChartResponseItem[]
+> => {
+  try {
+    const response = await axios.get(`${baseUrl}/neo4j/most-liked`);
+    return response.data;
+  } catch (error) {
+    return [];
+  }
+};
+
 export const fetchDatabaseStats = async () => {
   try {
     const response = await axios.get(`${baseUrl}/neo4j/stats`);
@@ -474,4 +485,9 @@ export const getUserInformation = async (
 export interface GetSpotifyItemResponse {
   item: any;
   statusCode: number;
+}
+
+export interface GetLikedChartResponseItem {
+  itemType: string;
+  properties: Neo4jItemProperties;
 }

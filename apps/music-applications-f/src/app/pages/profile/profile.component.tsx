@@ -99,6 +99,7 @@ const Profile = () => {
           </div>
         </div>
         <div className="profile-page-stats">
+          Welcome back, <span>{currentUser.username}</span> <br></br>
           Nodes saved by you: <span>{currentUser.nodesCount}</span> <br></br>
           Relationships saved by you:{' '}
           <span>{currentUser.relationshipsCount}</span>

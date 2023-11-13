@@ -302,6 +302,16 @@ export class DatabaseService {
     return [nodesCount, relationshipsCount];
   }
 
+  public async getMostLikedItems(): Promise<any[]> {
+    const records = (
+      await this.dbService.read(`MATCH (n) WHERE n.likes > 0 RETURN n`)
+    ).records.map((value) => value['_fields']);
+
+    return records.map(([record]) => {
+      return { itemType: record.labels.at(0), properties: record.properties };
+    });
+  }
+
   public async getNodesShort(
     nodeIds: string[]
   ): Promise<DatabaseItemPreview[]> {
@@ -355,7 +365,7 @@ export class DatabaseService {
         label: String(recordShape.get('label')),
         databaseId: String(recordShape.get('databaseId')),
         image: String(recordShape.get('image')),
-        type: 'playlist'
+        type: 'playlist',
       };
     });
 

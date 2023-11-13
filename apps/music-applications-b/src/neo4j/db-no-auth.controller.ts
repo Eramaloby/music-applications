@@ -30,6 +30,11 @@ export class DatabaseNoAuthController {
     return await this.dbService.getNodesWithType(type);
   }
 
+  @Get('most-liked')
+  async getMostLikedRecords() {
+    return await this.dbService.getMostLikedItems();
+  }
+
   @Get('search')
   async getData(@Query() query: { [searchType: string]: string }) {
     return await this.dbService.getData(query);
