@@ -41,8 +41,8 @@ export const customUserRepository: Pick<UserRepository, any> = {
       tasks: [],
       relationshipsAddedCount: 0,
       nodesAddedCount: 0,
-      subscribers: '',
-      subscriptions: '',
+      subscribers: '[]',
+      subscriptions: '[]',
     });
 
     try {
