@@ -30,9 +30,17 @@ export class User {
 
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
- 
+
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
+
+  // array of usernames that user subscribed by
+  @Column()
+  subscribers: string;
+
+  // array of usernames that user subscribed to
+  @Column()
+  subscriptions: string;
 
   @Column()
   pictureBase64: string;

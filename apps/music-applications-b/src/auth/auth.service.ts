@@ -66,6 +66,13 @@ export class AuthService {
     }
   }
 
+  async updateUser(username: string, changedUser: User) {
+    return await this.userRepository.update(
+      { username: username },
+      { ...changedUser }
+    );
+  }
+
   async comparePasswords(
     confirmPasswordDto: ConfirmPasswordDto,
     username: string
