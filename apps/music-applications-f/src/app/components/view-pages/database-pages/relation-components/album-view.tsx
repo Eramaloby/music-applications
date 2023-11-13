@@ -8,6 +8,7 @@ import {
 } from './utils';
 import './styles.scss';
 import { RelationshipInterpretation } from './relationship';
+import { useNavigate } from 'react-router-dom';
 
 const AlbumItemRelationView = ({
   item,
@@ -16,6 +17,7 @@ const AlbumItemRelationView = ({
   item: AlbumWithRelationships;
   navigateTo: (type: string, id: string) => void;
 }) => {
+  const router = useNavigate();
   const displayedProperties = Object.entries({
     Name: String(item.properties.name),
     'Count of tracks at album': String(item.properties.count_of_tracks),
@@ -50,6 +52,9 @@ const AlbumItemRelationView = ({
           {displayedProperties.map(([label, value], index) => (
             <PropertyDisplay label={label} value={value} key={index}></PropertyDisplay>
           ))}
+        </div>
+        <div className="added-by-link">
+          <p>Added by:</p> <span onClick={() => router(`/profile/${item.properties.added_by}`)}>{item.properties.added_by}</span>
         </div>
       </div>
       <div className="item-relationships-container">

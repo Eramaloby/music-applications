@@ -45,6 +45,19 @@
       }
     }
   }
+
+  .added-by-link {
+    display: flex;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: large;
+
+    span {
+      font-weight: 600;
+      color: greenyellow;
+      margin-left: auto;
+    }
+  }
 }
 
 .item-relationships-container {

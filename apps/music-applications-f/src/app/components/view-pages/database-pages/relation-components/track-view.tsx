@@ -9,6 +9,7 @@ import {
   convertArtistProperties,
   convertPlaylistProperties,
 } from './utils';
+import { useNavigate } from 'react-router-dom';
 
 const TrackItemRelationView = ({
   item,
@@ -17,6 +18,7 @@ const TrackItemRelationView = ({
   item: TrackWithRelationships;
   navigateTo: (type: string, id: string) => void;
 }) => {
+  const router = useNavigate();
   const displayedProperties = Object.entries({
     Name: item.properties.name,
     'Duration of track': convertDuration(item.properties.duration_ms),
@@ -45,6 +47,9 @@ const TrackItemRelationView = ({
           {displayedProperties.map(([label, value], index) => (
             <PropertyDisplay label={label} value={value} key={index}></PropertyDisplay>
           ))}
+        </div>
+        <div className="added-by-link">
+          <p>Added by:</p> <span onClick={() => router(`/profile/${item.properties.added_by}`)}>{item.properties.added_by}</span>
         </div>
       </div>
       <div className="item-relationships-container">

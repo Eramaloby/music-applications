@@ -4,6 +4,7 @@ import './styles.scss';
 import { PropertyDisplay } from './property';
 import { RelationshipInterpretation } from './relationship';
 import { convertGenreProperties, convertTrackProperties } from './utils';
+import { useNavigate } from 'react-router-dom';
 
 const PlaylistItemRelationView = ({
   item,
@@ -12,6 +13,7 @@ const PlaylistItemRelationView = ({
   item: PlaylistWithRelationships;
   navigateTo: (type: string, id: string) => void;
 }) => {
+  const router = useNavigate();
   const displayedProperties = Object.entries({
     Name: item.properties.name,
     'About playlist': item.properties.description,
@@ -38,6 +40,9 @@ const PlaylistItemRelationView = ({
           {displayedProperties.map(([label, value], key) => (
             <PropertyDisplay label={label} value={value} key={key}></PropertyDisplay>
           ))}
+        </div>
+        <div className="added-by-link">
+          <p>Added by:</p> <span onClick={() => router(`/profile/${item.properties.added_by}`)}>{item.properties.added_by}</span>
         </div>
       </div>
       <div className="item-relationships-container">
