@@ -3,4 +3,6 @@ export class CreateTaskDto {
   details: string;
   reason: string;
   relationshipCount: number;
+  targetRecordId: string;
+  targetRecordType: string;
 }

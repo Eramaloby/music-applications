@@ -1,0 +1,99 @@
+.task-history-wrapper {
+  .is-successful {
+    font-weight: 600;
+    font-size: large;
+  }
+
+  .error {
+    color: rgba(255, 0, 0, 0.5);
+  }
+
+  .details {
+    font-size: medium;
+    font-weight: 500;
+    span {
+      color: greenyellow;
+    }
+  }
+
+  .view-details-btn {
+    cursor: pointer;
+    border: none;
+    width: 40%;
+    height: 30px;
+    background-color: rgb(3, 61, 3);
+    color: white;
+    font-weight: 600;
+    align-self: center;
+    border-radius: 100px;
+
+    &:hover {
+      background-color: rgb(13, 121, 85);
+    }
+  }
+
+  hr {
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+
+  .details-wrapper {
+    display: flex;
+    justify-content: center;
+    .successful-task-details {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      .details-header {
+        text-align: center;
+        width: 100%;
+        font-weight: 900;
+        font-size: large;
+
+        span {
+          color: greenyellow;
+        }
+        margin-bottom: 30px;
+      }
+
+      .details {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+
+        .detail {
+          width: 100%;
+          text-align: left;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .failed-task-details {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      .reason {
+        font-weight: 700;
+      }
+
+      .retry-btn {
+        cursor: pointer;
+        border: none;
+        width: 40%;
+        height: 30px;
+        background-color: rgb(3, 61, 3);
+        color: white;
+        font-weight: 600;
+        align-self: center;
+        border-radius: 100px;
+
+        &:hover {
+          background-color: rgb(13, 121, 85);
+        }
+      }
+    }
+  }
+}

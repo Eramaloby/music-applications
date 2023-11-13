@@ -14,4 +14,8 @@ export class TaskService {
   async createTask(user: User, dto: CreateTaskDto) {
     await this.taskRepository.createTask(user, dto);
   }
+
+  async getAllUserTasks(user: User) {
+    return await this.taskRepository.find({ where: { user } });
+  }
 }

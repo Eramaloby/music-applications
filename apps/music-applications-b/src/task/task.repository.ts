@@ -20,6 +20,8 @@ export const customTaskRepository: Pick<TaskRepository, any> = {
       details: dto.details,
       relationshipCount: dto.relationshipCount,
       reason: dto.reason,
+      targetRecordId: dto.targetRecordId,
+      targetRecordType: dto.targetRecordType,
     });
 
     try {

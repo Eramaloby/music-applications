@@ -533,13 +533,10 @@ export class DatabaseService {
 
       await transaction.commit();
     } catch (error) {
-      // maybe useless
-      console.log(error, 'error in try');
-
-      transaction.rollback();
+      // await transaction.rollback();
       return {
         isSuccess: false,
-        reason: error.message,
+        reason: JSON.stringify(error.message),
         data: { records: [], relationshipCount: 0 },
       };
     } finally {
@@ -918,7 +915,7 @@ export class DatabaseService {
     const artistIds = [
       ...new Set(
         playlistTracks
-          .map((track) => track.track.artists.map((artist) => artist.id))
+          .map((track) => track.track.artists?.map((artist) => artist.id))
           .flat()
       ),
     ];

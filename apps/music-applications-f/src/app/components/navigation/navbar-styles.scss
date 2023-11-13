@@ -5,13 +5,15 @@
 
 
 .navbar-links {
+
+  padding: 0px 100px;
   width: 100%;
-  height: 75px;
+  height: 100px;
   background-color: #000000;
   color: #ffffff;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
   flex-shrink: 0;
   position: sticky;
   top: 0;

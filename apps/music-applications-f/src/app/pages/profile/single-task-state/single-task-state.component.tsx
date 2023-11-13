@@ -22,25 +22,34 @@ const SingleTaskState = ({ task }: { task: AsyncNeo4jTaskMetadata }) => {
   // add button to view task details after it either finished or failed
   return (
     <div className="task-wrapper">
-      <div className="current-state">
+      <div
+        className={'current-state ' + (task.status === 'failed' ? 'error' : '')}
+      >
         {task.status === 'successful' && 'Task was completed successfully'}
         {task.status === 'pending' && 'Task is queued.'}
         {task.status === 'failed' && 'Task exited execution with error'}
         {task.status === 'process' && `Task in progress for ${elapsedSeconds}`}
       </div>
-      {task.finishedAt && task.startedAt && (
+      {task.finishedAt && task.startedAt && task.status !== 'failed' && (
         <div className="task-finished-info">
           <div className="duration-time">
-            Task completion duration:{' '}
-            {Math.floor((task.finishedAt - task.startedAt) / 1000)} seconds
+            Task completed for{' '}
+            <span>
+              {Math.floor((task.finishedAt - task.startedAt) / 1000)} seconds
+            </span>
           </div>
-          <div className="nodes-cnt">Nodes count: {task.details.length}</div>
+          <div className="nodes-cnt">
+            Nodes count: <span>{task.details.length}</span>
+          </div>
           <div className="rels-cnt">
-            Relationships count: {task.relationshipsCount}
+            Relationships count: <span>{task.relationshipsCount}</span>
           </div>
         </div>
       )}
-      {/* view details button when task is complete */}
+      {task.status === 'failed' && (
+        <div className="error-text">View task history to track error</div>
+      )}
+      <hr />
     </div>
   );
 };

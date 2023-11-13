@@ -314,3 +314,12 @@ export interface LyricsNeuralNetworkParams {
   stop_words: string[];
   isExplicit: boolean;
 }
+
+export interface FulfilledTask {
+  successful: boolean;
+  reason: string;
+  details: string;
+  relationshipCount: number;
+  targetRecordType: string;
+  targetRecordId: string;
+}

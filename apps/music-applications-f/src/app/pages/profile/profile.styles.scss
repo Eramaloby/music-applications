@@ -1,35 +1,137 @@
 .profile-page-wrapper {
   display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
 
-  height: 500px;
+  height: 100%;
+  overflow: hidden;
 
   // justify-content: space-between;
-  padding: 10px;
-  margin: 10px;
+  padding: 60px 100px 20px 100px;
 
-  .profile-page-action-panel {
+  .profile-info {
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    width: 20%;
-    height: 100%;
+
+    gap: 5px;
+
+    .profile-page-picture {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      .picture-container {
+        width: 300px;
+        height: 300px;
+
+        img {
+          width: 100%;
+          border: 1px solid transparent;
+          border-radius: 50%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .change-profile-picture {
+        width: 100%;
+        align-self: center;
+      }
+    }
+
+    .profile-page-stats {
+      width: 100%;
+      margin-top: 30px;
+      font-weight: 700;
+      font-size: large;
+      align-self: center;
+
+      span {
+        color: greenyellow;
+      }
+    }
   }
-}
 
-.btn {
-  display: flex;
-  justify-content: center;
-  padding: 8px;
-  align-items: center;
-  font-size: larger;
-  font-weight: 600;
-  color: aliceblue;
-  border: 2px solid green;
-  border-radius: 5px;
+  .profile-page-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 
-  &:hover {
-    cursor: pointer;
+    .profile-page-tasks-contents {
+      display: flex;
+      height: 35%;
+      .profile-page-tasks {
+        margin-left: 50px;
+      }
+      .profile-page-tasks-history {
+        margin-left: auto;
+      }
+
+      .profile-page-tasks,
+      .profile-page-tasks-history {
+        width: 40%;
+        max-height: 100%;
+
+        .dashboard-wrapper,
+        .task-history-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          max-height: 100%;
+
+          .dashboard-map-container,
+          .tasks-container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            overflow-y: scroll;
+          }
+
+          .no-tasks-message,
+          .tasks-header {
+            width: 100%;
+            font-size: x-large;
+            font-weight: 550;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+        }
+      }
+    }
+
+    .profile-recommendations {
+      margin-left: 50px;
+      height: 55%;
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+      .profile-recommendations-wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+  
+        .profile-recommendations-title {
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: 600;
+          font-size: x-large;
+        }
+  
+        .profile-recommendations-items::-webkit-scrollbar {
+          display: none;
+        }
+  
+        .profile-recommendations-items {
+          margin-top: 20px;
+          height: 400px;
+          overflow-y: scroll;
+          display: grid;
+          gap: 5px;
+          grid-template-columns: repeat(4, minmax(212px, 1fr));
+        }
+      }
+    }
   }
 }

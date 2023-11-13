@@ -1,0 +1,33 @@
+.task-wrapper {
+
+  .current-state {
+    font-weight: 600;
+    font-size: large;    
+  }
+  
+  .error {
+    color: rgba(255, 0, 0, 0.5);
+  }
+
+  .task-finished-info {
+    margin-top: 2px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    .duration-time, .nodes-cnt, .rels-cnt {
+      span {
+        color: greenyellow;
+      }
+    }
+  }
+
+  .error-text {
+    font-weight: 600;
+  }
+
+  hr {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    width: 70%;
+  }
+}

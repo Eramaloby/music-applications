@@ -7,6 +7,7 @@ import {
   UserSignInRequestResult,
   FetchItemFromNeo4jResult,
   Neo4jItemProperties,
+  FulfilledTask,
 } from './types';
 import { parseNeo4jLikes, parseNeo4jRecommendation } from './utils';
 
@@ -187,23 +188,40 @@ export const updateProfileImage = async (
   }
 };
 
-export const fetchProfileStats = async (accessToken: string) => {
+// export const fetchProfileStats = async (accessToken: string) => {
+//   try {
+//     const response = await axios.get(`${baseUrl}/profile/stats`, {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+
+//     console.log(response, 'fetched-stats');
+
+//     return {
+//       nodes: response.data.nodesCount,
+//       relationships: response.data.relationshipCount,
+//     } as DbStats;
+//   } catch (error) {
+//     console.log(error);
+//     return null;
+//   }
+// };
+
+export const fetchProfileTaskHistory = async (
+  accessToken: string
+): Promise<FulfilledTask[]> => {
   try {
-    const response = await axios.get(`${baseUrl}/profile/stats`, {
+    const response = await axios.get(`${baseUrl}/task`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
 
-    console.log(response, 'fetched-stats');
-
-    return {
-      nodes: response.data.nodesCount,
-      relationships: response.data.relationshipCount,
-    } as DbStats;
+    return response.data as FulfilledTask[];
   } catch (error) {
     console.log(error);
-    return null;
+    return [];
   }
 };
 

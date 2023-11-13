@@ -35,7 +35,7 @@ const ViewPanelContainer = ({ title, items, containerClassName }: ViewPanelConta
                 item={value}
                 key={key}
                 onClickCallback={(id: string, type: string) =>
-                  router(`/db/${type}/${id}`)
+                  router(`/db/${type.toLowerCase()}/${id}`)
                 }
               ></DatabaseItemPreview>
             );

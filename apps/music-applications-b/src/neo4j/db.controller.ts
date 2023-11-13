@@ -44,15 +44,20 @@ export class DatabaseController {
         reason: 'Success',
         details: JSON.stringify(result.data.records),
         relationshipCount: result.data.relationshipCount,
+        targetRecordId: params.id,
+        targetRecordType: params.type,
       });
     } else {
       await this.taskService.createTask(user, {
         successful: false,
         reason: result.reason,
-        details: 'Transaction was rolled back',
+        details: 'Transaction was interrupted.',
         relationshipCount: 0,
+        targetRecordId: params.id,
+        targetRecordType: params.type,
       });
     }
+
 
     return result;
   }

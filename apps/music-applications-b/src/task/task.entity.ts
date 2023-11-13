@@ -19,5 +19,11 @@ export class Task {
   details: string;
 
   @Column()
+  targetRecordId: string;
+
+  @Column()
+  targetRecordType: string;
+
+  @Column()
   relationshipCount: number;
 }
