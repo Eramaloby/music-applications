@@ -32,7 +32,7 @@ const TaskHistoryItem = ({ item }: { item: FulfilledTask }) => {
       ) : (
         <div className="details">
           Insertion of <span>{item.targetRecordType}</span> was successful.
-          Click button below to get more detailed information.
+          Click button below to get moreindex detailed information.
         </div>
       )}
       <button
@@ -61,9 +61,9 @@ const TaskHistoryItem = ({ item }: { item: FulfilledTask }) => {
                 Records added:
               </div>
               <div className="details">
-                {(JSON.parse(item.details) as TaskDetail[]).map((detail) => {
+                {(JSON.parse(item.details) as TaskDetail[]).map((detail, index) => {
                   return (
-                    <div className="detail">
+                    <div className="detail" key={index}>
                       Type: <span>{detail.type}</span>; Name:{' '}
                       <span>{detail.name}</span>
                     </div>
