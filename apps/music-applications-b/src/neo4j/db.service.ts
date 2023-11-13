@@ -878,7 +878,7 @@ export class DatabaseService {
     await transaction.run(`
       CREATE (track: Track {
         name: "${track.name.replace(`"`, '')}",
-        duration_ms: "${track.duration_ms}",
+        duration_ms: "${String(track.duration_ms)}",
         explicit: "${track.explicit}",
         type: "${track.type}",
         image: "${imageUrl}",
@@ -935,7 +935,7 @@ export class DatabaseService {
     await transaction.run(`
       CREATE (track: Track {
         name: "${model.name}",
-        duration_ms: "${model.durationMs}",
+        duration_ms: "${String(model.durationMs)}",
         explicit: "${model.explicit}",
         type: "${model.type}",
         image: "${model.image}",
