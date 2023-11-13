@@ -16,7 +16,7 @@ export const RelationshipInterpretation = ({
       <div className="relationships">
         {relationships.map((relInfo, index) => {
           return (
-            <Tooltip title={relInfo.textForTooltip} placement="top">
+            <Tooltip title={relInfo.textForTooltip} placement="top" key={index}>
               <div
                 key={relInfo.id}
                 onClick={() =>

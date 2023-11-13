@@ -35,8 +35,8 @@ const PlaylistItemRelationView = ({
           )}
         </div>
         <div className="item-properties">
-          {displayedProperties.map(([label, value]) => (
-            <PropertyDisplay label={label} value={value}></PropertyDisplay>
+          {displayedProperties.map(([label, value], key) => (
+            <PropertyDisplay label={label} value={value} key={key}></PropertyDisplay>
           ))}
         </div>
       </div>

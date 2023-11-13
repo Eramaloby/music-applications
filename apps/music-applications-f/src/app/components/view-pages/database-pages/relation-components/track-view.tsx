@@ -42,8 +42,8 @@ const TrackItemRelationView = ({
           )}
         </div>
         <div className="item-properties">
-          {displayedProperties.map(([label, value]) => (
-            <PropertyDisplay label={label} value={value}></PropertyDisplay>
+          {displayedProperties.map(([label, value], index) => (
+            <PropertyDisplay label={label} value={value} key={index}></PropertyDisplay>
           ))}
         </div>
       </div>
