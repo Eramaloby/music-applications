@@ -5,7 +5,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import './profile.styles.scss';
 import { FulfilledTask, ItemPreview, User } from '../../types';
 import FileUploader from '../../components/file-uploader/file-uploader.component';
-import { getBase64FromFile } from '../../utils';
+import { getBase64FromFile, intersectTwoArrays } from '../../utils';
 import {
   fetchProfileTaskHistory,
   getUserNotifications,
@@ -79,6 +79,7 @@ const Profile = () => {
       );
       if (answer) {
         await updateNotifications();
+        await updateCurrentUser();
       }
     }
   };
@@ -88,8 +89,8 @@ const Profile = () => {
       const notifications = await getUserNotifications(currentUser.accessToken);
 
       if (notifications) {
-        console.log(notifications);
         setNotifications([...notifications]);
+        await updateCurrentUser();
       }
     }
   };
@@ -101,6 +102,7 @@ const Profile = () => {
           updateRecommendations(),
           updateTasks(),
           updateNotifications(),
+          updateCurrentUser(),
         ]);
       }
     };
@@ -124,6 +126,11 @@ const Profile = () => {
       await updateCurrentUser();
     }
   };
+
+  const friendlist = intersectTwoArrays(
+    JSON.parse(currentUser.subscribers),
+    JSON.parse(currentUser.subscriptions)
+  );
 
   return (
     <div className="profile-page-wrapper">
@@ -178,11 +185,29 @@ const Profile = () => {
             </div>
           </div>
         )}
+        {friendlist.length > 0 && (
+          <div className="friend-list">
+            <div className="friend-list-header">Your friends</div>
+            <div className="friends">
+              {friendlist.map((friend, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="friend"
+                    onClick={() => router(`/profile/${friend}`)}
+                  >
+                    {friend}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="profile-page-content">
         <div className="profile-page-tasks-contents">
-        <div className="profile-page-tasks-history">
+          <div className="profile-page-tasks-history">
             <div className="task-history-wrapper">
               {taskHistory.length !== 0 ? (
                 <>
@@ -224,7 +249,6 @@ const Profile = () => {
               )}
             </div>
           </div>
-          
         </div>
 
         {recommendations.length !== 0 && (

@@ -84,6 +84,29 @@
         }
       }
     }
+
+    .friend-list {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      .friend-list-header {
+        font-size: larger;
+        font-weight: 700;
+      }
+
+      .friends {
+        max-height: 100px;
+        overflow-y: scroll;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        color: greenyellow;
+        cursor: pointer;
+        font-weight: 600;
+      }
+    }
   }
 
   .profile-page-content {

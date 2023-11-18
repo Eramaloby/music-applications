@@ -216,3 +216,7 @@ export const tryToSignUp = async (form: UserSignUpForm) => {
     return false;
   }
 };
+
+export const intersectTwoArrays = (a: string[], b: string[]) => {
+  return a.filter(value => b.includes(value));
+}
