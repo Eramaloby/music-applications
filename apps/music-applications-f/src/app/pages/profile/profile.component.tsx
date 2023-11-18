@@ -42,7 +42,7 @@ const Profile = () => {
 
   const router = useNavigate();
 
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, updateCurrentUser } = useContext(UserContext);
   const { tasks } = useContext(TaskContext);
 
   const [currentImageUrl, setCurrentImageUrl] = useState<string>(
@@ -121,6 +121,7 @@ const Profile = () => {
       const imageHash = (await getBase64FromFile(file)) as string;
       setCurrentImageUrl(imageHash);
       await updateProfileImage(currentUser.accessToken, imageHash);
+      await updateCurrentUser();
     }
   };
 
@@ -181,6 +182,25 @@ const Profile = () => {
 
       <div className="profile-page-content">
         <div className="profile-page-tasks-contents">
+        <div className="profile-page-tasks-history">
+            <div className="task-history-wrapper">
+              {taskHistory.length !== 0 ? (
+                <>
+                  <div className="tasks-header">All tasks history</div>
+                  <div className="tasks-container">
+                    {taskHistory.map((task, index) => (
+                      <TaskHistoryItem
+                        item={task}
+                        key={index}
+                      ></TaskHistoryItem>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="no-tasks-message">No records yet</div>
+              )}
+            </div>
+          </div>
           <div className="profile-page-tasks">
             <div className="dashboard-wrapper">
               {tasksState.length !== 0 ? (
@@ -204,25 +224,7 @@ const Profile = () => {
               )}
             </div>
           </div>
-          <div className="profile-page-tasks-history">
-            <div className="task-history-wrapper">
-              {taskHistory.length !== 0 ? (
-                <>
-                  <div className="tasks-header">All tasks history</div>
-                  <div className="tasks-container">
-                    {taskHistory.map((task, index) => (
-                      <TaskHistoryItem
-                        item={task}
-                        key={index}
-                      ></TaskHistoryItem>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="no-tasks-message">No records yet</div>
-              )}
-            </div>
-          </div>
+          
         </div>
 
         {recommendations.length !== 0 && (

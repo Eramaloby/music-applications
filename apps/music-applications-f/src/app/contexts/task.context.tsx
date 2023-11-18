@@ -1,6 +1,13 @@
-import { ReactNode, createContext, useEffect, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { toast } from 'react-toastify';
 import { postItemToNeo4j } from '../requests';
+import { UserContext } from './user.context';
 
 export interface AsyncNeo4jTaskMetadata {
   startedAt?: number; // Date.now()
@@ -30,6 +37,7 @@ export const TaskContext = createContext<TaskContextType>({
 
 export const TaskContextProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<AsyncNeo4jTaskMetadata[]>([]);
+  const { updateCurrentUser } = useContext(UserContext);
   const [isExecuting, setIsExecuting] = useState<boolean>(false);
 
   const startOperation = async (task: AsyncNeo4jTaskMetadata) => {
@@ -61,6 +69,7 @@ export const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     }
 
     setIsExecuting(false);
+    await updateCurrentUser();
   };
 
   const queueTask = (

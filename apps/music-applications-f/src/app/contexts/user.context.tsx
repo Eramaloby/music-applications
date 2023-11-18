@@ -6,6 +6,7 @@ export interface UserContextType {
   currentUser: User | null;
   setUser: (accessToken: string | null) => void;
   signOut: () => void;
+  updateCurrentUser: () => Promise<boolean>;
 }
 
 export const UserContext = createContext<UserContextType>({
@@ -14,6 +15,8 @@ export const UserContext = createContext<UserContextType>({
   setUser: () => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   signOut: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  updateCurrentUser: async () => {return true;},
 });
 
 interface AccessTokenMetadata {
@@ -23,6 +26,34 @@ interface AccessTokenMetadata {
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  const updateCurrentUser = async () => {
+    if (currentUser?.accessToken) {
+      const response = await fetchUserProfileData(currentUser.accessToken);
+
+      if (response) {
+        setCurrentUser({
+          ...currentUser,
+          accessToken: currentUser.accessToken,
+          username: response.username,
+          password: response.password,
+          email: response.email,
+          gender: response.gender,
+          id: response.id,
+          dateOfBirth: response.dateOfBirth,
+          profileImageBase64: response.pictureBase64,
+          nodesCount: response.nodesAddedCount,
+          relationshipsCount: response.relationshipsAddedCount,
+          subscribers: response.subscribers,
+          subscriptions: response.subscriptions,
+        });
+
+        return true;
+      }
+    }
+
+    return false;
+  };
 
   const logInUser = async (accessToken: string) => {
     const response = await fetchUserProfileData(accessToken);
@@ -88,7 +119,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const value = { currentUser, setUser, signOut };
+  const value = { currentUser, setUser, signOut, updateCurrentUser };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
