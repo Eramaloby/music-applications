@@ -110,6 +110,14 @@ const Profile = () => {
     wrapper();
   }, []);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      updateNotifications();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   if (!currentUser) {
     return <Navigate to="/signin" replace></Navigate>;
   }
