@@ -2,10 +2,13 @@
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 
-import './genre-form.styles.scss';
+import '../../common.styles.scss';
 import { Tooltip } from '@mui/material';
 import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
-import { getBase64FromFile, validateFieldRequiredNotEmpty } from 'apps/music-applications-f/src/app/utils';
+import {
+  getBase64FromFile,
+  validateFieldRequiredNotEmpty,
+} from 'apps/music-applications-f/src/app/utils';
 
 export interface GenreFormFields {
   genreDescription: string;
@@ -38,6 +41,7 @@ const GenreForm = () => {
       const imageHash = (await getBase64FromFile(file)) as string;
       setForm({ ...form, imageBase64: imageHash });
       setErrors({ ...errors, imageBase64: '' });
+      console.log(imageHash);
     }
   };
 
@@ -140,6 +144,12 @@ const GenreForm = () => {
               showFileName={true}
             ></FileUploader>
           </div>
+
+          {form.imageBase64 !== '' && errors.imageBase64 === '' && (
+            <div className="image-preview">
+              <img src={form.imageBase64} alt=""></img>
+            </div>
+          )}
 
           {errors.imageBase64 && (
             <div className="image-validation-message">{errors.imageBase64}</div>

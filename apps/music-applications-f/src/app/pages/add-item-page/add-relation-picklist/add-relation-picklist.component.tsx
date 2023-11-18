@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './add-relation-picklist.styles.scss';
 
-import { Neo4jItemProperties } from '../../../types';
+import {  Neo4jItemProperties } from '../../../types';
 import { fetchDatabaseItemsByType } from '../../../requests';
 import { toast } from 'react-toastify';
 
@@ -113,7 +113,7 @@ export const AddRelationPicklist = ({
   };
 
   return (
-    <>
+    <div className='add-relationship-wrapper'>
       <h1>Search specific {type} by name</h1>
       <input
         type="search"
@@ -126,17 +126,14 @@ export const AddRelationPicklist = ({
           .filter((row) =>
             searchQuery ? row.item.name.includes(searchQuery) : true
           )
-          .map((row, index) => {
-            return (
-              <div className="add-relation-picklist-item-wrapper" key={index}>
-                <AddRelationPicklistItem
-                  row={row}
-                  itemType={type}
-                  handleClick={itemClickCallback}
-                />
-              </div>
-            );
-          })}
+          .map((row, index) => (
+            <AddRelationPicklistItem
+              key={index}
+              row={row}
+              itemType={type}
+              handleClick={itemClickCallback}
+            />
+          ))}
       </div>
       <button
         type="button"
@@ -145,7 +142,7 @@ export const AddRelationPicklist = ({
       >
         Add node(s)
       </button>
-    </>
+    </div>
   );
 };
 
@@ -155,24 +152,23 @@ const AddRelationPicklistItem = ({
   handleClick,
 }: RelationPicklistItemProps) => {
   return (
-    <>
-      <div className="picklist-item">
-        {itemType === 'genre' && <h2>{row.item.name} - genre</h2>}
-        {itemType === 'artist' && <h2>{row.item.name} - artist</h2>}
+    <div className="add-relation-picklist-item-wrapper">
+      <h2 className="picklist-item">
+        {row.item.name}
+        {/* {itemType === 'genre' && <h2>{row.item.name}</h2>}
+        {itemType === 'artist' && <h2>Genre{row.item.name} - artist</h2>}
         {itemType === 'album' && <h2>{row.item.name} - album</h2>}
         {itemType === 'track' && <h2>{row.item.name} - track</h2>}
-        {itemType === 'playlist' && <h2>{row.item.name} - playlist</h2>}
-      </div>
-      <div className="picklist-button-container">
-        <button
-          className={
-            'picklist-item-button-' + (row.selected ? 'checked' : 'unchecked')
-          }
-          onClick={() => handleClick(row.item.id, !row.selected)}
-        >
-          {row.selected ? 'remove selection' : 'select'}
-        </button>
-      </div>
-    </>
+        {itemType === 'playlist' && <h2>{row.item.name} - playlist</h2>} */}
+      </h2>
+      <button
+        className={
+          'picklist-item-button ' + (row.selected ? 'checked' : 'unchecked')
+        }
+        onClick={() => handleClick(row.item.id, !row.selected)}
+      >
+        {row.selected ? 'remove' : 'add'}
+      </button>
+    </div>
   );
 };

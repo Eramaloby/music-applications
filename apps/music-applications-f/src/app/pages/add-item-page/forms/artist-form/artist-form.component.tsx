@@ -1,12 +1,13 @@
 import { TextField, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { validateFieldRequiredNotEmpty } from '../../../../utils';
+import { getBase64FromFile, validateFieldRequiredNotEmpty } from '../../../../utils';
 import { fetchDatabaseItemsByType } from '../../../../requests';
 import AppModal from '../../../../components/ui-elements/modal';
 import { AddRelationPicklist } from '../../add-relation-picklist/add-relation-picklist.component';
 import { Neo4jItemProperties } from '../../../../types';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
+import '../../common.styles.scss';
 
 export interface ArtistFormFields {
   artistName: string;
@@ -49,6 +50,21 @@ const ArtistForm = () => {
     setModal(false);
   };
 
+  const onArtistFileSelected = async (file: File) => {
+    if (!file.type.includes('image')) {
+      setErrors({
+        ...errors,
+        artistImageBase64: 'File is required to be an image.',
+      });
+
+      return;
+    } else {
+      const imageHash = (await getBase64FromFile(file)) as string;
+      setForm({ ...form, artistImageBase64: imageHash });
+      setErrors({ ...errors, artistImageBase64: '' });
+    }
+  };
+
   const onFormControlsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [event.target.name]: event.target.value });
 
@@ -60,15 +76,6 @@ const ArtistForm = () => {
       ),
     });
   };
-
-  // useEffect(() => {
-  //   // const wrapper = async () => {
-  //   //   const result = await fetchDatabaseItemsByType('track');
-  //   //   console.log(result);
-  //   // };
-
-  //   // wrapper();
-  // }, [])
 
   return (
     <div className="form-wrapper">
@@ -150,19 +157,23 @@ const ArtistForm = () => {
           </Tooltip>
         </div>
         <div className="control-wrapper">
-          <div style={{ width: '70%' }}>
+          <div>
             <FileUploader
-              handleFile={() => {
-                return;
-              }}
-              buttonText="Upload genre image"
+              handleFile={onArtistFileSelected}
+              buttonText="Upload artist image"
               showFileName={true}
             ></FileUploader>
           </div>
 
-          {/* {errors.imageBase64 && (
-            <div className="image-validation-message">{errors.imageBase64}</div>
-          )} */}
+          {form.artistImageBase64 !== '' && errors.artistImageBase64 === '' && (
+            <div className="image-preview">
+              <img src={form.artistImageBase64} alt=""></img>
+            </div>
+          )}
+
+          {errors.artistImageBase64 && (
+            <div className="image-validation-message">{errors.artistImageBase64}</div>
+          )}
         </div>
         <div className="control-wrapper">
           <button
@@ -202,7 +213,7 @@ const ArtistForm = () => {
           return;
         }}
       >
-        Submit genre
+        Submit artist
       </button>
     </div>
   );

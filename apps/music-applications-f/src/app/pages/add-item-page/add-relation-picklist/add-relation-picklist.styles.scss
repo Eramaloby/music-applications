@@ -2,46 +2,57 @@ button {
   cursor: pointer;
 }
 
-.add-relation-picklist-wrapper {
-  margin-top: 10px;
-  height: 300px;
-  width: 500px;
-  overflow-y: scroll;
-  font-size: 10px;
-
-  .add-relation-picklist-item-wrapper {
-    height: 25px;
-    border: 1px solid #1db954;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.add-relationship-wrapper {
+  input {
+    padding: 10px;
+    outline: 0;
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
+  .add-relation-picklist-wrapper {
+    margin-top: 10px;
+    height: 400px;
+    width: 600px;
+    overflow-y: scroll;
+    font-size: 10px;
 
-  button {
-    font-size: 16px;
-    width: 150px;
-    height: 95%;
-  }
+    .add-relation-picklist-item-wrapper {
+      height: 10%;
+      border: 1px solid #1db954;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-  .picklist-button-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    .picklist-item {
+      padding: 10px;
+      font-size: large;
+    }
 
-    .picklist-item-button-checked {
+    .checked {
       color: white;
       background-color: #1db954;
     }
 
-    .picklist-item-button-checked:hover {
+    .picklist-item-button {
+      width: 25%;
+      height: 100%;
+      padding: 10px;
+      text-wrap: nowrap;
+      font-weight: 700;
+      font-size: large;
+    }
+    .checked:hover {
       color: darkgray;
       background-color: darkolivegreen;
     }
 
-    .picklist-item-button-unchecked {
+    .unchecked {
       color: black;
     }
 
-    .picklist-item-button-unchecked:hover {
+    .unchecked:hover {
       color: azure;
       background-color: gray;
     }
@@ -52,7 +63,7 @@ button {
   margin-top: 10px;
   font-size: large;
   font-weight: bold;
-  width: 160px;
+  width: 70%;
   padding: 6px;
   color: black;
   cursor: pointer;
