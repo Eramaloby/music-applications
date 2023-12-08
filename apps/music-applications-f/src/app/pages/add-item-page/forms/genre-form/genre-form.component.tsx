@@ -11,37 +11,36 @@ import {
 } from 'apps/music-applications-f/src/app/utils';
 
 export interface GenreFormFields {
-  genreDescription: string;
-  genreName: string;
-  imageBase64: string;
+  description: string;
+  name: string;
+  image: string;
 }
 
 const GenreForm = () => {
   const [form, setForm] = useState<GenreFormFields>({
-    genreDescription: '',
-    genreName: '',
-    imageBase64: '',
+    description: '',
+    name: '',
+    image: '',
   });
 
   const [errors, setErrors] = useState<GenreFormFields>({
-    genreDescription: '',
-    genreName: '',
-    imageBase64: '',
+    description: '',
+    name: '',
+    image: '',
   });
 
   const onGenreFileSelected = async (file: File) => {
     if (!file.type.includes('image')) {
       setErrors({
         ...errors,
-        imageBase64: 'File is required to be an image.',
+        image: 'File is required to be an image.',
       });
 
       return;
     } else {
       const imageHash = (await getBase64FromFile(file)) as string;
-      setForm({ ...form, imageBase64: imageHash });
-      setErrors({ ...errors, imageBase64: '' });
-      console.log(imageHash);
+      setForm({ ...form, image: imageHash });
+      setErrors({ ...errors, image: '' });
     }
   };
 
@@ -65,12 +64,12 @@ const GenreForm = () => {
     }
 
     const localErrors = {
-      genreName: validateFieldRequiredNotEmpty(form.genreName, 'Name'),
-      genreDescription: validateFieldRequiredNotEmpty(
-        form.genreDescription,
+      name: validateFieldRequiredNotEmpty(form.name, 'Name'),
+      description: validateFieldRequiredNotEmpty(
+        form.description,
         'Description'
       ),
-      imageBase64: validateFieldRequiredNotEmpty(form.imageBase64, 'Image'),
+      image: validateFieldRequiredNotEmpty(form.image, 'Image'),
     };
 
     if (Object.values(localErrors).some((msg) => Boolean(msg))) {
@@ -84,7 +83,7 @@ const GenreForm = () => {
 
   return (
     <div className="form-wrapper">
-      <div className="form-header">Fill required fields</div>
+      <div className="form-header">Fill required genre fields</div>
       <div className="form-controls">
         <div className="control-wrapper">
           <Tooltip
@@ -92,7 +91,7 @@ const GenreForm = () => {
             placement="top"
           >
             <TextField
-              name="genreName"
+              name="name"
               className="form-value-input"
               InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
               inputProps={{
@@ -104,17 +103,17 @@ const GenreForm = () => {
               }}
               color={'primary'}
               label={'Enter genre name'}
-              value={form.genreName}
+              value={form.name}
               onChange={onFormControlsChange}
-              error={Boolean(errors.genreName)}
-              helperText={errors.genreName}
+              error={Boolean(errors.name)}
+              helperText={errors.name}
             ></TextField>
           </Tooltip>
         </div>
         <div className="control-wrapper">
           <Tooltip title="Describe music in genre in few words" placement="top">
             <TextField
-              name="genreDescription"
+              name="description"
               className="form-value-input"
               InputLabelProps={{
                 style: { color: 'white', fontWeight: '500' },
@@ -128,10 +127,10 @@ const GenreForm = () => {
               }}
               color={'primary'}
               label={'Enter genre description'}
-              value={form.genreDescription}
+              value={form.description}
               onChange={onFormControlsChange}
-              error={Boolean(errors.genreDescription)}
-              helperText={errors.genreDescription}
+              error={Boolean(errors.description)}
+              helperText={errors.description}
             ></TextField>
           </Tooltip>
         </div>
@@ -145,14 +144,14 @@ const GenreForm = () => {
             ></FileUploader>
           </div>
 
-          {form.imageBase64 !== '' && errors.imageBase64 === '' && (
+          {form.image !== '' && errors.image === '' && (
             <div className="image-preview">
-              <img src={form.imageBase64} alt=""></img>
+              <img src={form.image} alt=""></img>
             </div>
           )}
 
-          {errors.imageBase64 && (
-            <div className="image-validation-message">{errors.imageBase64}</div>
+          {errors.image && (
+            <div className="image-validation-message">{errors.image}</div>
           )}
         </div>
       </div>

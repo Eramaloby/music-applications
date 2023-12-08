@@ -1,7 +1,6 @@
 import { TextField, Tooltip } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { getBase64FromFile, validateFieldRequiredNotEmpty } from '../../../../utils';
-import { fetchDatabaseItemsByType } from '../../../../requests';
 import AppModal from '../../../../components/ui-elements/modal';
 import { AddRelationPicklist } from '../../add-relation-picklist/add-relation-picklist.component';
 import { Neo4jItemProperties } from '../../../../types';
@@ -10,43 +9,43 @@ import FileUploader from 'apps/music-applications-f/src/app/components/file-uplo
 import '../../common.styles.scss';
 
 export interface ArtistFormFields {
-  artistName: string;
-  artistType: string;
-  artistDescription: string;
-  artistImageBase64: string;
+  name: string;
+  type: string;
+  description: string;
+  image: string;
 
-  artistRelatedGenres: Neo4jItemProperties[];
+  genres: Neo4jItemProperties[];
 }
 
 export interface ArtistFormFieldsErrors {
-  artistName: string;
-  artistType: string;
-  artistDescription: string;
-  artistImageBase64: string;
-  artistRelatedGenres: string;
+  name: string;
+  type: string;
+  description: string;
+  image: string;
+  genres: string;
 }
 
 const ArtistForm = () => {
   const [form, setForm] = useState<ArtistFormFields>({
-    artistName: '',
-    artistType: '',
-    artistDescription: '',
-    artistImageBase64: '',
-    artistRelatedGenres: [],
+    name: '',
+    type: '',
+    description: '',
+    image: '',
+    genres: [],
   });
 
   const [errors, setErrors] = useState<ArtistFormFieldsErrors>({
-    artistName: '',
-    artistType: '',
-    artistDescription: '',
-    artistImageBase64: '',
-    artistRelatedGenres: '',
+    name: '',
+    type: '',
+    description: '',
+    image: '',
+    genres: '',
   });
 
   const [modal, setModal] = useState(false);
 
   const onSelectedItemsSubmit = (selectedItems: Neo4jItemProperties[]) => {
-    setForm({ ...form, artistRelatedGenres: [...selectedItems] });
+    setForm({ ...form, genres: [...selectedItems] });
     setModal(false);
   };
 
@@ -54,14 +53,14 @@ const ArtistForm = () => {
     if (!file.type.includes('image')) {
       setErrors({
         ...errors,
-        artistImageBase64: 'File is required to be an image.',
+        image: 'File is required to be an image.',
       });
 
       return;
     } else {
       const imageHash = (await getBase64FromFile(file)) as string;
-      setForm({ ...form, artistImageBase64: imageHash });
-      setErrors({ ...errors, artistImageBase64: '' });
+      setForm({ ...form, image: imageHash });
+      setErrors({ ...errors, image: '' });
     }
   };
 
@@ -79,7 +78,7 @@ const ArtistForm = () => {
 
   return (
     <div className="form-wrapper">
-      <div className="form-header">Fill required fields</div>
+      <div className="form-header">Fill required artist fields</div>
       <div className="form-controls">
         <div className="control-wrapper">
           <Tooltip
@@ -87,7 +86,7 @@ const ArtistForm = () => {
             placement="top"
           >
             <TextField
-              name="artistName"
+              name="name"
               className="form-value-input"
               InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
               inputProps={{
@@ -99,10 +98,10 @@ const ArtistForm = () => {
               }}
               color={'primary'}
               label={'Enter artist name'}
-              value={form.artistName}
+              value={form.name}
               onChange={onFormControlsChange}
-              error={Boolean(errors.artistName)}
-              helperText={errors.artistName}
+              error={Boolean(errors.name)}
+              helperText={errors.name}
             ></TextField>
           </Tooltip>
         </div>
@@ -112,7 +111,7 @@ const ArtistForm = () => {
             placement="top"
           >
             <TextField
-              name="artistType"
+              name="type"
               className="form-value-input"
               InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
               inputProps={{
@@ -124,10 +123,10 @@ const ArtistForm = () => {
               }}
               color={'primary'}
               label={'Enter artist type'}
-              value={form.artistType}
+              value={form.type}
               onChange={onFormControlsChange}
-              error={Boolean(errors.artistType)}
-              helperText={errors.artistType}
+              error={Boolean(errors.type)}
+              helperText={errors.type}
             ></TextField>
           </Tooltip>
         </div>
@@ -137,7 +136,7 @@ const ArtistForm = () => {
             placement="top"
           >
             <TextField
-              name="artistDescription"
+              name="description"
               className="form-value-input"
               InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
               inputProps={{
@@ -149,10 +148,10 @@ const ArtistForm = () => {
               }}
               color={'primary'}
               label={'Enter artist description'}
-              value={form.artistDescription}
+              value={form.description}
               onChange={onFormControlsChange}
-              error={Boolean(errors.artistDescription)}
-              helperText={errors.artistDescription}
+              error={Boolean(errors.description)}
+              helperText={errors.description}
             ></TextField>
           </Tooltip>
         </div>
@@ -165,14 +164,14 @@ const ArtistForm = () => {
             ></FileUploader>
           </div>
 
-          {form.artistImageBase64 !== '' && errors.artistImageBase64 === '' && (
+          {form.image !== '' && errors.image === '' && (
             <div className="image-preview">
-              <img src={form.artistImageBase64} alt=""></img>
+              <img src={form.image} alt=""></img>
             </div>
           )}
 
-          {errors.artistImageBase64 && (
-            <div className="image-validation-message">{errors.artistImageBase64}</div>
+          {errors.image && (
+            <div className="image-validation-message">{errors.image}</div>
           )}
         </div>
         <div className="control-wrapper">
@@ -193,15 +192,15 @@ const ArtistForm = () => {
               relationshipTypeLabel=""
               onSubmitCallback={onSelectedItemsSubmit}
               multipleSelection={true}
-              alreadySelectedItemsIds={form.artistRelatedGenres.map(
+              alreadySelectedItemsIds={form.genres.map(
                 (genre) => genre.id
               )}
             ></AddRelationPicklist>
           </AppModal>
 
-          {form.artistRelatedGenres.length > 0 && (
+          {form.genres.length > 0 && (
             <div className="chosen-items-count">
-              Selected {form.artistRelatedGenres.length} genres
+              Selected {form.genres.length} genres
             </div>
           )}
         </div>

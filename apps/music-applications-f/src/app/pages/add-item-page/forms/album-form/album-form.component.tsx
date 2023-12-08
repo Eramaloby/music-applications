@@ -4,7 +4,7 @@ import '../../common.styles.scss';
 import { Neo4jItemProperties } from 'apps/music-applications-f/src/app/types';
 import { TextField, Tooltip } from '@mui/material';
 import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
-import { getBase64FromFile } from 'apps/music-applications-f/src/app/utils';
+import { getBase64FromFile, validateFieldRequiredNotEmpty } from 'apps/music-applications-f/src/app/utils';
 import AppModal from 'apps/music-applications-f/src/app/components/ui-elements/modal';
 import { AddRelationPicklist } from '../../add-relation-picklist/add-relation-picklist.component';
 
@@ -85,8 +85,21 @@ const AlbumForm = () => {
     }
   };
 
+  const onFormControlsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [event.target.name]: event.target.value });
+
+    setErrors({
+      ...errors,
+      [event.target.name]: validateFieldRequiredNotEmpty(
+        event.target.value,
+        event.target.name
+      ),
+    });
+  };
+
   const onAuthorSelected = (selectedItems: Neo4jItemProperties[]) => {
-    setForm({ ...form, author: selectedItems.at(0)! });
+    const author = selectedItems.at(0);
+    author && setForm({ ...form, author: author});
     setAuthorModal(false);
   };
 
@@ -105,9 +118,15 @@ const AlbumForm = () => {
     setGenresModal(false);
   };
 
+  const onSubmitForm = () => {
+    console.log(form);
+    const { name, type, countOfTracks, label, releaseDate } = form;
+
+  }
+
   return (
     <div className="form-wrapper">
-      <div className="form-header">Fill fields for album objects</div>
+      <div className="form-header">Fill required album fields</div>
       <div className="form-controls">
         <div className="control-wrapper">
           <Tooltip title="Album name">
@@ -127,13 +146,14 @@ const AlbumForm = () => {
               value={form.name}
               error={Boolean(errors.name)}
               helperText={errors.name}
+              onChange={onFormControlsChange}
             ></TextField>
           </Tooltip>
         </div>
         <div className="control-wrapper">
           <Tooltip title="Album type, like single, special or any other...">
             <TextField
-              name="name"
+              name="type"
               className="form-value-input"
               InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
               inputProps={{
@@ -148,6 +168,7 @@ const AlbumForm = () => {
               value={form.type}
               error={Boolean(errors.type)}
               helperText={errors.type}
+              onChange={onFormControlsChange}
             ></TextField>
           </Tooltip>
         </div>
@@ -170,6 +191,7 @@ const AlbumForm = () => {
               error={Boolean(errors.countOfTracks)}
               helperText={errors.countOfTracks}
               type="number"
+              onChange={onFormControlsChange}
             ></TextField>
           </Tooltip>
         </div>
@@ -191,6 +213,7 @@ const AlbumForm = () => {
               value={form.label}
               error={Boolean(errors.label)}
               helperText={errors.label}
+              onChange={onFormControlsChange}
             ></TextField>
           </Tooltip>
         </div>
@@ -212,6 +235,7 @@ const AlbumForm = () => {
               value={form.releaseDate}
               error={Boolean(errors.releaseDate)}
               helperText={errors.releaseDate}
+              onChange={onFormControlsChange}
             ></TextField>
           </Tooltip>
         </div>

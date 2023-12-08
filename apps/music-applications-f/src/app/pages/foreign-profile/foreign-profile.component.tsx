@@ -106,7 +106,19 @@ const ForeignProfile = () => {
                 <div className="profile-picture-container">
                   <img src={userInfo.imageBase64} alt=""></img>
                 </div>
-                <div className="profile-name">{userInfo?.username}</div>
+                <div className="profile-name">
+                  <span>{userInfo.username} </span>
+                  {currentUser &&
+                  userInfo.subscribers.includes(currentUser.username) &&
+                  currentUser.subscribers.includes(userInfo.username)
+                    ? 'is your friend'
+                    : ''}
+                  {currentUser &&
+                  userInfo.subscriptions.includes(currentUser.username) &&
+                  !currentUser.subscriptions.includes(userInfo.username)
+                    ? 'following you'
+                    : ''}
+                </div>
                 <div className="profile-stats">
                   Count of nodes added by user:{' '}
                   <span>{userInfo.nodesCount}</span>
