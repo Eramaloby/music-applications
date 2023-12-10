@@ -7,14 +7,16 @@ import AlbumForm from './forms/album-form/album-form.component';
 import PlaylistForm from './forms/playlist-form/playlist-form.component';
 import ArtistForm from './forms/artist-form/artist-form.component';
 import TrackForm from './forms/track-form/track-form.component';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { DbStats, Neo4jModel } from '../../types';
 import GenreForm from './forms/genre-form/genre-form.component';
+import { TaskContext } from '../../contexts/task.context';
 
 type AddSection = 'artist' | 'album' | 'genre' | 'playlist' | 'track';
 
 const AddItemPage = () => {
   const { currentUser } = useContext(UserContext);
+  const { queueUserTask }= useContext(TaskContext);
   const [modal, setModal] = useState<boolean>(false);
   const [currentSection, setCurrentSection] = useState<AddSection | null>(null);
   const [stats, setStats] = useState<DbStats | null>(null);
@@ -70,6 +72,8 @@ const AddItemPage = () => {
       setModal(true);
     }
   };
+  
+  const router = useNavigate();
 
   const onSubmitCallback = async (
     model: Neo4jModel,
@@ -79,13 +83,8 @@ const AddItemPage = () => {
       return;
     }
 
-    const response = await postItemToNeo4jCustom(
-      type,
-      model,
-      currentUser.accessToken
-    );
-
-    console.log(response);
+    queueUserTask(type, model, currentUser.accessToken);
+    router('/profile');
   };
 
   // useEffect(() => {

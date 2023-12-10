@@ -6,9 +6,9 @@ import {
   useState,
 } from 'react';
 import { toast } from 'react-toastify';
-import { postItemToNeo4j } from '../requests';
+import { postItemToNeo4j, postItemToNeo4jCustom } from '../requests';
 import { UserContext } from './user.context';
-import { AlbumModel, ArtistModel, GenreModel, Neo4jModel, PlaylistModel, TrackModel } from '../types';
+import { Neo4jModel } from '../types';
 
 export interface AsyncNeo4jTaskMetadata {
   startedAt?: number; // Date.now()
@@ -17,15 +17,20 @@ export interface AsyncNeo4jTaskMetadata {
   details: { name: string; type: string }[];
   relationshipsCount: number;
   accessTokenInvocation: string;
-  itemType: string;
+  itemType: 'album' | 'playlist' | 'track' | 'genre' | 'artist';
   spotifyId: string;
-  model?: Neo4jModel; 
+  model?: Neo4jModel;
 }
 
 export interface TaskContextType {
   queueTask: (
     itemType: string,
     spotify_id: string,
+    accessToken: string
+  ) => void;
+  queueUserTask: (
+    itemType: string,
+    model: Neo4jModel,
     accessToken: string
   ) => void;
   tasks: AsyncNeo4jTaskMetadata[];
@@ -35,6 +40,8 @@ export const TaskContext = createContext<TaskContextType>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   queueTask: () => {},
   tasks: [],
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  queueUserTask: () => {},
 });
 
 export const TaskContextProvider = ({ children }: { children: ReactNode }) => {
@@ -46,28 +53,39 @@ export const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     setIsExecuting(true);
 
     task.startedAt = Date.now();
-    const response = await postItemToNeo4j(
-      task.itemType,
-      task.spotifyId,
-      task.accessTokenInvocation
-    );
-
-    if (response.isSuccess) {
-      task.status = 'successful';
-      task.finishedAt = Date.now();
-      toast.success(
-        `${
-          task.itemType.charAt(0).toUpperCase() + task.itemType.slice(1)
-        } and related instances were added to db.`,
-        { position: 'top-center' }
+    let response;
+    if (task.spotifyId === '' && task.model) {
+      response = await postItemToNeo4jCustom(
+        task.itemType,
+        task.model,
+        task.accessTokenInvocation
       );
-
-      task.details = [...response.records];
-      task.relationshipsCount = response.relsCount;
     } else {
-      task.status = 'failed';
-      task.finishedAt = Date.now();
-      toast.error(`Operation was terminated. Message: ${response.message}`);
+      response = await postItemToNeo4j(
+        task.itemType,
+        task.spotifyId,
+        task.accessTokenInvocation
+      );
+    }
+
+    if (response) {
+      if (response.isSuccess) {
+        task.status = 'successful';
+        task.finishedAt = Date.now();
+        toast.success(
+          `${
+            task.itemType.charAt(0).toUpperCase() + task.itemType.slice(1)
+          } and related instances were added to db.`,
+          { position: 'top-center' }
+        );
+
+        task.details = [...response.records];
+        task.relationshipsCount = response.relsCount;
+      } else {
+        task.status = 'failed';
+        task.finishedAt = Date.now();
+        toast.error(`Operation was terminated. Message: ${response.message}`);
+      }
     }
 
     setIsExecuting(false);
@@ -109,7 +127,11 @@ export const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     setTasks([...tasks, pendingTask]);
   };
 
-  const queueUserTask = (itemType: string, model: Neo4jModel, accessToken: string) => {
+  const queueUserTask = (
+    itemType: string,
+    model: Neo4jModel,
+    accessToken: string
+  ) => {
     const pendingTask = {
       status: 'pending',
       details: [],
@@ -117,9 +139,29 @@ export const TaskContextProvider = ({ children }: { children: ReactNode }) => {
       accessTokenInvocation: accessToken,
       itemType: itemType,
       spotifyId: '',
-
+      model: model,
     } as AsyncNeo4jTaskMetadata;
-  }
+
+    if (isExecuting) {
+      toast.info(
+        'Operation in queue...\nCheck profile page to track pending operations.',
+        {
+          position: 'top-center',
+        }
+      );
+    } else {
+      // change state of task from pending to in process and start execution
+      pendingTask.status = 'process';
+      toast.info(
+        `Operation was started...\nCheck profile page to track operations.`,
+        { position: 'top-center' }
+      );
+
+      startOperation(pendingTask);
+    }
+
+    setTasks([...tasks, pendingTask]);
+  };
 
   useEffect(() => {
     if (!isExecuting) {
@@ -132,7 +174,7 @@ export const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isExecuting]);
 
-  const value = { queueTask, tasks };
+  const value = { queueTask, queueUserTask, tasks };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 };

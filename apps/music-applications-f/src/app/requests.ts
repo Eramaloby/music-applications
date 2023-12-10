@@ -89,11 +89,27 @@ export const postItemToNeo4jCustom = async (
       }
     });
 
-    console.log(response);
-
-    return undefined;
+    if (response.data.isSuccess) {
+      return {
+        isSuccess: true,
+        records: [...response.data.data.records],
+        relsCount: response.data.data.relationshipCount,
+      };
+    } else {
+      return {
+        isSuccess: false,
+        records: [],
+        message: response.data.reason,
+        relsCount: 0,
+      };
+    }
   } catch (error) {
-    return undefined;
+    return {
+      isSuccess: false,
+      message: error.message,
+      records: [],
+      relsCount: 0,
+    };
   }
 };
 
