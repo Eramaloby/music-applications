@@ -6,7 +6,11 @@ import {
 } from '../../../../utils';
 import AppModal from '../../../../components/ui-elements/modal';
 import { AddRelationPicklist } from '../../add-relation-picklist/add-relation-picklist.component';
-import { Neo4jItemProperties } from '../../../../types';
+import {
+  ArtistModel,
+  Neo4jItemProperties,
+  Neo4jModel,
+} from '../../../../types';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
 import '../../common.styles.scss';
@@ -28,7 +32,14 @@ export interface ArtistFormFieldsErrors {
   genres: string;
 }
 
-const ArtistForm = () => {
+const ArtistForm = ({
+  requestCallback,
+}: {
+  requestCallback: (
+    model: Neo4jModel,
+    type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
+  ) => void;
+}) => {
   const [form, setForm] = useState<ArtistFormFields>({
     name: '',
     type: '',
@@ -98,7 +109,15 @@ const ArtistForm = () => {
       return;
     }
 
-    console.log(form);
+    const model: ArtistModel = {
+      name: form.name,
+      description: form.description,
+      type: form.type,
+      image: form.image,
+      relatedGenresIds: form.genres.map(i => i.id),
+    }
+    
+    requestCallback(model, 'artist');
   };
 
   return (

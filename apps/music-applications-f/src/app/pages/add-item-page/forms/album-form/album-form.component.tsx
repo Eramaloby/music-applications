@@ -1,7 +1,7 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React, { useState } from 'react';
 import '../../common.styles.scss';
-import { Neo4jItemProperties } from 'apps/music-applications-f/src/app/types';
+import { AlbumModel, Neo4jItemProperties, Neo4jModel } from 'apps/music-applications-f/src/app/types';
 import { TextField, Tooltip } from '@mui/material';
 import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
 import { getBase64FromFile, validateFieldRequiredNotEmpty } from 'apps/music-applications-f/src/app/utils';
@@ -38,7 +38,14 @@ export interface AlbumFormErrors {
   tracks: string;
 }
 
-const AlbumForm = () => {
+const AlbumForm = ({
+  requestCallback,
+}: {
+  requestCallback: (
+    model: Neo4jModel,
+    type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
+  ) => void;
+}) => {
   const [form, setForm] = useState<AlbumFormFields>({
     name: '',
     type: '',
@@ -101,6 +108,7 @@ const AlbumForm = () => {
     const author = selectedItems.at(0);
     author && setForm({ ...form, author: author});
     setAuthorModal(false);
+    author && setErrors({...errors, author: ''});
   };
 
   const onContributorsSelected = (selectedItems: Neo4jItemProperties[]) => {
@@ -138,6 +146,25 @@ const AlbumForm = () => {
       setErrors({ ...errors, ...localErrors });
       return;
     }
+
+    if (!form.author) {
+      return;
+    }
+
+    const albumModel: AlbumModel = {
+      name: form.name,
+      image: form.image,
+      countOfTracks: form.countOfTracks,
+      type: form.type,
+      label: form.label,
+      releaseDate: form.releaseDate,
+      relatedGenresIds: form.relatedGenres.map(i => i.id),
+      authorId: form.author.id,
+      contributorsIds: form.contributors.map(i => i.id),
+      tracksIds: form.tracks.map(i => i.id),
+    };
+
+    requestCallback(albumModel, 'album');
   }
 
   return (

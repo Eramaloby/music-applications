@@ -83,7 +83,7 @@ export const postItemToNeo4jCustom = async (
   accessToken: string
 ) => {
   try {
-    const response = await axios.post(`${baseUrl}/neo4j/custom/${itemType}/`, model, {
+    const response = await axios.post(`${baseUrl}/neo4j/custom/user/${itemType}/`, model, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       }

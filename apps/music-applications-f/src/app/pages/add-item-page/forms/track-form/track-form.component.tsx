@@ -2,7 +2,7 @@
 import { TextField, Tooltip } from '@mui/material';
 import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
 import AppModal from 'apps/music-applications-f/src/app/components/ui-elements/modal';
-import { Neo4jItemProperties } from 'apps/music-applications-f/src/app/types';
+import {  Neo4jItemProperties, Neo4jModel, TrackModel } from 'apps/music-applications-f/src/app/types';
 import {
   getBase64FromFile,
   validateFieldRequiredNotEmpty,
@@ -27,7 +27,14 @@ export interface TrackFormFieldsErrors {
   author: string;
 }
 
-const TrackForm = () => {
+const TrackForm = ({
+  requestCallback,
+}: {
+  requestCallback: (
+    model: Neo4jModel,
+    type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
+  ) => void;
+}) => {
   const [form, setForm] = useState<TrackFormFields>({
     name: '',
     type: '',
@@ -102,7 +109,21 @@ const TrackForm = () => {
       return;
     }
 
-    console.log(form);
+    if (!form.author) {
+      return;
+    }
+
+    const model: TrackModel = {
+      name: form.name,
+      type: form.type,
+      durationMs: 10000,
+      explicit: false,
+      image: form.image,
+      authorId: form.author.id,
+      contributorsIds: form.contributors.map(i => i.id),
+    }
+
+    requestCallback(model, 'track');
   };
 
   return (

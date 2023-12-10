@@ -9,6 +9,10 @@ import {
   getBase64FromFile,
   validateFieldRequiredNotEmpty,
 } from 'apps/music-applications-f/src/app/utils';
+import {
+  GenreModel,
+  Neo4jModel,
+} from 'apps/music-applications-f/src/app/types';
 
 export interface GenreFormFields {
   description: string;
@@ -16,7 +20,14 @@ export interface GenreFormFields {
   image: string;
 }
 
-const GenreForm = () => {
+const GenreForm = ({
+  requestCallback,
+}: {
+  requestCallback: (
+    model: Neo4jModel,
+    type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
+  ) => void;
+}) => {
   const [form, setForm] = useState<GenreFormFields>({
     description: '',
     name: '',
@@ -77,9 +88,13 @@ const GenreForm = () => {
       return;
     }
 
-    console.log(form);
-    // validation passed
-    // invoke callback
+    const model: GenreModel = {
+      name: form.name,
+      description: form.description,
+      image: form.image,
+    };
+
+    requestCallback(model, 'genre');
   };
 
   return (

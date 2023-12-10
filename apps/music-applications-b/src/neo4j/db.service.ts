@@ -562,7 +562,7 @@ export class DatabaseService {
   }
 
   public performAddTransactionCustom = async (
-    type: string, model: any, username: string
+    type: string, model: AlbumModel | TrackModel | PlaylistModel | ArtistModel | PlaylistModel | GenreModel, username: string
   ): Promise<AddTransactionResult> => {
     const txData: TransactionData = {
       records: [],
@@ -575,10 +575,23 @@ export class DatabaseService {
     try {
       switch(type) {
         case 'track':
-          await this.addTrack(model, username, txData, transaction);
+          await this.addTrack(model as TrackModel, username, txData, transaction);
           break;
         case 'album':
+          await this.addAlbum(model as AlbumModel, username, txData, transaction);
+          break;
+        case 'artist':
+          await this.addArtist(model as ArtistModel, username, txData, transaction);
+          break;
+        case 'playlist':
+          await this.addPlaylist(model as PlaylistModel, username, txData, transaction);
+          break;
+        case 'genre':
+          await this.addGenre(model as GenreModel, username, txData, transaction);
+          break;
       }
+
+      await transaction.commit();
     }
     catch (error) {
       return {
@@ -590,6 +603,19 @@ export class DatabaseService {
     } finally {
       await transaction.close();
       await session.close();
+    }
+
+    if (txData.records.length > 0) {
+      return {
+        isSuccess: true,
+        data: txData,
+      };
+    } else {
+      return {
+        isSuccess: false,
+        data: txData,
+        reason: 'Record was already added.',
+      };
     }
   }
   /* ADD functions */

@@ -8,6 +8,7 @@ import {
 import { toast } from 'react-toastify';
 import { postItemToNeo4j } from '../requests';
 import { UserContext } from './user.context';
+import { AlbumModel, ArtistModel, GenreModel, Neo4jModel, PlaylistModel, TrackModel } from '../types';
 
 export interface AsyncNeo4jTaskMetadata {
   startedAt?: number; // Date.now()
@@ -18,6 +19,7 @@ export interface AsyncNeo4jTaskMetadata {
   accessTokenInvocation: string;
   itemType: string;
   spotifyId: string;
+  model?: Neo4jModel; 
 }
 
 export interface TaskContextType {
@@ -106,6 +108,18 @@ export const TaskContextProvider = ({ children }: { children: ReactNode }) => {
 
     setTasks([...tasks, pendingTask]);
   };
+
+  const queueUserTask = (itemType: string, model: Neo4jModel, accessToken: string) => {
+    const pendingTask = {
+      status: 'pending',
+      details: [],
+      relationshipsCount: 0,
+      accessTokenInvocation: accessToken,
+      itemType: itemType,
+      spotifyId: '',
+
+    } as AsyncNeo4jTaskMetadata;
+  }
 
   useEffect(() => {
     if (!isExecuting) {

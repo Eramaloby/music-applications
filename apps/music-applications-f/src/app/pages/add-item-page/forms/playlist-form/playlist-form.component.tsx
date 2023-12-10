@@ -5,7 +5,7 @@ import {
   getBase64FromFile,
   validateFieldRequiredNotEmpty,
 } from 'apps/music-applications-f/src/app/utils';
-import { Neo4jItemProperties } from 'apps/music-applications-f/src/app/types';
+import {  Neo4jItemProperties, Neo4jModel, PlaylistModel } from 'apps/music-applications-f/src/app/types';
 import { TextField, Tooltip } from '@mui/material';
 import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
 import AppModal from 'apps/music-applications-f/src/app/components/ui-elements/modal';
@@ -29,7 +29,14 @@ export interface PlaylistFormFieldsErrors {
   genres: string;
 }
 
-const PlaylistForm = () => {
+const PlaylistForm = ({
+  requestCallback,
+}: {
+  requestCallback: (
+    model: Neo4jModel,
+    type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
+  ) => void;
+}) => {
   const [form, setForm] = useState<PlaylistFormFields>({
     name: '',
     description: '',
@@ -99,11 +106,16 @@ const PlaylistForm = () => {
       return;
     }
 
-    console.log(form);
+    const model: PlaylistModel = {
+      name: form.name,
+      description: form.description,
+      ownerName: form.ownerName,
+      image: form.image,
+      tracksIds: form.tracks.map(i => i.id),
+      genresIds: form.genres.map(i => i.id)
+    }
 
-
-    // validation passed
-    // invoke callback
+    requestCallback(model, 'playlist');
   };
 
   const onTracksSelected = (selectedItems: Neo4jItemProperties[]) => {

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import './add-item-section.styles.scss';
-import { fetchDatabaseStats } from '../../requests';
+import { fetchDatabaseStats, postItemToNeo4jCustom } from '../../requests';
 import { UserContext } from '../../contexts/user.context';
 import AppModal from '../../components/ui-elements/modal';
 import AlbumForm from './forms/album-form/album-form.component';
@@ -8,7 +8,7 @@ import PlaylistForm from './forms/playlist-form/playlist-form.component';
 import ArtistForm from './forms/artist-form/artist-form.component';
 import TrackForm from './forms/track-form/track-form.component';
 import { Navigate } from 'react-router-dom';
-import { DbStats } from '../../types';
+import { DbStats, Neo4jModel } from '../../types';
 import GenreForm from './forms/genre-form/genre-form.component';
 
 type AddSection = 'artist' | 'album' | 'genre' | 'playlist' | 'track';
@@ -71,6 +71,23 @@ const AddItemPage = () => {
     }
   };
 
+  const onSubmitCallback = async (
+    model: Neo4jModel,
+    type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
+  ) => {
+    if (!currentUser) {
+      return;
+    }
+
+    const response = await postItemToNeo4jCustom(
+      type,
+      model,
+      currentUser.accessToken
+    );
+
+    console.log(response);
+  };
+
   // useEffect(() => {
   //   // TODO: trigger animation to change opacity of modal
   //   setModal(true);
@@ -85,11 +102,21 @@ const AddItemPage = () => {
       <div className="add-item-section-wrapper">
         {currentSection && (
           <>
-            {currentSection === 'artist' && <ArtistForm></ArtistForm>}
-            {currentSection === 'playlist' && <PlaylistForm></PlaylistForm>}
-            {currentSection === 'album' && <AlbumForm></AlbumForm>}
-            {currentSection === 'genre' && <GenreForm></GenreForm>}
-            {currentSection === 'track' && <TrackForm></TrackForm>}
+            {currentSection === 'artist' && (
+              <ArtistForm requestCallback={onSubmitCallback}></ArtistForm>
+            )}
+            {currentSection === 'playlist' && (
+              <PlaylistForm requestCallback={onSubmitCallback}></PlaylistForm>
+            )}
+            {currentSection === 'album' && (
+              <AlbumForm requestCallback={onSubmitCallback}></AlbumForm>
+            )}
+            {currentSection === 'genre' && (
+              <GenreForm requestCallback={onSubmitCallback}></GenreForm>
+            )}
+            {currentSection === 'track' && (
+              <TrackForm requestCallback={onSubmitCallback}></TrackForm>
+            )}
           </>
         )}
         {/* add spinner to wait for request loading */}

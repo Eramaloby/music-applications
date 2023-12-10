@@ -382,3 +382,10 @@ export interface PlaylistModel {
   tracksIds: string[];
   genresIds: string[];
 }
+
+export type Neo4jModel =
+  | PlaylistModel
+  | AlbumModel
+  | ArtistModel
+  | TrackModel
+  | GenreModel;
