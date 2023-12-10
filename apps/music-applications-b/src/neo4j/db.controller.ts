@@ -1,11 +1,24 @@
-import { Body, Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { DatabaseService } from './db.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
 import { ProfileService } from '../profile/profile.service';
 import { TaskService } from '../task/task.service';
-import { AlbumModel, ArtistModel, GenreModel, PlaylistModel, TrackModel } from './types';
+import {
+  AlbumModel,
+  ArtistModel,
+  GenreModel,
+  PlaylistModel,
+  TrackModel,
+} from './types';
 
 @Controller('neo4j')
 @UseGuards(AuthGuard())
@@ -17,11 +30,13 @@ export class DatabaseController {
   ) {}
 
   @Delete(':id')
-  async deleteItemFromDatabase(@Param() param) {
+  async deleteItemFromDatabase(@Param() param, @GetUser() user: User) {
     const result = await this.dbService.deleteInstanceById(param.id);
-
-    console.log(result.records);
-
+    await this.profileService.updateProfileDatabaseStats(
+      -1,
+      -result,
+      user.username
+    );
     return true;
   }
 
@@ -59,13 +74,21 @@ export class DatabaseController {
       });
     }
 
-
     return result;
   }
 
   @Post('custom/user/:type/')
-  async addUserItem(@Param() params, @Body() dto: TrackModel | AlbumModel | PlaylistModel | GenreModel | ArtistModel, @GetUser() user: User) {
-    const result = await this.dbService.performAddTransactionCustom(params.type, dto, user.username);
+  async addUserItem(
+    @Param() params,
+    @Body()
+    dto: TrackModel | AlbumModel | PlaylistModel | GenreModel | ArtistModel,
+    @GetUser() user: User
+  ) {
+    const result = await this.dbService.performAddTransactionCustom(
+      params.type,
+      dto,
+      user.username
+    );
 
     if (result.isSuccess) {
       await this.profileService.updateProfileDatabaseStats(

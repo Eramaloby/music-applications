@@ -23,15 +23,15 @@ export class ProfileService {
   }
 
   async updateProfileDatabaseStats(
-    nodeCount: number,
-    relationshipsCount: number,
+    nodeCountInc: number,
+    relationshipsCountInc: number,
     username: string
   ) {
     const user = await this.userRepository.findOne({ where: { username } });
 
     if (user) {
-      const nodesUpdated = user.nodesAddedCount + nodeCount;
-      const relsUpdated = user.relationshipsAddedCount + relationshipsCount;
+      const nodesUpdated = user.nodesAddedCount + nodeCountInc;
+      const relsUpdated = user.relationshipsAddedCount + relationshipsCountInc;
 
       return await this.userRepository.update(
         { username: username },

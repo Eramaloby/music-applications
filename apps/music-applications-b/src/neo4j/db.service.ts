@@ -302,6 +302,7 @@ export class DatabaseService {
     return [nodesCount, relationshipsCount];
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async getMostLikedItems(): Promise<any[]> {
     const records = (
       await this.dbService.read(`MATCH (n) WHERE n.likes > 0 RETURN n`)
@@ -696,8 +697,10 @@ export class DatabaseService {
   };
 
   public async deleteInstanceById(id: string) {
-    const query = await this.dbService.write(`MATCH (item) WHERE item.id = '${id}' DETACH DELETE item`);
-    return query;
+    const relsCount = await this.dbService.read(`MATCH (p)-[r]-(n) WHERE p.id = '${id}' RETURN count(r) AS count`)
+    const [count] = relsCount.records.map(record => record['_fields']).at(0);
+    await this.dbService.write(`MATCH (item) WHERE item.id = '${id}' DETACH DELETE item`);
+    return count.low;
   }
 
   /* ADD TO DB FUNCTIONS */
