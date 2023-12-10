@@ -29,18 +29,20 @@ export interface TrackFormFieldsErrors {
 
 const TrackForm = ({
   requestCallback,
+  initValues
 }: {
   requestCallback: (
     model: Neo4jModel,
     type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
   ) => void;
+  initValues?: TrackFormFields
 }) => {
   const [form, setForm] = useState<TrackFormFields>({
-    name: '',
-    type: '',
-    image: '',
-    contributors: [],
-    author: null,
+    name: initValues?.name ?? '',
+    type: initValues?.type ?? '',
+    image: initValues?.image ?? '',
+    contributors: initValues?.contributors ?? [],
+    author: initValues?.author ?? null,
   });
 
   const [errors, setErrors] = useState<TrackFormFieldsErrors>({

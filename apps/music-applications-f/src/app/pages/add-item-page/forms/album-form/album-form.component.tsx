@@ -40,23 +40,25 @@ export interface AlbumFormErrors {
 
 const AlbumForm = ({
   requestCallback,
+  initValues
 }: {
   requestCallback: (
     model: Neo4jModel,
     type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
   ) => void;
+  initValues?: AlbumFormFields
 }) => {
   const [form, setForm] = useState<AlbumFormFields>({
-    name: '',
-    type: '',
-    countOfTracks: 0,
-    label: '',
-    releaseDate: '',
-    image: '',
-    contributors: [],
-    tracks: [],
-    author: null,
-    relatedGenres: [],
+    name: initValues?.name ?? '',
+    type: initValues?.type ?? '',
+    countOfTracks: initValues?.countOfTracks ?? 0,
+    label: initValues?.label ?? '',
+    releaseDate: initValues?.releaseDate ?? '',
+    image: initValues?.image ?? '',
+    contributors: initValues?.contributors ?? [],
+    tracks: initValues?.tracks ?? [],
+    author: initValues?.author ?? null,
+    relatedGenres: initValues?.relatedGenres ?? [],
   });
 
   const [errors, setErrors] = useState<AlbumFormErrors>({

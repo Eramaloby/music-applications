@@ -34,18 +34,20 @@ export interface ArtistFormFieldsErrors {
 
 const ArtistForm = ({
   requestCallback,
+  initValues,
 }: {
   requestCallback: (
     model: Neo4jModel,
     type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
   ) => void;
+  initValues?: ArtistFormFields
 }) => {
   const [form, setForm] = useState<ArtistFormFields>({
-    name: '',
-    type: '',
-    description: '',
-    image: '',
-    genres: [],
+    name: initValues?.name ?? '',
+    type: initValues?.type ?? '',
+    description: initValues?.description ?? '',
+    image: initValues?.image ?? '',
+    genres: initValues?.genres ?? [],
   });
 
   const [errors, setErrors] = useState<ArtistFormFieldsErrors>({

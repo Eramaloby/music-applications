@@ -60,17 +60,33 @@
     }
   }
 
-  .delete-item {
-    align-self: flex-start;
-    width: 50%;
-    height: 30px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: large;
-    border: 2px solid red;
-    border-radius: 5px;
-    background-color: black;
-    color: white;
+  .btns {
+    display: flex;
+    justify-content: space-between;
+
+    .delete-item {
+      width: 30%;
+      height: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: large;
+      border: 2px solid red;
+      border-radius: 5px;
+      background-color: black;
+      color: white;
+    }
+
+    .edit-item {
+      width: 30%;
+      height: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: large;
+      border: 2px solid greenyellow;
+      border-radius: 5px;
+      background-color: black;
+      color: white;
+    }
   }
 }
 

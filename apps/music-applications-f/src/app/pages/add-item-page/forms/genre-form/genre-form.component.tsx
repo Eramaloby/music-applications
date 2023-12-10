@@ -22,16 +22,18 @@ export interface GenreFormFields {
 
 const GenreForm = ({
   requestCallback,
+  initValues,
 }: {
   requestCallback: (
     model: Neo4jModel,
     type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
   ) => void;
+  initValues?: GenreFormFields,
 }) => {
   const [form, setForm] = useState<GenreFormFields>({
-    description: '',
-    name: '',
-    image: '',
+    description: initValues?.description ?? '',
+    name: initValues?.name ?? '',
+    image: initValues?.image ?? '',
   });
 
   const [errors, setErrors] = useState<GenreFormFields>({

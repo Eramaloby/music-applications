@@ -31,19 +31,21 @@ export interface PlaylistFormFieldsErrors {
 
 const PlaylistForm = ({
   requestCallback,
+  initValues
 }: {
   requestCallback: (
     model: Neo4jModel,
     type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
   ) => void;
+  initValues?: PlaylistFormFields
 }) => {
   const [form, setForm] = useState<PlaylistFormFields>({
-    name: '',
-    description: '',
-    ownerName: '',
-    image: '',
-    tracks: [],
-    genres: [],
+    name: initValues?.name ?? '',
+    description: initValues?.description ?? '',
+    ownerName: initValues?.ownerName ?? '',
+    image: initValues?.image ?? '',
+    tracks: initValues?.tracks ?? [],
+    genres: initValues?.genres ?? [],
   });
 
   const [errors, setErrors] = useState<PlaylistFormFieldsErrors>({
