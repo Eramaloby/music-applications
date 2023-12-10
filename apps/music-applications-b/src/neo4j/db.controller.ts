@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
 import { DatabaseService } from './db.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
@@ -15,6 +15,11 @@ export class DatabaseController {
     private readonly profileService: ProfileService,
     private readonly taskService: TaskService
   ) {}
+
+  @Delete(':id')
+  async deleteItemFromDatabase(@Param() param) {
+    console.log(param);
+  }
 
   @Post(':type/:id')
   async addItemFromSpotify(@Param() params, @GetUser() user: User) {

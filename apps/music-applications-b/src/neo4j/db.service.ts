@@ -695,6 +695,12 @@ export class DatabaseService {
     }
   };
 
+  public async deleteInstanceById(id: string) {
+    const query = this.dbService.write(`MATCH (item) WHERE item.id = '${id}' DETACH DELETE item`);
+
+    
+  }
+
   /* ADD TO DB FUNCTIONS */
 
   public async instanceWithIdExistsWithTransaction(
