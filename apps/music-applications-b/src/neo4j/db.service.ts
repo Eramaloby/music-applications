@@ -561,6 +561,37 @@ export class DatabaseService {
     return query.records;
   }
 
+  public performAddTransactionCustom = async (
+    type: string, model: any, username: string
+  ): Promise<AddTransactionResult> => {
+    const txData: TransactionData = {
+      records: [],
+      relationshipCount: 0
+    };
+
+    const session = this.dbService.getDriver().session();
+    const transaction = await session.beginTransaction();
+
+    try {
+      switch(type) {
+        case 'track':
+          await this.addTrack(model, username, txData, transaction);
+          break;
+        case 'album':
+      }
+    }
+    catch (error) {
+      return {
+        isSuccess: false,
+        reason: JSON.stringify(error.message),
+        data: { records: [], relationshipCount: 0 },
+      }
+
+    } finally {
+      await transaction.close();
+      await session.close();
+    }
+  }
   /* ADD functions */
   public performAddTransaction = async (
     type: string,

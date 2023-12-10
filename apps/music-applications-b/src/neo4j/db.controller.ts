@@ -62,28 +62,8 @@ export class DatabaseController {
     return result;
   }
 
-  @Post('/track')
-  async addUserTrack(dto: PostTrackDto, @GetUser() user: User) {
+  @Post('custom/:type/')
+  async addUserItem(@Param() params, @Body() dto: any, @GetUser() user: User) {
     console.log(dto);
-  }
-
-  @Post('/album')
-  async addUserAlbum(dto: PostAlbumDto, @GetUser() user: User) {
-    console.log(dto);
-  }
-
-  @Post('/artist')
-  async addUserArtist(dto: PostArtistDto, @GetUser() user: User) {
-    console.log(dto);
-  }
-
-  @Post('/playlist')
-  async addUserPlaylist(dto: PostPlaylistDto, @GetUser() user: User) {
-    console.log(dto);
-  }
-
-  @Post('/genre')
-  async addUserGenre(@Body() dto: PostGenreDto, @GetUser() user: User) {
-    console.log('post request passed dto', dto);
   }
 }

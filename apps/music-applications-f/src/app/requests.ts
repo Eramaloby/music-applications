@@ -8,6 +8,11 @@ import {
   FetchItemFromNeo4jResult,
   Neo4jItemProperties,
   FulfilledTask,
+  TrackModel,
+  GenreModel,
+  AlbumModel,
+  PlaylistModel,
+  ArtistModel,
 } from './types';
 import { parseNeo4jLikes, parseNeo4jRecommendation } from './utils';
 import { ProfileNotification } from './pages/profile/profile.component';
@@ -72,15 +77,23 @@ export interface PostItemResponse {
   relsCount: number;
 }
 
-export const postItemFromParameters = async (accessToken: string, dto: any) => {
+export const postItemToNeo4jCustom = async (
+  itemType: 'album' | 'playlist' | 'track' | 'genre' | 'artist',
+  model: TrackModel | GenreModel | AlbumModel | PlaylistModel | ArtistModel,
+  accessToken: string
+) => {
   try {
-    const response = await axios.post(`${baseUrl}/neo4j/genre`, dto, {
+    const response = await axios.post(`${baseUrl}/neo4j/custom/${itemType}/`, model, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
-      },
+      }
     });
+
+    console.log(response);
+
+    return undefined;
   } catch (error) {
-    console.log(error);
+    return undefined;
   }
 };
 

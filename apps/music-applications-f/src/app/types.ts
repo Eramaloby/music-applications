@@ -325,3 +325,60 @@ export interface FulfilledTask {
   targetRecordType: string;
   targetRecordId: string;
 }
+
+export interface GenreModel {
+  name: string;
+  description: string;
+
+  // in base64 or url provided by spotify
+  image: string;
+}
+
+export interface ArtistModel {
+  name: string;
+  description: string;
+  type: string;
+
+  image: string;
+
+  relatedGenresIds: string[];
+}
+
+export interface TrackModel {
+  name: string;
+  type: string;
+  durationMs: number;
+  explicit: boolean;
+
+  image: string;
+
+  authorId: string;
+  contributorsIds: string[];
+}
+export interface AlbumModel {
+  name: string;
+  type: string;
+  countOfTracks: number;
+  label: string;
+  releaseDate: string;
+
+  image: string;
+
+  relatedGenresIds: string[];
+  authorId: string;
+  contributorsIds: string[];
+  tracksIds: string[];
+}
+
+export interface PlaylistModel {
+  name: string;
+  description: string;
+
+  // could be owner name on spotify, and username inside db
+  ownerName: string;
+
+  image: string;
+
+  tracksIds: string[];
+  genresIds: string[];
+}

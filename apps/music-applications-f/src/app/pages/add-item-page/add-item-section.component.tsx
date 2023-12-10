@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import './add-item-section.styles.scss';
-import { fetchDatabaseStats, postItemFromParameters } from '../../requests';
+import { fetchDatabaseStats } from '../../requests';
 import { UserContext } from '../../contexts/user.context';
 import AppModal from '../../components/ui-elements/modal';
 import AlbumForm from './forms/album-form/album-form.component';
