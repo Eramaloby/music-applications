@@ -1,6 +1,9 @@
 import { TextField, Tooltip } from '@mui/material';
 import React, { useState } from 'react';
-import { getBase64FromFile, validateFieldRequiredNotEmpty } from '../../../../utils';
+import {
+  getBase64FromFile,
+  validateFieldRequiredNotEmpty,
+} from '../../../../utils';
 import AppModal from '../../../../components/ui-elements/modal';
 import { AddRelationPicklist } from '../../add-relation-picklist/add-relation-picklist.component';
 import { Neo4jItemProperties } from '../../../../types';
@@ -74,6 +77,28 @@ const ArtistForm = () => {
         event.target.name
       ),
     });
+  };
+
+  const onSubmit = () => {
+    if (Object.values(errors).some((msg) => Boolean(msg))) {
+      return;
+    }
+
+    const localErrors = {
+      name: validateFieldRequiredNotEmpty(form.name, 'Name'),
+      description: validateFieldRequiredNotEmpty(
+        form.description,
+        'Description'
+      ),
+      type: validateFieldRequiredNotEmpty(form.type, 'Type'),
+    };
+
+    if (Object.values(localErrors).some((msg) => Boolean(msg))) {
+      setErrors({ ...errors, ...localErrors });
+      return;
+    }
+
+    console.log(form);
   };
 
   return (
@@ -192,9 +217,7 @@ const ArtistForm = () => {
               relationshipTypeLabel=""
               onSubmitCallback={onSelectedItemsSubmit}
               multipleSelection={true}
-              alreadySelectedItemsIds={form.genres.map(
-                (genre) => genre.id
-              )}
+              alreadySelectedItemsIds={form.genres.map((genre) => genre.id)}
             ></AddRelationPicklist>
           </AppModal>
 
@@ -205,13 +228,7 @@ const ArtistForm = () => {
           )}
         </div>
       </div>
-      <button
-        type="button"
-        className="create-btn"
-        onClick={() => {
-          return;
-        }}
-      >
+      <button type="button" className="create-btn" onClick={onSubmit}>
         Submit artist
       </button>
     </div>

@@ -119,9 +119,25 @@ const AlbumForm = () => {
   };
 
   const onSubmitForm = () => {
-    console.log(form);
     const { name, type, countOfTracks, label, releaseDate } = form;
+    // check for existing errors
+    if (Object.values(errors).some((msg) => Boolean(msg))) {
+      return;
+    }
+    const localErrors = {
+      name: validateFieldRequiredNotEmpty(name, 'Name'),
+      type: validateFieldRequiredNotEmpty(type, 'Type'),
+      countOfTracks: validateFieldRequiredNotEmpty(countOfTracks.toString(), 'Count of tracks'),
+      label: validateFieldRequiredNotEmpty(label, 'Label'),
+      releaseDate: validateFieldRequiredNotEmpty(releaseDate, 'Release date')
+    }
 
+   
+
+    if (Object.values(localErrors).some((msg) => Boolean(msg))) {
+      setErrors({ ...errors, ...localErrors });
+      return;
+    }
   }
 
   return (
@@ -175,7 +191,7 @@ const AlbumForm = () => {
         <div className="control-wrapper">
           <Tooltip title="Count of tracks on album">
             <TextField
-              name="name"
+              name="countOfTracks"
               className="form-value-input"
               InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
               inputProps={{
@@ -198,7 +214,7 @@ const AlbumForm = () => {
         <div className="control-wrapper">
           <Tooltip title="Enter album label or legal owner of rights...">
             <TextField
-              name="name"
+              name="label"
               className="form-value-input"
               InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
               inputProps={{
@@ -220,7 +236,7 @@ const AlbumForm = () => {
         <div className="control-wrapper">
           <Tooltip title="Enter release date">
             <TextField
-              name="name"
+              name="releaseDate"
               className="form-value-input"
               InputLabelProps={{ style: { color: 'white', fontWeight: '500' } }}
               inputProps={{
@@ -349,7 +365,7 @@ const AlbumForm = () => {
           </AppModal>
         </div>
       </div>
-      <button type='button' className='create-btn'>Submit album</button>
+      <button type='button' className='create-btn' onClick={onSubmitForm}>Submit album</button>
     </div>
   );
 };

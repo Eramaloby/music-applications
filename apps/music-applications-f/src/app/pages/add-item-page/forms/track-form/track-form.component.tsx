@@ -3,8 +3,11 @@ import { TextField, Tooltip } from '@mui/material';
 import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
 import AppModal from 'apps/music-applications-f/src/app/components/ui-elements/modal';
 import { Neo4jItemProperties } from 'apps/music-applications-f/src/app/types';
-import { getBase64FromFile, validateFieldRequiredNotEmpty } from 'apps/music-applications-f/src/app/utils';
-import  { useState } from 'react';
+import {
+  getBase64FromFile,
+  validateFieldRequiredNotEmpty,
+} from 'apps/music-applications-f/src/app/utils';
+import { useState } from 'react';
 import { AddRelationPicklist } from '../../add-relation-picklist/add-relation-picklist.component';
 
 export interface TrackFormFields {
@@ -60,7 +63,7 @@ const TrackForm = () => {
   };
 
   const onAuthorSelected = (selectedItems: Neo4jItemProperties[]) => {
-    const value = selectedItems.at(0) ;
+    const value = selectedItems.at(0);
     value && setForm({ ...form, author: value });
     setAuthorModal(false);
   };
@@ -77,10 +80,29 @@ const TrackForm = () => {
       ),
     });
   };
-  
+
   const onContributorsSelected = (selectedItems: Neo4jItemProperties[]) => {
     setForm({ ...form, contributors: [...selectedItems] });
     setContributorsModal(false);
+  };
+
+  const onSubmit = () => {
+    // check for existing errors
+    if (Object.values(errors).some((msg) => Boolean(msg))) {
+      return;
+    }
+
+    const localErrors = {
+      name: validateFieldRequiredNotEmpty(form.name, 'Name'),
+      type: validateFieldRequiredNotEmpty(form.type, 'Type'),
+    };
+
+    if (Object.values(localErrors).some((msg) => Boolean(msg))) {
+      setErrors({ ...errors, ...localErrors });
+      return;
+    }
+
+    console.log(form);
   };
 
   return (
@@ -245,7 +267,9 @@ const TrackForm = () => {
           </AppModal>
         </div>
       </div>
-      <button type='button' className='create-btn'>Submit album</button>
+      <button type="button" className="create-btn" onSubmit={onSubmit}>
+        Submit album
+      </button>
     </div>
   );
 };

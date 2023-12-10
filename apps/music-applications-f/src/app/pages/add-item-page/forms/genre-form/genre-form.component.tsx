@@ -77,6 +77,7 @@ const GenreForm = () => {
       return;
     }
 
+    console.log(form);
     // validation passed
     // invoke callback
   };

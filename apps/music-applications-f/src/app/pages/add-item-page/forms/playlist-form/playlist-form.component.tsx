@@ -1,7 +1,10 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React, { useState } from 'react';
 import '../../common.styles.scss';
-import { getBase64FromFile, validateFieldRequiredNotEmpty } from 'apps/music-applications-f/src/app/utils';
+import {
+  getBase64FromFile,
+  validateFieldRequiredNotEmpty,
+} from 'apps/music-applications-f/src/app/utils';
 import { Neo4jItemProperties } from 'apps/music-applications-f/src/app/types';
 import { TextField, Tooltip } from '@mui/material';
 import FileUploader from 'apps/music-applications-f/src/app/components/file-uploader/file-uploader.component';
@@ -74,6 +77,33 @@ const PlaylistForm = () => {
         event.target.name
       ),
     });
+  };
+
+  const onSubmit = () => {
+    // check for existing errors
+    if (Object.values(errors).some((msg) => Boolean(msg))) {
+      return;
+    }
+
+    const localErrors = {
+      name: validateFieldRequiredNotEmpty(form.name, 'Name'),
+      description: validateFieldRequiredNotEmpty(
+        form.description,
+        'Description'
+      ),
+      ownerName: validateFieldRequiredNotEmpty(form.ownerName, 'Image'),
+    };
+
+    if (Object.values(localErrors).some((msg) => Boolean(msg))) {
+      setErrors({ ...errors, ...localErrors });
+      return;
+    }
+
+    console.log(form);
+
+
+    // validation passed
+    // invoke callback
   };
 
   const onTracksSelected = (selectedItems: Neo4jItemProperties[]) => {
@@ -220,7 +250,9 @@ const PlaylistForm = () => {
           </AppModal>
         </div>
       </div>
-      <button type='button' className='create-btn'>Submit playlist</button>
+      <button type="button" className="create-btn" onClick={onSubmit}>
+        Submit playlist
+      </button>
     </div>
   );
 };
