@@ -13,9 +13,11 @@ import { useNavigate } from 'react-router-dom';
 const ArtistItemRelationView = ({
   item,
   navigateTo,
+  onDelete,
 }: {
   item: ArtistWithRelationships;
   navigateTo: (type: string, id: string) => void;
+  onDelete: () => void;
 }) => {
   // iam lazy
   const router = useNavigate();
@@ -54,6 +56,7 @@ const ArtistItemRelationView = ({
         <div className="added-by-link">
           <p>Added by:</p> <span onClick={() => router(`/profile/${item.properties.added_by}`)}>{item.properties.added_by}</span>
         </div>
+        <button className='delete-item' type='button' onClick={onDelete}>remove from db</button>
       </div>
       <div className="item-relationships-container">
         {item.genres && item.genres.length > 0 && (

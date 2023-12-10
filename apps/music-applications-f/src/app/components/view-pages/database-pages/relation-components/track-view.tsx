@@ -14,9 +14,11 @@ import { useNavigate } from 'react-router-dom';
 const TrackItemRelationView = ({
   item,
   navigateTo,
+  onDelete,
 }: {
   item: TrackWithRelationships;
   navigateTo: (type: string, id: string) => void;
+  onDelete: () => void;
 }) => {
   const router = useNavigate();
   const displayedProperties = Object.entries({
@@ -51,6 +53,7 @@ const TrackItemRelationView = ({
         <div className="added-by-link">
           <p>Added by:</p> <span onClick={() => router(`/profile/${item.properties.added_by}`)}>{item.properties.added_by}</span>
         </div>
+        <button className='delete-item' type='button' onClick={onDelete}>remove from db</button>
       </div>
       <div className="item-relationships-container">
         {item.author && (

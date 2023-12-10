@@ -59,6 +59,19 @@
       margin-left: auto;
     }
   }
+
+  .delete-item {
+    align-self: flex-start;
+    width: 50%;
+    height: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: large;
+    border: 2px solid red;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+  }
 }
 
 .item-relationships-container {

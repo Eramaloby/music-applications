@@ -18,7 +18,11 @@ export class DatabaseController {
 
   @Delete(':id')
   async deleteItemFromDatabase(@Param() param) {
-    console.log(param);
+    const result = await this.dbService.deleteInstanceById(param.id);
+
+    console.log(result.records);
+
+    return true;
   }
 
   @Post(':type/:id')
@@ -75,7 +79,7 @@ export class DatabaseController {
         reason: 'Success',
         details: JSON.stringify(result.data.records),
         relationshipCount: result.data.relationshipCount,
-        targetRecordId: params.id,
+        targetRecordId: 'Custom item',
         targetRecordType: params.type,
       });
     } else {
@@ -84,7 +88,7 @@ export class DatabaseController {
         reason: result.reason,
         details: 'Transaction was interrupted.',
         relationshipCount: 0,
-        targetRecordId: params.id,
+        targetRecordId: 'Custom item',
         targetRecordType: params.type,
       });
     }

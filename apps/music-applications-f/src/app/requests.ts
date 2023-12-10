@@ -77,6 +77,20 @@ export interface PostItemResponse {
   relsCount: number;
 }
 
+export const deleteItemFromNeo4j = async (id: string, accessToken: string) => {
+  try {
+    await axios.delete(`${baseUrl}/neo4j/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 export const postItemToNeo4jCustom = async (
   itemType: 'album' | 'playlist' | 'track' | 'genre' | 'artist',
   model: TrackModel | GenreModel | AlbumModel | PlaylistModel | ArtistModel,
