@@ -8,6 +8,7 @@ import { DatabaseController } from './db.controller';
 import { DatabaseNoAuthController } from './db-no-auth.controller';
 import { ProfileModule } from '../profile/profile.module';
 import { TaskModule } from '../task/task.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TaskModule } from '../task/task.module';
     SpotifyModule,
     ProfileModule,
     TaskModule,
+    HttpModule,
   ],
   controllers: [DatabaseController, DatabaseNoAuthController],
   providers: [DatabaseService],

@@ -20,6 +20,7 @@ import {
   PlaylistModel,
   TrackModel,
 } from './types';
+import { HttpService } from '@nestjs/axios';
 
 @Controller('neo4j')
 @UseGuards(AuthGuard())
@@ -27,7 +28,8 @@ export class DatabaseController {
   constructor(
     private readonly dbService: DatabaseService,
     private readonly profileService: ProfileService,
-    private readonly taskService: TaskService
+    private readonly taskService: TaskService,
+    private readonly httpService: HttpService
   ) {}
 
   @Delete(':id')
@@ -42,8 +44,11 @@ export class DatabaseController {
   }
 
   @Patch(':type/:id')
-  async updateItemFromDatabase(@Param() param, @Body()
-  dto: TrackModel | AlbumModel | PlaylistModel | GenreModel | ArtistModel,) {
+  async updateItemFromDatabase(
+    @Param() param,
+    @Body()
+    dto: TrackModel | AlbumModel | PlaylistModel | GenreModel | ArtistModel
+  ) {
     const result = await this.dbService.updateObject(dto, param.type, param.id);
     return result;
   }
@@ -71,6 +76,14 @@ export class DatabaseController {
         targetRecordId: params.id,
         targetRecordType: params.type,
       });
+
+      this.httpService
+        .post(
+          `https://kmeans-rec-system.onrender.com/entities/${params.id}?type=${params.type}`
+        )
+        .subscribe((response) => {
+          console.log('data was added to recommendations db', response);
+        });
     } else {
       await this.taskService.createTask(user, {
         successful: false,

@@ -11,9 +11,10 @@ import { customLikeRepository } from './like.repository';
 import { LikeService } from './like.service';
 import { LikeController } from './like.controller';
 import { Neo4jDatabaseModule } from '../neo4j/db.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Like]), AuthModule, Neo4jDatabaseModule],
+  imports: [TypeOrmModule.forFeature([Like]), AuthModule, Neo4jDatabaseModule, HttpModule],
   providers: [
     {
       provide: getRepositoryToken(Like),

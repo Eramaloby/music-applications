@@ -14,13 +14,15 @@ import { CreateDeleteLikeDto } from './create-delete-like.dto';
 import { User } from '../auth/user.entity';
 import { DatabaseService } from '../neo4j/db.service';
 import { CreateDeleteLikeSpotifyDto } from './dto/create-delete-like-spotify.dto';
+import { HttpService } from '@nestjs/axios';
 
 @UseGuards(AuthGuard())
 @Controller('like')
 export class LikeController {
   constructor(
     private readonly likeService: LikeService,
-    private readonly dbManager: DatabaseService
+    private readonly dbManager: DatabaseService,
+    private readonly http: HttpService
   ) {}
 
   @Get()
@@ -99,6 +101,12 @@ export class LikeController {
     const relatedItemsAsList = nodeIdsUserLikes
       .map((value) => `'${value}'`)
       .join(', ');
+    
+    console.log(relatedItemsAsList);
+
+    // this.http.get(`https://kmeans-rec-system.onrender.com/entities?like_ids=4kJDe36c1CCYkRetEHYkYO+4Z8W4fKeB5YxbusRsdQVPb`).subscribe((response) => {
+    //   console.log(response, 'server response');
+    // });
 
     const genres = (
       await this.dbManager.getGenresRecommendations(relatedItemsAsList)
