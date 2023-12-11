@@ -21,6 +21,7 @@ import {
   TrackModel,
 } from './types';
 import { HttpService } from '@nestjs/axios';
+import { error } from 'console';
 
 @Controller('neo4j')
 @UseGuards(AuthGuard())
@@ -81,8 +82,13 @@ export class DatabaseController {
         .post(
           `https://kmeans-rec-system.onrender.com/entities/${params.id}?type=${params.type}`
         )
-        .subscribe((response) => {
-          console.log('data was added to recommendations db', response);
+        .subscribe({
+          next: (response) => {
+            console.log('success', response.status, response.data);
+          },
+          error: (obj) => {
+            console.log('error', obj);
+          },
         });
     } else {
       await this.taskService.createTask(user, {
