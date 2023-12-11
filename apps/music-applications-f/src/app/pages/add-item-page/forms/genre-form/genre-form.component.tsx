@@ -26,7 +26,7 @@ const GenreForm = ({
 }: {
   requestCallback: (
     model: Neo4jModel,
-    type: 'artist' | 'genre' | 'playlist' | 'track' | 'album'
+    type: 'artist' | 'genre' | 'playlist' | 'track' | 'album',
   ) => void;
   initValues?: GenreFormFields,
 }) => {

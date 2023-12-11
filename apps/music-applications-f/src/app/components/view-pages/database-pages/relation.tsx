@@ -17,7 +17,7 @@ import PlaylistItemRelationView from './relation-components/playlist-view';
 import TrackItemRelationView from './relation-components/track-view';
 import AppModal from '../../ui-elements/modal';
 import { toast } from 'react-toastify';
-import { deleteItemFromNeo4j } from '../../../requests';
+import { deleteItemFromNeo4j, updateNeo4jItem } from '../../../requests';
 import { UserContext } from '../../../contexts/user.context';
 import { useNavigate } from 'react-router-dom';
 import GenreForm from '../../../pages/add-item-page/forms/genre-form/genre-form.component';
@@ -56,8 +56,22 @@ const RelationViewPage = ({
     }
   };
 
-  const onUpdate = async (model: Neo4jModel) => {
-    console.log(model);
+  const onUpdate = async (model: Neo4jModel, type: 'album' | 'playlist' | 'track' | 'genre' | 'artist') => {
+    if(!currentUser) {
+      setEditModal(false);
+      return;
+    }
+
+    const id = wrapper.item.properties.id;
+
+    const result = await updateNeo4jItem(type, model, id, currentUser.accessToken);
+    if (result) {
+      toast.info(`Record was updated`, { position: 'top-center' });
+    } else {
+      toast.info(`Record was not updated`, { position: 'top-center' });
+    }
+
+    setEditModal(false);
   };
 
   return (

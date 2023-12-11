@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -38,6 +39,13 @@ export class DatabaseController {
       user.username
     );
     return true;
+  }
+
+  @Patch(':type/:id')
+  async updateItemFromDatabase(@Param() param, @Body()
+  dto: TrackModel | AlbumModel | PlaylistModel | GenreModel | ArtistModel,) {
+    const result = await this.dbService.updateObject(dto, param.type, param.id);
+    return result;
   }
 
   @Post(':type/:id')

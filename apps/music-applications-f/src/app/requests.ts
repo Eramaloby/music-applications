@@ -13,6 +13,7 @@ import {
   AlbumModel,
   PlaylistModel,
   ArtistModel,
+  Neo4jModel,
 } from './types';
 import { parseNeo4jLikes, parseNeo4jRecommendation } from './utils';
 import { ProfileNotification } from './pages/profile/profile.component';
@@ -91,9 +92,23 @@ export const deleteItemFromNeo4j = async (id: string, accessToken: string) => {
   }
 }
 
+export const updateNeo4jItem = async(itemType: 'album' | 'playlist' | 'track' | 'genre' | 'artist', model: Neo4jModel, id: string, accessToken: string) => {
+  try {
+    const response = await axios.patch(`${baseUrl}/neo4j/${itemType}/${id}`, model, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      }
+    });
+
+    return response.data as boolean;
+  } catch(error) {
+    return false;
+  }
+}
+
 export const postItemToNeo4jCustom = async (
   itemType: 'album' | 'playlist' | 'track' | 'genre' | 'artist',
-  model: TrackModel | GenreModel | AlbumModel | PlaylistModel | ArtistModel,
+  model: Neo4jModel,
   accessToken: string
 ) => {
   try {

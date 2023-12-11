@@ -309,7 +309,10 @@ export class DatabaseService {
     ).records.map((value) => value['_fields']);
 
     return records.map(([record]) => {
-      return { itemType: record.labels.at(0).toLowerCase(), properties: record.properties };
+      return {
+        itemType: record.labels.at(0).toLowerCase(),
+        properties: record.properties,
+      };
     });
   }
 
@@ -563,44 +566,74 @@ export class DatabaseService {
   }
 
   public performAddTransactionCustom = async (
-    type: string, model: AlbumModel | TrackModel | PlaylistModel | ArtistModel | PlaylistModel | GenreModel, username: string
+    type: string,
+    model:
+      | AlbumModel
+      | TrackModel
+      | PlaylistModel
+      | ArtistModel
+      | GenreModel,
+    username: string
   ): Promise<AddTransactionResult> => {
     const txData: TransactionData = {
       records: [],
-      relationshipCount: 0
+      relationshipCount: 0,
     };
 
     const session = this.dbService.getDriver().session();
     const transaction = await session.beginTransaction();
 
     try {
-      switch(type) {
+      switch (type) {
         case 'track':
-          await this.addTrack(model as TrackModel, username, txData, transaction);
+          await this.addTrack(
+            model as TrackModel,
+            username,
+            txData,
+            transaction
+          );
           break;
         case 'album':
-          await this.addAlbum(model as AlbumModel, username, txData, transaction);
+          await this.addAlbum(
+            model as AlbumModel,
+            username,
+            txData,
+            transaction
+          );
           break;
         case 'artist':
-          await this.addArtist(model as ArtistModel, username, txData, transaction);
+          await this.addArtist(
+            model as ArtistModel,
+            username,
+            txData,
+            transaction
+          );
           break;
         case 'playlist':
-          await this.addPlaylist(model as PlaylistModel, username, txData, transaction);
+          await this.addPlaylist(
+            model as PlaylistModel,
+            username,
+            txData,
+            transaction
+          );
           break;
         case 'genre':
-          await this.addGenre(model as GenreModel, username, txData, transaction);
+          await this.addGenre(
+            model as GenreModel,
+            username,
+            txData,
+            transaction
+          );
           break;
       }
 
       await transaction.commit();
-    }
-    catch (error) {
+    } catch (error) {
       return {
         isSuccess: false,
         reason: JSON.stringify(error.message),
         data: { records: [], relationshipCount: 0 },
-      }
-
+      };
     } finally {
       await transaction.close();
       await session.close();
@@ -618,7 +651,7 @@ export class DatabaseService {
         reason: 'Record was already added.',
       };
     }
-  }
+  };
   /* ADD functions */
   public performAddTransaction = async (
     type: string,
@@ -697,9 +730,13 @@ export class DatabaseService {
   };
 
   public async deleteInstanceById(id: string) {
-    const relsCount = await this.dbService.read(`MATCH (p)-[r]-(n) WHERE p.id = '${id}' RETURN count(r) AS count`)
-    const [count] = relsCount.records.map(record => record['_fields']).at(0);
-    await this.dbService.write(`MATCH (item) WHERE item.id = '${id}' DETACH DELETE item`);
+    const relsCount = await this.dbService.read(
+      `MATCH (p)-[r]-(n) WHERE p.id = '${id}' RETURN count(r) AS count`
+    );
+    const [count] = relsCount.records.map((record) => record['_fields']).at(0);
+    await this.dbService.write(
+      `MATCH (item) WHERE item.id = '${id}' DETACH DELETE item`
+    );
     return count.low;
   }
 
@@ -1387,5 +1424,224 @@ export class DatabaseService {
 
     transactionData.relationshipCount += relsTracksAlbum.length;
     return true;
+  }
+
+  public async updateObject(
+    model:
+      | AlbumModel
+      | TrackModel
+      | PlaylistModel
+      | ArtistModel
+      | GenreModel,
+    type: string,
+    id: string
+  ) {
+    try {
+      switch (type) {
+        case 'track':
+          return await this.updateTrack(model as TrackModel, id);
+        case 'album':
+          return await this.updateAlbum(model as AlbumModel, id);
+        case 'playlist':
+          return await this.updatePlaylist(model as PlaylistModel, id);
+        case 'artist':
+          return await this.updateArtist(model as ArtistModel, id);
+        case 'genre':
+          return await this.updateGenre(model as GenreModel, id);
+        }
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  public async updateGenre(model: GenreModel, id: string) {
+    try {
+      await this.dbService.write(`
+      MATCH (g: Genre {id: "${id}"})
+      SET 
+        g.name = "${model.name}",
+        g.description = "${model.description}",
+        g.image = "${model.image}"`);
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  public async updateArtist(model: ArtistModel, id: string) {
+    try {
+      await this.dbService.write(`
+      MATCH (a: Artist {id: "${id}"})
+      SET
+        a.name = "${model.name}",
+        a.description = "${model.description}",
+        a.type = "${model.type}",
+        a.image = "${model.image}"`);
+
+      await Promise.allSettled(
+        model.relatedGenresIds.map((genreNodeId) =>
+          this.dbService.write(`
+          MATCH
+            (artist: Artist {id: "${id}"}),
+            (genre: Genre {id: "${genreNodeId}"})
+          MERGE (artist)-[r:PerformsInGenre]->(genre)
+          RETURN type(r)
+        `)
+        )
+      );
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  public async updateTrack(model: TrackModel, id: string) {
+    try {
+      await this.dbService.write(`
+        MATCH (t: Track {id: "${id}"})
+        SET
+          t.name = "${model.name}",
+          t.duration_ms = "${String(model.durationMs)}",
+          t.explicit = "${model.explicit}",
+          t.type = "${model.type}",
+          t.image = "${model.image}"
+        `);
+
+      await this.dbService.write(`
+        MATCH (t: Track {id: "${id}"})-[r]-()
+        DELETE r
+      `);
+
+      await this.dbService.write(`
+        MATCH
+          (artist: Artist {id: "${model.authorId}"}),
+          (track: Track {id: "${id}"})
+        MERGE (artist)-[r:Author]->(track)`);
+
+      await Promise.allSettled(
+        model.contributorsIds.map((cId) =>
+          this.dbService.write(`
+          MATCH
+            (artist: Artist {id: "${cId}"}),
+            (track: Track {id: "${id}"})
+          MERGE (artist)-[r:AppearedAt]->(track)
+          RETURN type(r)
+        `)
+        )
+      );
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  public async updatePlaylist(model: PlaylistModel, id: string) {
+    try {
+      await this.dbService.write(`
+        MATCH (p: Playlist {id: "${id}"})
+        SET
+        p.name = "${model.name}",
+        p.description = "${model.description}",
+        p.owner_name = "${model.ownerName}",
+        p.image = "${model.image}"`);
+
+      await this.dbService.write(`
+        MATCH (p: Playlist {id: "${id}"})-[r]-()
+        DELETE r
+      `);
+
+      await Promise.allSettled(
+        model.tracksIds.map((trackId) =>
+          this.dbService.write(`
+      MATCH
+        (playlist: Playlist {id: "${id}"}),
+        (track: Track {id: "${trackId}"})
+      MERGE (playlist)-[r:Contains]->(track)
+      RETURN type(r)`)
+        )
+      );
+
+      await Promise.allSettled(
+        model.genresIds.map((genreId) =>
+          this.dbService.write(`
+      MATCH
+        (playlist: Playlist {id: "${id}"}),
+        (genre: Genre {id: "${genreId}"})
+      MERGE (playlist)-[r:RelatedToGenre]->(genre)
+      RETURN type(r)
+    `)
+        )
+      );
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  public async updateAlbum(model: AlbumModel, id: string) {
+    try {
+      await this.dbService.write(`
+        MATCH (a: Album {id: "${id}"})
+        SET
+        a.name = "${model.name}",
+        a.type = "${model.type}",
+        a.count_of_tracks = "${model.countOfTracks}",
+        a.label = "${model.label}",
+        a.release_date = "${model.releaseDate}",
+        a.image = "${model.image}"`);
+
+      await this.dbService.write(`
+        MATCH (a: Album {id: "${id}"})-[r]-()
+        DELETE r
+      `);
+
+      await this.dbService.write(`
+      MATCH
+        (album: Album {id: "${id}"}),
+        (artist: Artist {id: "${model.authorId}"})
+      MERGE (artist)-[r:Author]->(album)
+      RETURN type(r)`);
+
+      await Promise.allSettled(
+        model.contributorsIds.map((artistId) =>
+          this.dbService.write(`
+      MATCH
+        (artist: Artist {id: "${artistId}"}),
+        (album: Album {id: "${id}"})
+      MERGE (artist)-[r:AppearedAt]->(album)
+      RETURN type(r)`)
+        )
+      );
+
+      await Promise.allSettled(
+        model.relatedGenresIds.map((genreId) =>
+          this.dbService.write(`
+      MATCH
+        (album: Album {id: "${id}"}),
+        (genre: Genre {id: "${genreId}"})
+      MERGE (album)-[r:RelatedToGenre]->(genre)
+      RETURN type(r)`)
+        )
+      );
+
+      await Promise.allSettled(
+        model.tracksIds.map((trackId) =>
+          this.dbService.write(`
+      MATCH
+        (album: Album {id: "${id}"}),
+        (track: Track {id: "${trackId}"})
+      MERGE (album)-[r:Contains]->(track)
+      RETURN type(r)`)
+        )
+      );
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }
