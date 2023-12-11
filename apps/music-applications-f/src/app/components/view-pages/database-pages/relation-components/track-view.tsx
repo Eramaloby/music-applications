@@ -1,6 +1,7 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { TrackWithRelationships } from '../../../../types';
 import { convertDuration } from '../../../../utils';
-import React from 'react';
+import React, { useContext } from 'react';
 import './styles.scss';
 import { PropertyDisplay } from './property';
 import { RelationshipInterpretation } from './relationship';
@@ -10,6 +11,7 @@ import {
   convertPlaylistProperties,
 } from './utils';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from 'apps/music-applications-f/src/app/contexts/user.context';
 
 const TrackItemRelationView = ({
   item,
@@ -30,6 +32,8 @@ const TrackItemRelationView = ({
     'Track type': item.properties.type,
     'Count of likes': String(item.properties.likes.low),
   });
+
+  const { currentUser } = useContext(UserContext);
 
   return (
     <>
@@ -62,14 +66,16 @@ const TrackItemRelationView = ({
             {item.properties.added_by}
           </span>
         </div>
-        <div className="btns">
-          <button className="delete-item" type="button" onClick={onDelete}>
-            delete
-          </button>
-          <button className="edit-item" type="button" onClick={onUpdate}>
-            edit
-          </button>
-        </div>
+        {currentUser && (
+          <div className="btns">
+            <button className="delete-item" type="button" onClick={onDelete}>
+              delete
+            </button>
+            <button className="edit-item" type="button" onClick={onUpdate}>
+              edit
+            </button>
+          </div>
+        )}
       </div>
       <div className="item-relationships-container">
         {item.author && (

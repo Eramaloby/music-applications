@@ -82,29 +82,38 @@ export const deleteItemFromNeo4j = async (id: string, accessToken: string) => {
   try {
     await axios.delete(`${baseUrl}/neo4j/${id}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
 
     return true;
   } catch (error) {
     return false;
   }
-}
+};
 
-export const updateNeo4jItem = async(itemType: 'album' | 'playlist' | 'track' | 'genre' | 'artist', model: Neo4jModel, id: string, accessToken: string) => {
+export const updateNeo4jItem = async (
+  itemType: 'album' | 'playlist' | 'track' | 'genre' | 'artist',
+  model: Neo4jModel,
+  id: string,
+  accessToken: string
+) => {
   try {
-    const response = await axios.patch(`${baseUrl}/neo4j/${itemType}/${id}`, model, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const response = await axios.patch(
+      `${baseUrl}/neo4j/${itemType}/${id}`,
+      model,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
-    });
+    );
 
     return response.data as boolean;
-  } catch(error) {
+  } catch (error) {
     return false;
   }
-}
+};
 
 export const postItemToNeo4jCustom = async (
   itemType: 'album' | 'playlist' | 'track' | 'genre' | 'artist',
@@ -112,11 +121,15 @@ export const postItemToNeo4jCustom = async (
   accessToken: string
 ) => {
   try {
-    const response = await axios.post(`${baseUrl}/neo4j/custom/user/${itemType}/`, model, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const response = await axios.post(
+      `${baseUrl}/neo4j/custom/user/${itemType}/`,
+      model,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
-    });
+    );
 
     if (response.data.isSuccess) {
       return {
@@ -445,6 +458,21 @@ export const getAllUserLikes = async (
   }
 };
 
+export const getSideRecommendations = async (token: string) => {
+  try {
+    const result = await axios.get(`${baseUrl}/like/new-recommendations`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(result, 'results');
+    return [];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
 export const receiveRecommendations = async (
   token: string
 ): Promise<ItemPreview[] | undefined> => {
@@ -455,7 +483,6 @@ export const receiveRecommendations = async (
       },
     });
 
-    console.log(result);
     const [albums, genres, artists, tracks] = [
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       result.data.albums.map((obj: any) =>

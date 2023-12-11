@@ -104,6 +104,13 @@ export class DatabaseService {
     return res.records;
   };
 
+  public getSpotifyIdsByNodeIds = async (nodeIds: string) => {
+    const res = await this.dbService.read(
+      `MATCH (obj) WHERE obj.id IN [${nodeIds}] RETURN obj.spotify_id`
+    );
+    return res.records;
+  };
+
   public getNodesWithType = async (type: string) => {
     const res = (
       await this.dbService.read(`MATCH (obj: ${type}) return obj`)
@@ -118,6 +125,7 @@ export class DatabaseService {
       await this.findNodeAndRelationsWithId(id, type)
     ).map((value) => value['_fields']);
 
+    console.log(nodeWithRelationships, 'node with relationships');
     const node = nodeWithRelationships[0][0];
     const relationships = nodeWithRelationships.map((object) => {
       return { relName: object[1].type, targetOrSource: object[2] };
@@ -129,6 +137,8 @@ export class DatabaseService {
   // add labels guard to all relationships ??
   public async getGenreFull(id: string): Promise<GenreWithRelationships> {
     const { node, relationships } = await this.getNeo4jData(id, 'Genre');
+
+    console.log(relationships);
 
     return {
       properties: node.properties as GenreProperties,
@@ -567,12 +577,7 @@ export class DatabaseService {
 
   public performAddTransactionCustom = async (
     type: string,
-    model:
-      | AlbumModel
-      | TrackModel
-      | PlaylistModel
-      | ArtistModel
-      | GenreModel,
+    model: AlbumModel | TrackModel | PlaylistModel | ArtistModel | GenreModel,
     username: string
   ): Promise<AddTransactionResult> => {
     const txData: TransactionData = {
@@ -1427,12 +1432,7 @@ export class DatabaseService {
   }
 
   public async updateObject(
-    model:
-      | AlbumModel
-      | TrackModel
-      | PlaylistModel
-      | ArtistModel
-      | GenreModel,
+    model: AlbumModel | TrackModel | PlaylistModel | ArtistModel | GenreModel,
     type: string,
     id: string
   ) {
@@ -1448,7 +1448,7 @@ export class DatabaseService {
           return await this.updateArtist(model as ArtistModel, id);
         case 'genre':
           return await this.updateGenre(model as GenreModel, id);
-        }
+      }
       return false;
     } catch (error) {
       return false;

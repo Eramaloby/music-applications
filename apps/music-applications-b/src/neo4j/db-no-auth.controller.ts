@@ -8,6 +8,7 @@ export class DatabaseNoAuthController {
   @Get(':type/:id')
   async getDatabaseItem(@Param() params) {
     // lowercase params later
+    console.log(params);
     switch (params.type) {
       case 'genre':
         return await this.dbService.getGenreFull(params.id);

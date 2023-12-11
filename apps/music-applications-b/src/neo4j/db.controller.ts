@@ -21,7 +21,6 @@ import {
   TrackModel,
 } from './types';
 import { HttpService } from '@nestjs/axios';
-import { error } from 'console';
 
 @Controller('neo4j')
 @UseGuards(AuthGuard())

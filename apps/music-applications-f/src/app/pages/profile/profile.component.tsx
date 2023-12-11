@@ -8,6 +8,7 @@ import FileUploader from '../../components/file-uploader/file-uploader.component
 import { getBase64FromFile, intersectTwoArrays } from '../../utils';
 import {
   fetchProfileTaskHistory,
+  getSideRecommendations,
   getUserNotifications,
   receiveRecommendations,
   sendMarkNotificationAsViewed,
@@ -104,6 +105,8 @@ const Profile = () => {
           updateNotifications(),
           updateCurrentUser(),
         ]);
+
+        const result = await getSideRecommendations(currentUser.accessToken);
       }
     };
 

@@ -15,6 +15,7 @@ import { User } from '../auth/user.entity';
 import { DatabaseService } from '../neo4j/db.service';
 import { CreateDeleteLikeSpotifyDto } from './dto/create-delete-like-spotify.dto';
 import { HttpService } from '@nestjs/axios';
+import { async, lastValueFrom } from 'rxjs';
 
 @UseGuards(AuthGuard())
 @Controller('like')
@@ -92,21 +93,63 @@ export class LikeController {
     return allLikes.map((likeObj) => likeObj['p']);
   }
 
+  // @Get('/new-recommendations')
+  // async getServerRecommendations(@GetUser() user: User) {
+  //   const nodeIdsUserLikes = (await this.likeService.findUserLikes(user)).map(
+  //     (value) => value.nodeId
+  //   );
+
+  //   const likeIdsConcat = nodeIdsUserLikes.join('+');
+  //   const requestResult = await lastValueFrom(
+  //     this.http.get(
+  //       `https://kmeans-rec-system.onrender.com/entities?like_ids=${likeIdsConcat}`
+  //     )
+  //   );
+
+  //   console.log(requestResult);
+
+  //   return requestResult;
+  // }
+
+  @Get('/new-recommendations')
+  async getSideRecommendations(@GetUser() user: User) {
+    const userLikes = await this.likeService.findUserLikes(user);
+    const relatedItemsAsList = userLikes
+      .map((value) => `'${value.nodeId}'`)
+      .join(', ');
+
+    const nodeSpotifyIds = (
+      await this.dbManager.getSpotifyIdsByNodeIds(relatedItemsAsList)
+    )
+      .map((value) => value['_fields'].at(0))
+      .filter((value) => Boolean(value));
+
+    if (nodeSpotifyIds.length === 0) {
+      return false;
+    }
+
+    const likeIdsConcat = nodeSpotifyIds.join('+');
+    console.log(likeIdsConcat);
+
+    try {
+      const requestResult = await lastValueFrom(
+        this.http.get(
+          `https://kmeans-rec-system.onrender.com/entities?like_ids=${likeIdsConcat}`
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+
+    return [];
+  }
+
   @Get('/recommendations')
   async getRecommendations(@GetUser() user: User) {
-    const nodeIdsUserLikes = (await this.likeService.findUserLikes(user)).map(
-      (value) => value.nodeId
-    );
-
-    const relatedItemsAsList = nodeIdsUserLikes
-      .map((value) => `'${value}'`)
+    const userLikes = await this.likeService.findUserLikes(user);
+    const relatedItemsAsList = userLikes
+      .map((value) => `'${value.nodeId}'`)
       .join(', ');
-    
-    console.log(relatedItemsAsList);
-
-    // this.http.get(`https://kmeans-rec-system.onrender.com/entities?like_ids=4kJDe36c1CCYkRetEHYkYO+4Z8W4fKeB5YxbusRsdQVPb`).subscribe((response) => {
-    //   console.log(response, 'server response');
-    // });
 
     const genres = (
       await this.dbManager.getGenresRecommendations(relatedItemsAsList)

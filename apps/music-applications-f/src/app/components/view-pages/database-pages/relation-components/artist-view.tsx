@@ -1,5 +1,5 @@
 import { ArtistWithRelationships } from '../../../../types';
-import React from 'react';
+import React, { useContext } from 'react';
 import './styles.scss';
 import { PropertyDisplay } from './property';
 import {
@@ -9,6 +9,8 @@ import {
 } from './utils';
 import { RelationshipInterpretation } from './relationship';
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { UserContext } from 'apps/music-applications-f/src/app/contexts/user.context';
 
 const ArtistItemRelationView = ({
   item,
@@ -29,6 +31,8 @@ const ArtistItemRelationView = ({
     'Artist type': item.properties.type,
     'Count of likes': String(item.properties.likes.low),
   });
+
+  const { currentUser } = useContext(UserContext);
 
   return (
     <>
@@ -56,16 +60,21 @@ const ArtistItemRelationView = ({
           ))}
         </div>
         <div className="added-by-link">
-          <p>Added by:</p> <span onClick={() => router(`/profile/${item.properties.added_by}`)}>{item.properties.added_by}</span>
+          <p>Added by:</p>{' '}
+          <span onClick={() => router(`/profile/${item.properties.added_by}`)}>
+            {item.properties.added_by}
+          </span>
         </div>
-        <div className="btns">
-          <button className="delete-item" type="button" onClick={onDelete}>
-            delete
-          </button>
-          <button className="edit-item" type="button" onClick={onUpdate}>
-            edit
-          </button>
-        </div>
+        {currentUser && (
+          <div className="btns">
+            <button className="delete-item" type="button" onClick={onDelete}>
+              delete
+            </button>
+            <button className="edit-item" type="button" onClick={onUpdate}>
+              edit
+            </button>
+          </div>
+        )}
       </div>
       <div className="item-relationships-container">
         {item.genres && item.genres.length > 0 && (

@@ -1,5 +1,5 @@
 import { GenreWithRelationships } from '../../../../types';
-import React from 'react';
+import React, { useContext } from 'react';
 import './styles.scss';
 import { PropertyDisplay } from './property';
 import { RelationshipInterpretation } from './relationship';
@@ -9,6 +9,8 @@ import {
   convertPlaylistProperties,
 } from './utils';
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { UserContext } from 'apps/music-applications-f/src/app/contexts/user.context';
 
 const GenreItemRelationView = ({
   item,
@@ -29,6 +31,8 @@ const GenreItemRelationView = ({
     'Count of likes': String(item.properties.likes.low),
   });
 
+  const { currentUser } = useContext(UserContext);
+
   return (
     <>
       <div className="item-properties-container">
@@ -47,20 +51,29 @@ const GenreItemRelationView = ({
         </div>
         <div className="item-properties">
           {displayedProperties.map(([label, value], index) => (
-            <PropertyDisplay label={label} value={value} key={index}></PropertyDisplay>
+            <PropertyDisplay
+              label={label}
+              value={value}
+              key={index}
+            ></PropertyDisplay>
           ))}
         </div>
         <div className="added-by-link">
-          <p>Added by:</p> <span onClick={() => router(`/profile/${item.properties.added_by}`)}>{item.properties.added_by}</span>
+          <p>Added by:</p>{' '}
+          <span onClick={() => router(`/profile/${item.properties.added_by}`)}>
+            {item.properties.added_by}
+          </span>
         </div>
-        <div className="btns">
-          <button className="delete-item" type="button" onClick={onDelete}>
-            delete
-          </button>
-          <button className="edit-item" type="button" onClick={onUpdate}>
-            edit
-          </button>
-        </div>
+        {currentUser && (
+          <div className="btns">
+            <button className="delete-item" type="button" onClick={onDelete}>
+              delete
+            </button>
+            <button className="edit-item" type="button" onClick={onUpdate}>
+              edit
+            </button>
+          </div>
+        )}
       </div>
       <div className="item-relationships-container">
         {item.albums && item.albums.length > 0 && (
