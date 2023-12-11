@@ -1,5 +1,6 @@
 import { PickersLayoutContentWrapper } from '@mui/x-date-pickers';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchMostLikedRecords } from '../../requests';
 import './charts.styles.scss';
 
@@ -8,6 +9,7 @@ type ChartItem = {
   name: string;
   likes: number;
   image: string;
+  id: string;
 };
 
 type TableViewProps = {
@@ -23,6 +25,7 @@ const ChartsPage = () => {
       setItems([
         ...responce.slice(0, 100).map((item) => {
           return {
+            id: item.properties.id,
             type: item.itemType,
             name: item.properties.name,
             likes: item.properties.likes.low,
@@ -48,14 +51,25 @@ const ChartsPage = () => {
 export default ChartsPage;
 
 const TableView = ({ items }: TableViewProps) => {
+  const router = useNavigate();
   return (
     <div className="table">
       <div className="tableRow">
-        <span>#</span>
-        <span>Title</span>
-        <span></span>
-        <span>Type</span>
-        <span>Likes</span>
+        <div className="numberContainer">
+          <span>#</span>
+        </div>
+        <div className="numberContainer">
+          <span></span>
+        </div>
+        <div className="numberContainer">
+          <span>Title</span>
+        </div>
+        <div className="numberContainer">
+          <span>Type</span>
+        </div>
+        <div className="numberContainer">
+          <span>Likes</span>
+        </div>
       </div>
       {items.map((item, index) => {
         return (
@@ -64,8 +78,17 @@ const TableView = ({ items }: TableViewProps) => {
               <span>{index + 1}</span>
             </div>
             <img src={item.image} alt=""></img>
-            <span>{item.name}</span>
-            <span>{item.type}</span>
+            <div className="numberContainer">
+              <span
+                className="link"
+                onClick={() => router(`/db/${item.type}/${item.id}`)}
+              >
+                {item.name}
+              </span>
+            </div>
+            <div className="numberContainer">
+              <span>{item.type}</span>
+            </div>
             <div className="numberContainer">
               <span>{item.likes}</span>
             </div>
